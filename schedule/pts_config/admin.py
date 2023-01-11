@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from pts_config.models import PtsConstructor
+
+
+admin.site.register(PtsConstructor)

@@ -7,3 +7,6 @@ class NameModel(models.Model):
 
     class Meta:
         abstract = True
+
+    def __str__(self) -> str:
+        return f'{self.name}'

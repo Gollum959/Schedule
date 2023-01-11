@@ -17,30 +17,31 @@ class PtsName(NameModel):
 class PtsRequest(models.Model):
     """Broadcast request model."""
 
-    broadcast_date = models.DateField(help_text='Broadcast date')
+    broadcast_date = models.DateField(
+        help_text='Broadcast date',
+    )
     place = models.ForeignKey(
         PlaceConstructor,
-        on_delete=models.SET_NULL,
-        related_name='place_constructor'
-    ),
-    name = models.CharField(max_length=200)
+        on_delete=models.CASCADE,
+    )
     type = models.ForeignKey(
-        BroadCastType, on_delete=models.SET_NULL,
+        BroadCastType, on_delete=models.CASCADE,
     )
     start_date = models.DateTimeField(
-        help_text='Broadcast start date and time'
-    ),
-    send_date = models.DateTimeField(
-        help_text='Broadcast end date and time'
-     ),
+        help_text='Broadcast start date and time',
+    )
+    end_date = models.DateTimeField(
+        help_text='Broadcast end date and time',
+    )
     pts_name = models.ForeignKey(
         PtsName, on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        blank=True,
     )
     pts_cfg = models.ForeignKey(
         PtsConstructor,
-        on_delete=models.SET_NULL,
-    ),
+        on_delete=models.CASCADE,
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -51,5 +52,3 @@ class PtsRequest(models.Model):
         verbose_name_plural = 'PTS Requests'
         ordering = ('broadcast_date', )
 
-    def __str__(self):
-        return self.name
