@@ -51,4 +51,3 @@ class PtsRequest(models.Model):
         verbose_name = 'PTS Request'
         verbose_name_plural = 'PTS Requests'
         ordering = ('broadcast_date', )
-
