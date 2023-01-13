@@ -18,6 +18,7 @@ class PlaceConstructor(models.Model):
         User,
         on_delete=models.CASCADE,
     )
+    create_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f'{self.name}'
@@ -25,4 +26,4 @@ class PlaceConstructor(models.Model):
     class Meta:
         verbose_name = 'Location of the broadcast'
         verbose_name_plural = 'Broadcast locations'
-        ordering = ('id', )
+        ordering = ('create_date', )
