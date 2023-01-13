@@ -1,4 +1,5 @@
 from django.db import models
+from users.models import User
 
 
 class PlaceConstructor(models.Model):
@@ -13,6 +14,10 @@ class PlaceConstructor(models.Model):
     phone = models.CharField('Contact phone', max_length=25, blank=True)
     web = models.URLField('Website Address', blank=True)
     email_address = models.EmailField('Email Address', blank=True)
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
 
     def __str__(self) -> str:
         return f'{self.name}'

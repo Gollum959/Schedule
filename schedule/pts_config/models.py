@@ -1,6 +1,7 @@
 from django.db import models
 
 from pts_config.abstract_models import StrName, ConstrQuantity
+from users.models import User
 
 
 class Optic(StrName):
@@ -13,7 +14,7 @@ class OpticPtsConstructor(ConstrQuantity):
     """Many2many model for PtsConstructor and Optic."""
 
     optics = models.ForeignKey(
-        'Optics',
+        'Optic',
         on_delete=models.CASCADE,
     )
 
@@ -28,7 +29,7 @@ class CameraPtsConstructor(ConstrQuantity):
     """Many2many model for PtsConstructor and Camera."""
 
     cameras = models.ForeignKey(
-        'Cameras',
+        'Camera',
         on_delete=models.CASCADE,
     )
 
@@ -43,7 +44,7 @@ class MicrophonePtsConstructor(ConstrQuantity):
     """Many2many model for PtsConstructor and Microphone."""
 
     microphones = models.ForeignKey(
-        'Microphones',
+        'Microphone',
         on_delete=models.CASCADE,
     )
 
@@ -58,7 +59,7 @@ class CommentatorPtsConstructor(ConstrQuantity):
     """Many2many model for PtsConstructor and Commentator."""
 
     commentators = models.ForeignKey(
-        'Commentators',
+        'Commentator',
         on_delete=models.CASCADE,
     )
 
@@ -103,6 +104,11 @@ class PtsConstructor(models.Model):
         'Gfx',
         through='GfxPtsConstructor',
     )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
+    create_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f'{self.name}'
