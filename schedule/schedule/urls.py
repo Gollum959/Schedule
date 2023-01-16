@@ -7,4 +7,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('users.urls', namespace='users')),
     path('place/', include('place_broadcast.urls', namespace='place')),
+    path('config/', include('pts_config.urls', namespace='config')),
 ]

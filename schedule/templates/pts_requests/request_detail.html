@@ -1,18 +1,35 @@
 {% extends 'base.html' %}
-{% block title %}<title>Пост {{ title }}</title>{% endblock %}
+{% block title %}<title></title>{% endblock %}
 {% block content %}
-  <div class="container py-5">
-    <div class="row">
-      <aside class="col-12 col-md-3">
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">
-            Broadcast date: {{ ptsrequest.broadcast_date|date:'d E Y' }}
-          </li>
-        </ul>
-      </aside>
-      <article class="col-12 col-md-9">
-        <p>{{ ptsrequest.place.name  }}</p> 
-      </article>  
-    </div>
+<div class="container py-5">
+  <div class="row">
+    <li>
+      Customer: {{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.direction}}, {{ptsrequest.author.position}}
+    </li>
+    <li>
+      Broadcast date: {{ ptsrequest.broadcast_date|date:'d E Y' }}
+    </li>
+    <li>
+      <a href="{% url 'place:place_detail' ptsrequest.place.pk %}">Broadcast place</a>: {{ ptsrequest.place.name  }}. {{ ptsrequest.place.city  }}, {{ ptsrequest.place.address  }}
+    </li>
+    <li>
+      Responsible person at the facility: {{ ptsrequest.place.contact_name  }}. Phone: {{ ptsrequest.place.phone  }}
+    </li>
+    <li>
+      Type of work: {{ ptsrequest.type }}
+    </li>
+    <li>
+      Start date: {{ ptsrequest.start_date|date:'d E Y H:i' }}
+    </li>
+    <li>
+      End date: {{ ptsrequest.end_date|date:'d E Y H:i' }}
+    </li>
+    <li>
+      <a href="{% url 'config:config_detail' ptsrequest.pts_cfg.pk %}">PTS Configurations</a>: {{  ptsrequest.pts_cfg }}
+    </li>
+    <li>
+      PTS: {{  ptsrequest.pts_name }}
+    </li>
   </div>
+</div>
 {% endblock %} 

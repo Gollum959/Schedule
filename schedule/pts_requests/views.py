@@ -1,8 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView
 from django.urls import reverse_lazy
 
 from pts_requests.models import PtsRequest
+from core.custom_view import DetailViewOnlyAuthor
 
 
 class PtsRequestsView(LoginRequiredMixin, ListView):
@@ -17,7 +18,7 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
         return PtsRequest.objects.filter(author=self.request.user)
 
 
-class PtsRequestDetail(LoginRequiredMixin, DetailView):
+class PtsRequestDetail(DetailViewOnlyAuthor):
     """Request detail view"""
     login_url = reverse_lazy('users:login')
     model = PtsRequest

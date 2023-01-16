@@ -116,4 +116,4 @@ class PtsConstructor(models.Model):
     class Meta:
         verbose_name = 'PTS config'
         verbose_name_plural = 'PTS configs'
-        ordering = ('name', )
+        ordering = ('create_date', )

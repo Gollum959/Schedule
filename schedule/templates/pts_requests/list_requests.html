@@ -6,7 +6,7 @@
       <article>    
         <ul>
           <li>
-            Author: {{ request.author.get_full_name }}, {{request.author.direction}}: {{request.author.position}}
+            Customer: {{ request.author.get_full_name }}, {{request.author.direction}}: {{request.author.position}}
           </li>
           <li>
             Broadcast date: {{ request.broadcast_date|date:'d E Y' }}
