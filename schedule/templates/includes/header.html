@@ -9,6 +9,11 @@
     <ul class="nav nav-pills">
       {% if user.is_authenticated %}
         <li class="nav-item"> 
+          <a class="nav-link {% if view_name  == 'pts_requests:request_create' %}active{% endif %}" href="{% url 'pts_requests:request_create' %}">
+            Create request
+          </a>
+        </li>
+        <li class="nav-item"> 
           <a class="nav-link {% if view_name  == 'place:places' %}active{% endif %}" href="{% url 'place:places' %}">
             Places
           </a>
