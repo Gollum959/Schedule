@@ -1,28 +1,27 @@
 from django.db import models
 
-from pts_config.abstract_models import StrName, ConstrQuantity
+from pts_config.abstract_models import StrName, ConstrQuantity, StrNameModel
 from users.models import User
 
 
-class Optic(StrName):
-    """Optics type model."""
+class Camera(StrNameModel):
+    """Camera type model."""
+    description = 'Type of cameras'
 
-    name = models.CharField('Type of optics', max_length=30)
+
+class CameraBrend(StrNameModel):
+    """Camera brend model."""
+    description = 'Camera brend'
 
 
-class OpticPtsConstructor(ConstrQuantity):
-    """Many2many model for PtsConstructor and Optic."""
+class CameraModelBrend(StrNameModel):
+    """Model camera model connected with CameraBrend model"""
+    description = 'Camera model'
 
-    optics = models.ForeignKey(
-        'Optic',
+    brend = models.ForeignKey(
+        CameraBrend,
         on_delete=models.CASCADE,
     )
-
-
-class Camera(StrName):
-    """Cameras type model."""
-
-    name = models.CharField('Type of cameras', max_length=20)
 
 
 class CameraPtsConstructor(ConstrQuantity):
@@ -31,7 +30,61 @@ class CameraPtsConstructor(ConstrQuantity):
     cameras = models.ForeignKey(
         'Camera',
         on_delete=models.CASCADE,
+        verbose_name='Camera type'
     )
+    brend = models.ForeignKey(
+        'CameraBrend',
+        on_delete=models.CASCADE,
+        blank=True
+    )
+    model = models.ForeignKey(
+        'CameraModelBrend',
+        on_delete=models.CASCADE,
+        blank=True
+    )
+
+
+class Optic(StrNameModel):
+    """Optics type model."""
+    description = 'Optical magnification'
+
+
+class OpticBrend(StrNameModel):
+    """Optic brend model."""
+    description = 'Optic brend'
+
+
+class OpticModelBrend(StrNameModel):
+    """Optics model model connected with OpticBrend model"""
+    description = 'Optic model'
+
+    brend = models.ForeignKey(
+        OpticBrend,
+        on_delete=models.CASCADE,
+    )
+
+
+class OpticPtsConstructor(ConstrQuantity):
+    """Many2many model for PtsConstructor and Optic."""
+
+    optics = models.ForeignKey(
+        'Optic',
+        on_delete=models.CASCADE,
+        verbose_name='Optical magnification'
+    )
+    brend = models.ForeignKey(
+        'OpticBrend',
+        on_delete=models.CASCADE,
+        blank=True
+    )
+    model = models.ForeignKey(
+        'OpticModelBrend',
+        on_delete=models.CASCADE,
+        blank=True
+    )
+
+
+
 
 
 class Microphone(StrName):

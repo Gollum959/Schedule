@@ -1,12 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.urls import reverse_lazy
-from django.http import Http404
-
 
 from pts_requests.models import PtsRequest
 from pts_requests.forms import AddRequestFrom
-from core.custom_view import DetailViewOnlyAuthor
+from core.custom_view import (DetalInformationMixin,
+                              UserToFormMixin,
+                              EditOnlyAuthorMixin)
 
 
 class PtsRequestsView(LoginRequiredMixin, ListView):
@@ -21,47 +21,29 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
         return PtsRequest.objects.filter(author=self.request.user)
 
 
-class PtsRequestDetail(DetailViewOnlyAuthor):
+class PtsRequestDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
     """Request detail view"""
     login_url = reverse_lazy('users:login')
     model = PtsRequest
     template_name = 'pts_requests/request_detail.html'
 
 
-class PtsRequestCreate(LoginRequiredMixin, CreateView):
+class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
     login_url = reverse_lazy('users:login')
     form_class = AddRequestFrom
     model = PtsRequest
     template_name = 'pts_requests/create_requests.html'
-
-    def get_form_kwargs(self):
-        kwargs = super(PtsRequestCreate, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
-        return kwargs
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
 
-class PtsRequestEdit(LoginRequiredMixin, UpdateView):
+class PtsRequestEdit(
+    UserToFormMixin, EditOnlyAuthorMixin,
+    LoginRequiredMixin, UpdateView
+):
     login_url = reverse_lazy('users:login')
     form_class = AddRequestFrom
     model = PtsRequest
     template_name = 'pts_requests/create_requests.html'
-
-    def get_form_kwargs(self):
-        kwargs = super(PtsRequestEdit, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
-        return kwargs
-
-    def get_object(self, queryset=None):
-        """Check that only author can see detail information"""
-        obj = super(PtsRequestEdit, self).get_object(queryset=queryset)
-        if (
-            obj.author != self.request.user
-            and not self.request.user.is_admin
-            and not self.request.user.is_moderator
-        ):
-            raise Http404()
-        return obj

@@ -4,6 +4,7 @@ from django.db import models
 
 class ConstrQuantity(models.Model):
     """Abstract model for PTS configuration"""
+
     constructor = models.ForeignKey(
         'PtsConstructor',
         on_delete=models.CASCADE,
@@ -23,6 +24,18 @@ class ConstrQuantity(models.Model):
 
 class StrName(models.Model):
     """Abstract model for __str__ method"""
+    def __str__(self) -> str:
+        return f'{self.name}'
+
+    class Meta:
+        abstract = True
+
+
+class StrNameModel(models.Model):
+    """Abstract model for __str__ method and Name"""
+    description = 'Type of cameras'
+    name = models.CharField(description, max_length=20)
+
     def __str__(self) -> str:
         return f'{self.name}'
 

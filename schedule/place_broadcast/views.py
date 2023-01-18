@@ -1,9 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy
 
 from place_broadcast.models import PlaceConstructor
-from core.custom_view import DetailViewOnlyAuthor
+from core.custom_view import DetalInformationMixin
 
 
 class PlacesBroadcastView(LoginRequiredMixin, ListView):
@@ -16,7 +16,9 @@ class PlacesBroadcastView(LoginRequiredMixin, ListView):
         return PlaceConstructor.objects.filter(author=self.request.user)
 
 
-class PlacesBroadcastDetail(DetailViewOnlyAuthor):
+class PlacesBroadcastDetail(
+    DetalInformationMixin, LoginRequiredMixin, DetailView
+):
     """Place detail view"""
     login_url = reverse_lazy('users:login')
     model = PlaceConstructor

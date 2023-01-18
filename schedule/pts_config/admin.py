@@ -6,11 +6,13 @@ from pts_config.models import (
     Optic, OpticPtsConstructor,
     Microphone, MicrophonePtsConstructor,
     Commentator, CommentatorPtsConstructor,
-    Gfx, GfxPtsConstructor
+    Gfx, GfxPtsConstructor, CameraBrend,
+    CameraModelBrend, OpticBrend, OpticModelBrend
 )
 
 
-@admin.register(Camera, Optic, Microphone, Commentator, Gfx)
+@admin.register(Camera, Optic, Microphone, Commentator, Gfx, CameraBrend,
+                CameraModelBrend, OpticBrend, OpticModelBrend)
 class CameraAdmin(admin.ModelAdmin):
     """Displaying Camera, Optic, Microphone, Commentator, Gfx
        model in the admin panel."""
@@ -21,6 +23,7 @@ class CameraPtsConstructorInline(admin.TabularInline):
     """Display camera in PTS config."""
 
     model = CameraPtsConstructor
+    fields = ('cameras', 'brend', 'model', 'quantity')
     extra = 1
 
 
@@ -28,6 +31,7 @@ class OpticPtsConstructor(admin.TabularInline):
     """Display optic in PTS config."""
 
     model = OpticPtsConstructor
+    fields = ['optics', 'brend', 'model', 'quantity']
     extra = 1
 
 
