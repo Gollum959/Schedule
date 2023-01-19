@@ -13,6 +13,26 @@ class BroadCastType(NameModel):
 
 class PtsName(NameModel):
     """Names of PTS"""
+    head_fullname = models.CharField(
+        'Full name of the head of the PTS shift',
+        max_length=70
+    )
+    head_contact = models.CharField(
+        'Contact of the head of the PTS shift',
+        max_length=100
+    )
+    deputi_head_fullname = models.CharField(
+        'Full name of the deputy head of the PTS shift',
+        max_length=70
+    )
+    deputi_head_contact = models.CharField(
+        'Contact of the deputy head of the PTS shift',
+        max_length=100
+    )
+    other_informatio = models.TextField(
+        'Other information',
+        max_length=2000,
+        blank=True)
 
 
 class PtsRequest(models.Model):

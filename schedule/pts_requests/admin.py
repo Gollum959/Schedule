@@ -6,7 +6,8 @@ from pts_requests.models import PtsName, BroadCastType, PtsRequest
 @admin.register(PtsName)
 class PtsNameAdmin(admin.ModelAdmin):
     """Displaying the PtsName model in the admin panel."""
-    list_display = ('name', )
+    list_display = ('name', 'head_fullname', 'head_contact',
+                    'deputi_head_fullname', 'deputi_head_contact')
 
 
 @admin.register(BroadCastType)
