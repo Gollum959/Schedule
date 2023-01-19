@@ -1,23 +1,22 @@
 from django.db import models
 
-from pts_config.abstract_models import StrName, ConstrQuantity, StrNameModel
+from pts_config.abstract_models import StrName, ConstrQuantity
 from users.models import User
 
 
-class Camera(StrNameModel):
+class Camera(StrName):
     """Camera type model."""
-    description = 'Type of cameras'
+    name = models.CharField('Type of cameras', max_length=20)
 
 
-class CameraBrend(StrNameModel):
+class CameraBrend(StrName):
     """Camera brend model."""
-    description = 'Camera brend'
+    name = models.CharField('Camera brend', max_length=20)
 
 
-class CameraModelBrend(StrNameModel):
+class CameraModelBrend(StrName):
     """Model camera model connected with CameraBrend model"""
-    description = 'Camera model'
-
+    name = models.CharField('Camera model', max_length=20)
     brend = models.ForeignKey(
         CameraBrend,
         on_delete=models.CASCADE,
@@ -44,20 +43,19 @@ class CameraPtsConstructor(ConstrQuantity):
     )
 
 
-class Optic(StrNameModel):
+class Optic(StrName):
     """Optics type model."""
-    description = 'Optical magnification'
+    name = models.CharField('Optical magnification', max_length=20)
 
 
-class OpticBrend(StrNameModel):
+class OpticBrend(StrName):
     """Optic brend model."""
-    description = 'Optic brend'
+    name = models.CharField('Optic brend', max_length=20)
 
 
-class OpticModelBrend(StrNameModel):
+class OpticModelBrend(StrName):
     """Optics model model connected with OpticBrend model"""
-    description = 'Optic model'
-
+    name = models.CharField('Optic model', max_length=20)
     brend = models.ForeignKey(
         OpticBrend,
         on_delete=models.CASCADE,
@@ -84,43 +82,123 @@ class OpticPtsConstructor(ConstrQuantity):
     )
 
 
+class ServerRecordingRepeatBrend(StrName):
+    """Server recording or repeat model."""
+    name = models.CharField('Server brend', max_length=20)
 
 
-
-class Microphone(StrName):
-    """Microphones type model."""
-
-    name = models.CharField('Type of microphones', max_length=50)
-
-
-class MicrophonePtsConstructor(ConstrQuantity):
-    """Many2many model for PtsConstructor and Microphone."""
-
-    microphones = models.ForeignKey(
-        'Microphone',
+class ServerRecordingRepeatModelBrend(StrName):
+    """Optics model model connected with OpticBrend model"""
+    name = models.CharField('Server model', max_length=20)
+    brend = models.ForeignKey(
+        ServerRecordingRepeatBrend,
         on_delete=models.CASCADE,
     )
 
 
-class Commentator(StrName):
-    """Commentator equipment type model."""
+class ServerRecordingRepeatConstructor(ConstrQuantity):
+    """Many2many model for PtsConstructor and ServerRecordingRepeat."""
 
-    name = models.CharField('Type of commentary equipment', max_length=30)
+    RECORDING = 'recording'
+    REPEAT = 'repeat'
+    TYPE = [
+        (RECORDING, 'Сервер записи'),
+        (REPEAT, 'Сервер повтора'),
+    ]
+    DIGITAL_RECORDER = 'digital_recorder'
+    RECORD_PLAYER = 'record_player'
+    PLAYER_TYPE = [
+        (DIGITAL_RECORDER, 'Цифровой рекордер'),
+        (RECORD_PLAYER, 'Магнитофон'),
+    ]
 
-
-class CommentatorPtsConstructor(ConstrQuantity):
-    """Many2many model for PtsConstructor and Commentator."""
-
-    commentators = models.ForeignKey(
-        'Commentator',
+    type = models.CharField(
+        verbose_name='Server type',
+        max_length=20,
+        choices=TYPE,
+        blank=True,
+        default=None,
+    )
+    type_player = models.CharField(
+        verbose_name='Server player type',
+        max_length=20,
+        choices=PLAYER_TYPE,
+        blank=True,
+        default=None,
+    )
+    brend = models.ForeignKey(
+        'ServerRecordingRepeatBrend',
         on_delete=models.CASCADE,
+        blank=True
+    )
+    model = models.ForeignKey(
+        'ServerRecordingRepeatModelBrend',
+        on_delete=models.CASCADE,
+        blank=True
+    )
+
+
+class MicrophoneBrend(StrName):
+    """Microphone brend model."""
+    name = models.CharField('Type of microphones', max_length=20)
+
+
+class MicrophoneModelBrend(StrName):
+    """Microphones model model connected with OpticBrend model"""
+    name = models.CharField('Microphone model', max_length=20)
+    brend = models.ForeignKey(
+        MicrophoneBrend,
+        on_delete=models.CASCADE,
+    )
+
+
+class MicrophonePtsConstructor(ConstrQuantity):
+    """Many2many model for PtsConstructor and Microphone."""
+    GUN = 'gun'
+    HALF_GUN = 'half_gun'
+    HAND_STEREO = 'hand_stereo'
+    TYPE = [
+        (GUN, 'Пушка'),
+        (HALF_GUN, 'Полупушка'),
+        (HAND_STEREO, 'Ручной стерео'),
+    ]
+
+    type = models.CharField(
+        verbose_name='Micro type',
+        max_length=20,
+        choices=TYPE,
+        blank=True,
+        default=None,
+    )
+    brend = models.ForeignKey(
+        'MicrophoneBrend',
+        on_delete=models.CASCADE,
+        blank=True
+    )
+    model = models.ForeignKey(
+        'MicrophoneModelBrend',
+        on_delete=models.CASCADE,
+        blank=True
     )
 
 
 class Gfx(StrName):
     """Graphic stations type model."""
+    name = models.CharField('Graphic stations', max_length=20)
 
-    name = models.CharField('Graphic stations', max_length=30)
+
+class GfxModel(StrName):
+    """Graphic model model connected with Gfx model"""
+    name = models.CharField('GFX model', max_length=20)
+    type = models.ForeignKey(
+        Gfx,
+        on_delete=models.CASCADE,
+    )
+
+
+class GfxLicenseType(StrName):
+    """Graphic stations, license type."""
+    name = models.CharField('License type(kind of sport)', max_length=20)
 
 
 class GfxPtsConstructor(ConstrQuantity):
@@ -130,6 +208,18 @@ class GfxPtsConstructor(ConstrQuantity):
         'Gfx',
         on_delete=models.CASCADE,
         related_name='gfx',
+    )
+    model = models.ForeignKey(
+        'GfxModel',
+        on_delete=models.CASCADE,
+        blank=True
+    )
+    judicial_system = models.BooleanField(
+        default=False
+    )
+    license_type = models.ManyToManyField(
+        'GfxLicenseType',
+        blank=True,
     )
 
 
@@ -145,13 +235,11 @@ class PtsConstructor(models.Model):
         'Camera',
         through='CameraPtsConstructor',
     )
-    microphones = models.ManyToManyField(
-        'Microphone',
-        through='MicrophonePtsConstructor',
+    servers = models.ManyToManyField(
+        'ServerRecordingRepeatConstructor',
     )
-    commentators = models.ManyToManyField(
-        'Commentator',
-        through='CommentatorPtsConstructor',
+    microphones = models.ManyToManyField(
+        'MicrophonePtsConstructor',
     )
     gfxs = models.ManyToManyField(
         'Gfx',
