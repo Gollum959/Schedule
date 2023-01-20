@@ -22,6 +22,6 @@ class AddRequestFrom(ModelForm):
     class Meta:
         model = PtsRequest
         fields = [
-            'broadcast_date', 'place', 'type',
+            'broadcast_start_date', 'place', 'type',
             'start_date', 'end_date', 'pts_cfg'
         ]

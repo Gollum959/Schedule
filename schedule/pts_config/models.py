@@ -34,12 +34,10 @@ class CameraPtsConstructor(ConstrQuantity):
     brend = models.ForeignKey(
         'CameraBrend',
         on_delete=models.CASCADE,
-        blank=True
     )
     model = models.ForeignKey(
         'CameraModelBrend',
         on_delete=models.CASCADE,
-        blank=True
     )
 
 
@@ -73,12 +71,10 @@ class OpticPtsConstructor(ConstrQuantity):
     brend = models.ForeignKey(
         'OpticBrend',
         on_delete=models.CASCADE,
-        blank=True
     )
     model = models.ForeignKey(
         'OpticModelBrend',
         on_delete=models.CASCADE,
-        blank=True
     )
 
 
@@ -88,11 +84,27 @@ class ServerRecordingRepeatBrend(StrName):
 
 
 class ServerRecordingRepeatModelBrend(StrName):
-    """Optics model model connected with OpticBrend model"""
+    """Server model model connected with ServerRecordingRepeatBrend model"""
     name = models.CharField('Server model', max_length=20)
     brend = models.ForeignKey(
         ServerRecordingRepeatBrend,
         on_delete=models.CASCADE,
+    )
+
+
+class ServerPlayerType(StrName):
+    """Server player type model"""
+    RECORDING = 'recording'
+    REPEAT = 'repeat'
+    TYPE = [
+        (RECORDING, 'Сервер записи'),
+        (REPEAT, 'Сервер повтора'),
+    ]
+    name = models.CharField('Server player type', max_length=40)
+    type = models.CharField(
+        verbose_name='Server type',
+        max_length=20,
+        choices=TYPE,
     )
 
 
@@ -105,12 +117,6 @@ class ServerRecordingRepeatConstructor(ConstrQuantity):
         (RECORDING, 'Сервер записи'),
         (REPEAT, 'Сервер повтора'),
     ]
-    DIGITAL_RECORDER = 'digital_recorder'
-    RECORD_PLAYER = 'record_player'
-    PLAYER_TYPE = [
-        (DIGITAL_RECORDER, 'Цифровой рекордер'),
-        (RECORD_PLAYER, 'Магнитофон'),
-    ]
 
     type = models.CharField(
         verbose_name='Server type',
@@ -119,12 +125,10 @@ class ServerRecordingRepeatConstructor(ConstrQuantity):
         blank=True,
         default=None,
     )
-    type_player = models.CharField(
-        verbose_name='Server player type',
-        max_length=20,
-        choices=PLAYER_TYPE,
-        blank=True,
-        default=None,
+    type_player = models.ForeignKey(
+        'ServerPlayerType',
+        on_delete=models.CASCADE,
+        blank=True
     )
     brend = models.ForeignKey(
         'ServerRecordingRepeatBrend',
@@ -167,18 +171,14 @@ class MicrophonePtsConstructor(ConstrQuantity):
         verbose_name='Micro type',
         max_length=20,
         choices=TYPE,
-        blank=True,
-        default=None,
     )
     brend = models.ForeignKey(
         'MicrophoneBrend',
         on_delete=models.CASCADE,
-        blank=True
     )
     model = models.ForeignKey(
         'MicrophoneModelBrend',
         on_delete=models.CASCADE,
-        blank=True
     )
 
 
@@ -212,7 +212,6 @@ class GfxPtsConstructor(ConstrQuantity):
     model = models.ForeignKey(
         'GfxModel',
         on_delete=models.CASCADE,
-        blank=True
     )
     judicial_system = models.BooleanField(
         default=False
@@ -230,10 +229,12 @@ class PtsConstructor(models.Model):
     optics = models.ManyToManyField(
         'Optic',
         through='OpticPtsConstructor',
+        blank=True
     )
     cameras = models.ManyToManyField(
         'Camera',
         through='CameraPtsConstructor',
+        blank=True
     )
     servers = models.ManyToManyField(
         'ServerRecordingRepeatConstructor',
@@ -244,6 +245,7 @@ class PtsConstructor(models.Model):
     gfxs = models.ManyToManyField(
         'Gfx',
         through='GfxPtsConstructor',
+        blank=True
     )
     author = models.ForeignKey(
         User,

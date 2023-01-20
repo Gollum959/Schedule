@@ -7,14 +7,15 @@ from pts_config.models import (
     MicrophoneBrend, MicrophoneModelBrend, MicrophonePtsConstructor,
     Gfx, GfxPtsConstructor, GfxModel, GfxLicenseType,
     ServerRecordingRepeatBrend, ServerRecordingRepeatModelBrend,
-    ServerRecordingRepeatConstructor
+    ServerRecordingRepeatConstructor, ServerPlayerType
 )
 
 
 @admin.register(Camera, Optic, MicrophoneBrend, MicrophoneModelBrend,
                 Gfx, GfxModel, GfxLicenseType, CameraBrend,
                 CameraModelBrend, OpticBrend, OpticModelBrend,
-                ServerRecordingRepeatBrend, ServerRecordingRepeatModelBrend)
+                ServerRecordingRepeatBrend, ServerRecordingRepeatModelBrend,
+                ServerPlayerType)
 class CameraAdmin(admin.ModelAdmin):
     """Displaying Camera, Optic, Microphone, Commentator, Gfx
        model in the admin panel."""

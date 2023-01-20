@@ -15,7 +15,8 @@ class ConstrQuantity(models.Model):
             MinValueValidator(0),
             MaxValueValidator(15),
         ),
-        default=0
+        default=0,
+        blank=True
     )
 
     class Meta:
