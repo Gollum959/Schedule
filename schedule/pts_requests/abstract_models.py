@@ -16,10 +16,17 @@ class LineConstructor(models.Model):
     """Abstract model for direction."""
     DIRECTION_TO = 'to_pts'
     DIRECTION_FROM = 'from_pts'
+    DIRECTION_CUSTOM = 'custom'
     DIRECTION = [
         (DIRECTION_TO, 'От ЦА к ПТС'),
         (DIRECTION_FROM, 'От ПТС к ЦА'),
+        (DIRECTION_CUSTOM, 'Другое'),
     ]
+    custom = models.CharField(
+        'Custom direction',
+        max_length=200,
+        blank=True
+    )
     direction = models.CharField(
         verbose_name='Direction',
         max_length=20,
