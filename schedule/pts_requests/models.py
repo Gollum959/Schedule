@@ -5,7 +5,7 @@ from django.urls import reverse
 from users.models import User
 from pts_config.models import PtsConstructor
 from place_broadcast.models import PlaceConstructor
-from pts_requests.abstract_models import NameModel
+from pts_requests.abstract_models import NameModel, LineConstructor
 
 
 class BroadCastType(NameModel):
@@ -13,7 +13,7 @@ class BroadCastType(NameModel):
 
 
 class PtsName(NameModel):
-    """Names of PTS"""
+    """Names and teams of PTS"""
     head_fullname = models.CharField(
         'Full name of the head of the PTS shift',
         max_length=70
@@ -36,18 +36,8 @@ class PtsName(NameModel):
         blank=True)
 
 
-class CommLineConstructor(models.Model):
-    DIRECTION_TO = 'to_pts'
-    DIRECTION_FROM = 'from_pts'
-    DIRECTION = [
-        (DIRECTION_TO, 'От ПТС к ЦА'),
-        (DIRECTION_FROM, 'От ЦА к ПТС'),
-    ]
-    direction = models.CharField(
-        verbose_name='Direction',
-        max_length=20,
-        choices=DIRECTION,
-    )
+class CommLineConstructor(LineConstructor):
+    """Line of communication model."""
     internet = models.BooleanField(
         'The Internet yes or no',
         default=False
@@ -56,28 +46,14 @@ class CommLineConstructor(models.Model):
         'Quantity',
         validators=(
             MinValueValidator(0),
-            MaxValueValidator(15),
+            MaxValueValidator(25),
         ),
         default=0,
     )
-    pts_request = models.ForeignKey(
-        'PtsRequest',
-        on_delete=models.CASCADE,
-    )
 
 
-class TechCommLineConstructor(models.Model):
-    DIRECTION_TO = 'to_pts'
-    DIRECTION_FROM = 'from_pts'
-    DIRECTION = [
-        (DIRECTION_TO, 'От ПТС к ЦА'),
-        (DIRECTION_FROM, 'От ЦА к ПТС'),
-    ]
-    direction = models.CharField(
-        verbose_name='Direction',
-        max_length=20,
-        choices=DIRECTION,
-    )
+class TechCommLineConstructor(LineConstructor):
+    """Line of technical communication model."""
     four_wire_comm = models.BooleanField(
         'Four wire communication yes or no',
         default=False
@@ -85,10 +61,6 @@ class TechCommLineConstructor(models.Model):
     vpn = models.BooleanField(
         'VPN communication yes or no',
         default=False
-    )
-    pts_request = models.ForeignKey(
-        'PtsRequest',
-        on_delete=models.CASCADE,
     )
 
 
@@ -117,10 +89,12 @@ class PtsRequest(models.Model):
     start_date = models.DateTimeField(
         help_text='Arrival date and time (YYYY-MM-DD hh:mm)',
         blank=True,
+        null=True
     )
     end_date = models.DateTimeField(
         help_text='Departure date and time (YYYY-MM-DD hh:mm)',
         blank=True,
+        null=True
     )
     pts_name = models.ManyToManyField(
         PtsName,
@@ -131,7 +105,6 @@ class PtsRequest(models.Model):
         on_delete=models.CASCADE,
         verbose_name='PTS configuration',
     )
-    create_date = models.DateTimeField(auto_now_add=True)
     commentator_monitor = models.BooleanField(
         'Monitor for commentator',
         default=False
@@ -145,13 +118,7 @@ class PtsRequest(models.Model):
         max_length=30,
         choices=HEADSEAT,
     )
-    commline = models.ManyToManyField(
-        'CommLineConstructor',
-    )
-    techcommline = models.ManyToManyField(
-        'TechCommLineConstructor',
-    )
-
+    create_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

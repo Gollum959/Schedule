@@ -13,7 +13,7 @@ class ConstrQuantity(models.Model):
         'Quantity',
         validators=(
             MinValueValidator(0),
-            MaxValueValidator(15),
+            MaxValueValidator(50),
         ),
         default=0,
         blank=True
@@ -24,7 +24,26 @@ class ConstrQuantity(models.Model):
 
 
 class StrName(models.Model):
-    """Abstract model for __str__ method"""
+    """Abstract model with __str__ method"""
+    def __str__(self) -> str:
+        return f'{self.name}'
+
+    class Meta:
+        abstract = True
+
+
+class StrNameQuantity(models.Model):
+    """Abstract model with __str__ method and quantity field"""
+    quantity = models.PositiveSmallIntegerField(
+        'Quantity',
+        validators=(
+            MinValueValidator(0),
+            MaxValueValidator(50),
+        ),
+        default=0,
+        blank=True
+    )
+
     def __str__(self) -> str:
         return f'{self.name}'
 

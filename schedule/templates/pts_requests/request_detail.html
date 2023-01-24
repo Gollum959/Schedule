@@ -28,6 +28,11 @@
       <a href="{% url 'config:config_detail' ptsrequest.pts_cfg.pk %}">PTS Configurations</a>: {{  ptsrequest.pts_cfg }}
     </li>
     <li>
+      {% for commline in ptsrequest.commlineconstructor_set.all %}
+        <p>
+            {{ commline.str_directions}}
+        </p>
+      {% endfor %}
       PTS: {{  ptsrequest.pts_name }}
     </li>
     {% if user == ptsrequest.author %}

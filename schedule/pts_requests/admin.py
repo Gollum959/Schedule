@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-from pts_requests.models import (PtsName, BroadCastType, PtsRequest,
-                                 CommLineConstructor, TechCommLineConstructor)
+from pts_requests.models import (PtsName, BroadCastType,
+                                 PtsRequest, CommLineConstructor,
+                                 TechCommLineConstructor)
 
 
 @admin.register(PtsName)
@@ -13,23 +14,33 @@ class PtsNameAdmin(admin.ModelAdmin):
 
 @admin.register(BroadCastType)
 class BroadCastTypeAdmin(admin.ModelAdmin):
-    """Displaying the BroadCastTypeAdmin model in the admin panel."""
+    """Displaying the BroadCastType model in the admin panel."""
     list_display = ('name', )
 
 
-class CommLineConstructor(admin.TabularInline):
-    """Display microphone in PTS config."""
+@admin.register(CommLineConstructor)
+class CommLineConstructorAdmin(admin.ModelAdmin):
+    """Displaying the CommLineConstructor model in the admin panel."""
+    fields = ('direction', 'internet', 'quantity')
+
+
+class CommLineConstructors(admin.TabularInline):
+    """Display communication lines in PTS request."""
 
     model = CommLineConstructor
-    fields = ('direction', 'internet', 'quantity')
     extra = 1
 
 
-class TechCommLineConstructor(admin.TabularInline):
-    """Display GFX in PTS config."""
+@admin.register(TechCommLineConstructor)
+class TechCommLineConstructorAdmin(admin.ModelAdmin):
+    """Displaying the TechCommLineConstructor model in the admin panel."""
+    fields = ('direction', 'four_wire_comm', 'vpn')
+
+
+class TechCommLineConstructors(admin.TabularInline):
+    """Display tech communication lines in PTS request."""
 
     model = TechCommLineConstructor
-    fields = ('direction', 'four_wire_comm', 'vpn')
     extra = 1
 
 
@@ -39,10 +50,6 @@ class PtsRequestAdmin(admin.ModelAdmin):
 
     list_display = ('broadcast_start_date', 'place', 'type', 'start_date',
                     'end_date', 'get_pts', 'pts_cfg', 'author')
-    fields = ('broadcast_start_date', 'broadcast_end_date', 'place', 'type',
-              'start_date', 'end_date', 'pts_name', 'pts_cfg',
-              'commentator_monitor', 'commentator_console',
-              'commentator_headset', 'author')
     list_filter = ('author', 'broadcast_start_date', )
     search_fields = ('author', )
-    inlines = (CommLineConstructor, TechCommLineConstructor)
+    inlines = (CommLineConstructors, TechCommLineConstructors)
