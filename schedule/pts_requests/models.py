@@ -117,6 +117,8 @@ class PtsRequest(models.Model):
         verbose_name='Number of headsets',
         max_length=30,
         choices=HEADSEAT,
+        blank=True,
+        null=True
     )
     create_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
