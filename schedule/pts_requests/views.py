@@ -4,7 +4,9 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.urls import reverse_lazy
 
 from pts_requests.models import PtsRequest
-from pts_requests.forms import AddRequestFrom, CommLineFormset, TechCommLineFormset
+from pts_requests.forms import (AddRequestFrom,
+                                CommLineFormset,
+                                TechCommLineFormset)
 from core.custom_view import (DetalInformationMixin,
                               UserToFormMixin,
                               EditOnlyAuthorMixin)
@@ -76,14 +78,18 @@ class PtsRequestEdit(
         data = super().get_context_data(**kwargs)
 
         if self.request.POST:
-            data['commline'] = CommLineFormset(self.request.POST, instance=self.object)
-            data['techcommline'] = TechCommLineFormset(self.request.POST, instance=self.object)
+            data['commline'] = CommLineFormset(
+                self.request.POST, instance=self.object
+            )
+            data['techcommline'] = TechCommLineFormset(
+                self.request.POST, instance=self.object
+            )
         else:
             data['commline'] = CommLineFormset(instance=self.object)
             data['techcommline'] = TechCommLineFormset(instance=self.object)
 
         return data
-    
+
     def form_valid(self, form):
         form.instance.author = self.request.user
         context = self.get_context_data()

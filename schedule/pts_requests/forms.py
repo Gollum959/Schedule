@@ -1,7 +1,9 @@
 from django.forms import ModelForm, ModelChoiceField, inlineformset_factory
 
 from place_broadcast.models import PlaceConstructor
-from pts_requests.models import PtsRequest, CommLineConstructor, TechCommLineConstructor
+from pts_requests.models import (PtsRequest,
+                                 CommLineConstructor,
+                                 TechCommLineConstructor)
 from pts_config.models import PtsConstructor
 
 
