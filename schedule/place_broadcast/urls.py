@@ -4,6 +4,7 @@ from place_broadcast.views import (PlacesBroadcastView,
                                    PlacesBroadcastCreate,
                                    PlacesBroadcastEdit,)
 
+
 app_name = 'pts_broadcast'
 
 urlpatterns = [
@@ -16,11 +17,11 @@ urlpatterns = [
     path(
         'create/',
         PlacesBroadcastCreate.as_view(),
-        name='request_create'
+        name='place_create'
     ),
-    # path(
-    #     'create/<int:pk>/',
-    #     PlacesBroadcastEdit.as_view(),
-    #     name='request_edit'
-    # ),
+    path(
+        'create/<int:pk>/',
+        PlacesBroadcastEdit.as_view(),
+        name='place_edit'
+    ),
 ]

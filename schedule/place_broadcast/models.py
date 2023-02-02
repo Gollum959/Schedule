@@ -3,7 +3,6 @@ from django.urls import reverse
 from users.models import User
 
 
-
 class PlaceConstructor(models.Model):
     """Broadcast address constructor"""
     name = models.CharField('Name of the facility', max_length=30, unique=True)
@@ -26,7 +25,7 @@ class PlaceConstructor(models.Model):
         return f'{self.name}'
 
     def get_absolute_url(self):
-        return reverse('place:place_detail', kwargs={"pk": self.pk})
+        return reverse('place:place_detail', kwargs={'pk': self.pk})
 
     class Meta:
         verbose_name = 'Location of the broadcast'

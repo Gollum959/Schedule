@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block title %}<title></title>{% endblock %}
+{% block content %}   
+  <style>
+    .button_add {
+      margin-bottom: 10px;
+    }
+    .camera-form {
+      border-bottom: 1px solid black;
+      margin-bottom: 10px;
+    }
+    .optic-form {
+      border-bottom: 1px solid black;
+      margin-bottom: 10px;
+    }
+    .server-form {
+      border-bottom: 1px solid black;
+      margin-bottom: 10px;
+    }
+    .micro-form {
+      border-bottom: 1px solid black;
+      margin-bottom: 10px;
+    }
+    .gfx-form {
+      border-bottom: 1px solid black;
+      margin-bottom: 10px;
+    }
+    .hidden {
+      display: none
+    }
+  </style>
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 p-5">
+        <div class="card">
+          {% comment %} <div class="card-header">   
+            {% if is_edit %}
+              Редактировать запись
+            {% else %}
+              Новый пост
+            {% endif %}                 
+          </div> {% endcomment %}
+          <div class="card-body">        
+            <form method="post" enctype="multipart/form-data">
+              {% load user_filters %}
+              {% csrf_token %}
+              {% if form.errors %}
+                {% for field in form %}
+                  {% for error in field.errors %}            
+                    <div class="alert alert-danger">
+                      {{ error|escape }}
+                    </div>
+                  {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                  <div class="alert alert-danger">
+                    {{ error|escape }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+              {% for field in form %}
+                <div class="form-group row my-3 p-3">
+                  <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                    {% if field.field.required %}
+                      <span class="required text-danger">*</span>
+                    {% endif %}
+                  </label>    
+                  {{ field }}
+                  {% if field.help_text %}
+                    <small id="{{ field.id_for_label }}-help" class="form-text text-muted">
+                      {{ field.help_text|safe }}
+                    </small>
+                  {% endif %}
+                </div>
+              {% endfor %}
+
+              {% include 'includes/form.html' with form=camera style='camera' descr='Cameras:'%}   
+              {% include 'includes/form.html' with form=optic style='optic' descr='Optics:'%}  
+              {% include 'includes/form.html' with form=server style='server' descr='Servers:'%}   
+              {% include 'includes/form.html' with form=micro style='micro' descr='Microphone:'%}   
+              {% include 'includes/form.html' with form=gfx style='gfx' descr='GFX:'%}   
+
+              
+              {% comment %} <div class="form-group row my-3 p-3">
+                <b>Cameras:</b>
+                {{ camera.management_form }}
+                <div id="camera-form-list">
+                  {% for form in camera %}
+                    <div class='camera-form'>
+                      {{ form.as_p }}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div> {% endcomment %}
+
+              {% comment %} <div class="form-group row my-3 p-3">
+                <b>Optics:</b>
+                {{ optic.management_form }}
+                <div id="optic-form-list">
+                  {% for form in optic %}
+                    <div class='optic-form'>
+                      {{ form.as_p }}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div> {% endcomment %}
+
+
+              <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">Create:
+                  {% comment %} {% if is_edit %}
+                    Сохранить
+                  {% else %}
+                    Добавить
+                  {% endif %}   {% endcomment %}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const addMoreLineBtn = document.getElementById('add-more-commline')
+    const removeLineBtn = document.getElementById('remove-commline')
+    const totalNewForms = document.getElementById('id_commlineconstructor_set-TOTAL_FORMS')
+    const currentCommlineForms = document.getElementsByClassName('commline-form')
+    const FormCount = currentCommlineForms.length
+    var currentFormCount = 0
+
+    addMoreLineBtn.addEventListener('click', add_new_form)
+    removeLineBtn.addEventListener('click', remove_form)
+
+    function add_new_form(event) {
+      if (event) {
+        event.preventDefault()
+      }
+      const formCopyTarget = document.getElementById('commline-form-list')
+      
+      currentFormCount = currentCommlineForms.length
+      if (currentFormCount>=0) {
+        removeLineBtn.setAttribute('class', '')
+      }
+      const copyemptyFormEl = document.getElementById('comm-id').cloneNode(true)
+      copyemptyFormEl.setAttribute('class', 'commline-form')
+      copyemptyFormEl.setAttribute('id', `form-${currentFormCount}`)
+      const regex = new RegExp('__prefix__', 'g')
+      copyemptyFormEl.innerHTML = copyemptyFormEl.innerHTML.replace(regex, currentFormCount)
+      totalNewForms.setAttribute('value', currentFormCount + 1)
+      formCopyTarget.append(copyemptyFormEl)
+    }
+
+    function remove_form(event) {
+      if (event) {
+        event.preventDefault()
+      }
+      const emptyFormEl = document.getElementById(`form-${currentFormCount}`)
+      currentFormCount = currentFormCount - 1
+      emptyFormEl.remove()
+      totalNewForms.setAttribute('value', currentFormCount + 1)
+      console.log(currentFormCount)
+      if (currentFormCount-FormCount<0) {
+        removeLineBtn.setAttribute('class', 'hidden')
+      }
+    }
+
+
+    const addMoreTechLineBtn = document.getElementById('add-more-techcommline')
+    const removeTechLineBtn = document.getElementById('remove-techcommline')
+    const totalTechNewForms = document.getElementById('id_techcommlineconstructor_set-TOTAL_FORMS')
+    const currentTechCommlineForms = document.getElementsByClassName('techcommline-form')
+    const TechFormCount = currentTechCommlineForms.length
+
+    var currentTechFormCount = 0
+
+    addMoreTechLineBtn.addEventListener('click', add_tech_new_form)
+    removeTechLineBtn.addEventListener('click', remove_tech_form)
+
+    function add_tech_new_form(event) {
+      if (event) {
+        event.preventDefault()
+      }
+      const formTechCopyTarget = document.getElementById('techcommline-form-list')
+      currentTechFormCount = currentTechCommlineForms.length
+      if (currentTechFormCount>=0) {
+        removeTechLineBtn.setAttribute('class', '')
+      }
+      const copyemptyTechFormEl = document.getElementById('tech-comm-id').cloneNode(true)
+      copyemptyTechFormEl.setAttribute('class', 'techcommline-form')
+      copyemptyTechFormEl.setAttribute('id', `form-${currentTechFormCount}`)
+      const regex = new RegExp('__prefix__', 'g')
+      copyemptyTechFormEl.innerHTML = copyemptyTechFormEl.innerHTML.replace(regex, currentTechFormCount)
+      totalTechNewForms.setAttribute('value', currentTechFormCount + 1)
+      formTechCopyTarget.append(copyemptyTechFormEl)
+    }
+
+    function remove_tech_form(event) {
+      if (event) {
+        event.preventDefault()
+      }
+      const copyemptyTechFormEl = document.getElementById(`form-${currentTechFormCount}`)
+      currentTechFormCount = currentTechFormCount - 1
+      copyemptyTechFormEl.remove()
+      totalTechNewForms.setAttribute('value', currentTechFormCount + 1)
+      if (currentTechFormCount-TechFormCount<0) {
+        removeTechLineBtn.setAttribute('class', 'hidden')
+      }
+    }
+  </script>
+
+{% endblock %} 

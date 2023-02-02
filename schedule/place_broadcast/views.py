@@ -1,10 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
 
 from place_broadcast.forms import AddBroadcastPlace
 from place_broadcast.models import PlaceConstructor
-from core.custom_view import DetalInformationMixin
+from core.custom_view import DetalInformationMixin, EditOnlyAuthorMixin
 
 
 class PlacesBroadcastView(LoginRequiredMixin, ListView):
@@ -39,5 +39,13 @@ class PlacesBroadcastCreate(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class PlacesBroadcastEdit:
-    ...
+class PlacesBroadcastEdit(EditOnlyAuthorMixin, LoginRequiredMixin, UpdateView):
+    login_url = reverse_lazy('users:login')
+    form_class = AddBroadcastPlace
+    model = PlaceConstructor
+    template_name = 'place_broadcast/create_places.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        self.object = form.save()
+        return super().form_valid(form)

@@ -1,5 +1,8 @@
 from django.urls import path
-from pts_config.views import PtsConfigView, PtsConfigDetail
+from pts_config.views import (PtsConfigView,
+                              PtsConfigDetail,
+                              PtsConfigCreate,
+                              PtsConfigEdit)
 
 app_name = 'pts_config'
 
@@ -10,4 +13,10 @@ urlpatterns = [
         PtsConfigDetail.as_view(),
         name='config_detail'
     ),
+    path(
+        'create/',
+        PtsConfigCreate.as_view(),
+        name='config_create'
+    ),
+    path('create/<int:pk>/', PtsConfigEdit.as_view(), name='config_edit'),
 ]

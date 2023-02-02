@@ -60,7 +60,12 @@
             </ul>
           {% endfor %}
         </li>
+          {% if user == ptsconstructor.author %}
+            <a class="btn btn-primary" href="{% url 'config:config_edit' ptsconstructor.pk %}">
+              edit config
+            </a> 
+          {% endif %}
       </ul>
     </div>
   </div>
-{% endblock %} 
+{% endblock %}

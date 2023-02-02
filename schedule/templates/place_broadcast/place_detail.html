@@ -3,27 +3,34 @@
 {% block content %}
   <div class="container py-5">
     <div class="row">
-      <li>
-        Name of the facility: {{ placeconstructor.name }}
-      </li>
-      <li>
-        City: {{ placeconstructor.city }}
-      </li>
-      <li>
-        Address: {{ placeconstructor.address }}
-      </li>
-      <li>
-        Name of person in charge at the facility: {{ placeconstructor.contact_name }}
-      </li>
-      <li>
-        Contact phone: {{  placeconstructor.phone }}
-      </li>
-      <li>
-        Email address: {{  placeconstructor.email_address }}
-      </li>
-      <li>
-        Web: {{  placeconstructor.web }}
-      </li>
+      <ul>
+        <li>
+          Name of the facility: {{ placeconstructor.name }}
+        </li>
+        <li>
+          City: {{ placeconstructor.city }}
+        </li>
+        <li>
+          Address: {{ placeconstructor.address }}
+        </li>
+        <li>
+          Name of person in charge at the facility: {{ placeconstructor.contact_name }}
+        </li>
+        <li>
+          Contact phone: {{  placeconstructor.phone }}
+        </li>
+        <li>
+          Email address: {{  placeconstructor.email_address }}
+        </li>
+        <li>
+          Web: {{  placeconstructor.web }}
+        </li>
+        {% if user == placeconstructor.author %}
+          <a class="btn btn-primary" href="{% url 'place:place_edit' placeconstructor.pk %}">
+            edit place
+          </a> 
+        {% endif %}
+        </ul>
     </div>
   </div>
 {% endblock %} 

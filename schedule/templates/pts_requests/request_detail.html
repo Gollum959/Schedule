@@ -36,10 +36,10 @@
       PTS: {{  ptsrequest.pts_name }}
     </li>
     {% if user == ptsrequest.author %}
-    <a class="btn btn-primary" href="{% url 'pts_requests:request_edit' ptsrequest.pk %}">
-      edit request
-    </a> 
-  {% endif %}
+      <a class="btn btn-primary" href="{% url 'pts_requests:request_edit' ptsrequest.pk %}">
+        edit request
+      </a> 
+    {% endif %}
   </div>
 </div>
 {% endblock %} 

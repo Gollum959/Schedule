@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from pts_config.abstract_models import StrName, ConstrQuantity, StrNameQuantity
 from users.models import User
@@ -215,6 +216,9 @@ class PtsConstructor(models.Model):
 
     def __str__(self) -> str:
         return f'{self.name}'
+
+    def get_absolute_url(self):
+        return reverse('config:config_detail', kwargs={'pk': self.pk})
 
     class Meta:
         verbose_name = 'PTS config'

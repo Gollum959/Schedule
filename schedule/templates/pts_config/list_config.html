@@ -19,6 +19,9 @@
         </ul>
       </article>
       {% if not forloop.last %}<hr>{% endif %}
-    {% endfor %} 
+    {% endfor %}
+    <a class="btn btn-primary" href="{% url 'config:config_create' %}">
+      add config
+    </a> 
   </div>
 {% endblock %} 

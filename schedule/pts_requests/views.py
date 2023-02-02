@@ -62,13 +62,11 @@ class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
         if techcommlines.is_valid():
             techcommlines.instance = self.object
             techcommlines.save()
+
         return super().form_valid(form)
 
 
-class PtsRequestEdit(
-    UserToFormMixin, EditOnlyAuthorMixin,
-    LoginRequiredMixin, UpdateView
-):
+class PtsRequestEdit(EditOnlyAuthorMixin, LoginRequiredMixin, UpdateView):
     login_url = reverse_lazy('users:login')
     form_class = AddRequestFrom
     model = PtsRequest
@@ -103,4 +101,5 @@ class PtsRequestEdit(
         if techcommlines.is_valid():
             techcommlines.instance = self.object
             techcommlines.save()
+
         return super().form_valid(form)

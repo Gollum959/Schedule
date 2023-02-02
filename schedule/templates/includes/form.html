@@ -1,0 +1,11 @@
+<div class="form-group row my-3 p-3">
+    <b>{{descr}}</b>
+    {{ form.management_form }}
+    <div id="{{ style }}-form-list">
+      {% for form in form %}
+        <div class="{{ style }}-form">
+          {{ form.as_p }}
+        </div>
+      {% endfor %}
+    </div>
+  </div>

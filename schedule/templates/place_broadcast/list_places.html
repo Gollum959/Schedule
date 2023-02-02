@@ -23,5 +23,8 @@
       </article>
       {% if not forloop.last %}<hr>{% endif %}
     {% endfor %} 
+    <a class="btn btn-primary" href="{% url 'place:place_create' %}">
+      add place
+    </a> 
   </div>
 {% endblock %} 
