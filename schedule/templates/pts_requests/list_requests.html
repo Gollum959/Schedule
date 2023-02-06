@@ -24,10 +24,10 @@
             </a>
           </th>
           <td>{{ request.broadcast_start_date|date:'d E Y' }}</td>
-          <td>{{ request.broadcast_start_date|date:'hh:mm' }}</td>
-          <td>НЕТ ПОЛЯ</td>
+          <td>{{ request.broadcast_start_date|date:'h:m' }} - {{ request.broadcast_end_date|date:'h:m' }}</td>
+          <td>{{ request.name }}</td>
           <td>{{ request.author.get_full_name }}</td>
-          <td>{{ request.pts_name.name }}</td>
+          <td>{{ request.get_pts }}</td>
           <td>{{ request.pts_cfg.name }}</td>
           <td>{{ request.place.name }}</td>
         </tr>

@@ -21,6 +21,7 @@
     <div class="row justify-content-center">
       <div class="col-md-8 p-5">
         <div class="card">
+          <div>  <input id="datetimepicker" type="text" > </div>
           {% comment %} <div class="card-header">   
             {% if is_edit %}
               Редактировать запись
@@ -83,6 +84,21 @@
   </div>
 
   <script>
+    $(document).ready(function() 
+    {
+       $('#id_broadcast_start_date').datetimepicker
+       ({
+          format:'Y-m-d h:m',
+          step: 5
+       });
+       $('#id_broadcast_end_date').datetimepicker
+       ({
+            format:'Y-m-d h:m',
+            step: 5
+       });
+    });
+    
+    
     const addMoreCommLineBtn = document.getElementById('add-more-commline')
     const removeCommLineBtn = document.getElementById('remove-commline')
     const InitialCommlineFormCount = document.getElementsByClassName('commline-form').length
