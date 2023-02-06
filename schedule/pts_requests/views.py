@@ -66,7 +66,8 @@ class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class PtsRequestEdit(EditOnlyAuthorMixin, LoginRequiredMixin, UpdateView):
+class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
+                     LoginRequiredMixin, UpdateView):
     login_url = reverse_lazy('users:login')
     form_class = AddRequestFrom
     model = PtsRequest
