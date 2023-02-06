@@ -64,7 +64,9 @@
               {% endfor %}
               
               <div class="form-group row my-3 p-3">
-                <b>Communication lines</b>
+                {% include 'includes/form.html' with form=commline style='commline' descr='Communication lines:'%}
+
+                {% comment %} <b>Communication lines</b>
                 {{ commline.management_form }}
                 <div id="commline-form-list">
                   {% for form in commline %}
@@ -72,7 +74,7 @@
                       {{ form.as_p }}
                     </div>
                   {% endfor %}
-                </div>
+                </div> {% endcomment %}
                 <div id="comm-id" class="hidden">{{ commline.empty_form.as_p }}</div>
                 <button id="add-more-commline" type="button" class="button_add">Add more</button>
                 <button id="remove-commline" type="button" class="hidden">Remove</button>
@@ -110,91 +112,48 @@
   </div>
 
   <script>
-    const addMoreLineBtn = document.getElementById('add-more-commline')
-    const removeLineBtn = document.getElementById('remove-commline')
-    const totalNewForms = document.getElementById('id_commlineconstructor_set-TOTAL_FORMS')
-    const currentCommlineForms = document.getElementsByClassName('commline-form')
-    const FormCount = currentCommlineForms.length
-    var currentFormCount = 0
+    const addMoreCommLineBtn = document.getElementById('add-more-commline')
+    const removeCommLineBtn = document.getElementById('remove-commline')
+    const InitialCommlineFormCount = document.getElementsByClassName('commline-form').length
 
-    addMoreLineBtn.addEventListener('click', add_new_form)
-    removeLineBtn.addEventListener('click', remove_form)
-
-    function add_new_form(event) {
-      if (event) {
-        event.preventDefault()
-      }
-      const formCopyTarget = document.getElementById('commline-form-list')
-      
-      currentFormCount = currentCommlineForms.length
-      if (currentFormCount>=0) {
-        removeLineBtn.setAttribute('class', '')
-      }
-      const copyemptyFormEl = document.getElementById('comm-id').cloneNode(true)
-      copyemptyFormEl.setAttribute('class', 'commline-form')
-      copyemptyFormEl.setAttribute('id', `form-${currentFormCount}`)
-      const regex = new RegExp('__prefix__', 'g')
-      copyemptyFormEl.innerHTML = copyemptyFormEl.innerHTML.replace(regex, currentFormCount)
-      totalNewForms.setAttribute('value', currentFormCount + 1)
-      formCopyTarget.append(copyemptyFormEl)
-    }
-
-    function remove_form(event) {
-      if (event) {
-        event.preventDefault()
-      }
-      const emptyFormEl = document.getElementById(`form-${currentFormCount}`)
-      currentFormCount = currentFormCount - 1
-      emptyFormEl.remove()
-      totalNewForms.setAttribute('value', currentFormCount + 1)
-      console.log(currentFormCount)
-      if (currentFormCount-FormCount<0) {
-        removeLineBtn.setAttribute('class', 'hidden')
-      }
-    }
-
+    addMoreCommLineBtn.addEventListener('click', e => add_new_form(
+      'commline-form-list',
+      'comm-id', 
+      'commline-form',
+      'id_commlineconstructor_set-TOTAL_FORMS',
+      removeCommLineBtn,
+      e))
+    removeCommLineBtn.addEventListener('click', e => remove_form(
+      'commline-form-list',
+      'commline-form',
+      'id_commlineconstructor_set-TOTAL_FORMS',
+      InitialCommlineFormCount,
+      removeCommLineBtn,
+      e
+    ))
 
     const addMoreTechLineBtn = document.getElementById('add-more-techcommline')
     const removeTechLineBtn = document.getElementById('remove-techcommline')
-    const totalTechNewForms = document.getElementById('id_techcommlineconstructor_set-TOTAL_FORMS')
-    const currentTechCommlineForms = document.getElementsByClassName('techcommline-form')
-    const TechFormCount = currentTechCommlineForms.length
+    const InitialTechFormCount = document.getElementsByClassName('techcommline-form').length
 
     var currentTechFormCount = 0
 
-    addMoreTechLineBtn.addEventListener('click', add_tech_new_form)
-    removeTechLineBtn.addEventListener('click', remove_tech_form)
-
-    function add_tech_new_form(event) {
-      if (event) {
-        event.preventDefault()
-      }
-      const formTechCopyTarget = document.getElementById('techcommline-form-list')
-      currentTechFormCount = currentTechCommlineForms.length
-      if (currentTechFormCount>=0) {
-        removeTechLineBtn.setAttribute('class', '')
-      }
-      const copyemptyTechFormEl = document.getElementById('tech-comm-id').cloneNode(true)
-      copyemptyTechFormEl.setAttribute('class', 'techcommline-form')
-      copyemptyTechFormEl.setAttribute('id', `form-${currentTechFormCount}`)
-      const regex = new RegExp('__prefix__', 'g')
-      copyemptyTechFormEl.innerHTML = copyemptyTechFormEl.innerHTML.replace(regex, currentTechFormCount)
-      totalTechNewForms.setAttribute('value', currentTechFormCount + 1)
-      formTechCopyTarget.append(copyemptyTechFormEl)
-    }
-
-    function remove_tech_form(event) {
-      if (event) {
-        event.preventDefault()
-      }
-      const copyemptyTechFormEl = document.getElementById(`form-${currentTechFormCount}`)
-      currentTechFormCount = currentTechFormCount - 1
-      copyemptyTechFormEl.remove()
-      totalTechNewForms.setAttribute('value', currentTechFormCount + 1)
-      if (currentTechFormCount-TechFormCount<0) {
-        removeTechLineBtn.setAttribute('class', 'hidden')
-      }
-    }
+    addMoreTechLineBtn.addEventListener('click', e => add_new_form(
+      'techcommline-form-list',
+      'tech-comm-id', 
+      'techcommline-form',
+      'id_techcommlineconstructor_set-TOTAL_FORMS',
+      removeTechLineBtn,
+      e))
+    removeTechLineBtn.addEventListener('click',  e => remove_form(
+      'techcommline-form-list',
+      'techcommline-form',
+      'id_techcommlineconstructor_set-TOTAL_FORMS',
+      InitialTechFormCount,
+      removeTechLineBtn,
+      e
+    ))
   </script>
+   
 
 {% endblock %} 

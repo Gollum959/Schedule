@@ -74,14 +74,22 @@
                   {% endif %}
                 </div>
               {% endfor %}
-
-              {% include 'includes/form.html' with form=camera style='camera' descr='Cameras:'%}   
-              {% include 'includes/form.html' with form=optic style='optic' descr='Optics:'%}  
-              {% include 'includes/form.html' with form=server style='server' descr='Servers:'%}   
-              {% include 'includes/form.html' with form=micro style='micro' descr='Microphone:'%}   
-              {% include 'includes/form.html' with form=gfx style='gfx' descr='GFX:'%}   
-
-              
+              <div class="form-group row my-3 p-3">
+                {% include 'includes/form.html' with form=camera style='camera' descr='Cameras:'%}
+              </div>
+              <div class="form-group row my-3 p-3">
+                {% include 'includes/form.html' with form=optic style='optic' descr='Optics:'%}
+              </div>
+              <div class="form-group row my-3 p-3">
+                {% include 'includes/form.html' with form=server style='server' descr='Servers:'%}
+              </div>
+              <div class="form-group row my-3 p-3">
+                {% include 'includes/form.html' with form=micro style='micro' descr='Microphone:'%}
+              </div>
+              <div class="form-group row my-3 p-3">
+                {% include 'includes/form.html' with form=gfx style='gfx' descr='GFX:'%} 
+              </div>
+                           
               {% comment %} <div class="form-group row my-3 p-3">
                 <b>Cameras:</b>
                 {{ camera.management_form }}
