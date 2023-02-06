@@ -1,33 +1,41 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} 
 {% block content %}
-<div class="container py-5">     
-  <h1>PTS requests</h1>
-    {% for request in ptsrequest_list %}  
-      <article>    
-        <ul>
-          <li>
-            Customer: {{ request.author.get_full_name }}, {{request.author.direction}}: {{request.author.position}}
-          </li>
-          <li>
-            Broadcast date: {{ request.broadcast_date|date:'d E Y' }}
-          </li>
-          <li>
-            Broadcast place: {{ request.place.name }}
-          </li>
-          <li>
-            PTS config: {{ request.pts_cfg.name }}
-          </li>
-          <li>
-            PTS: {{ request.pts_name.name }}
-          </li>
-          <li>
+<div class="container py-5">
+  <h1>Заявки на работу ПТС</h1>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Дата работы</th>
+        <th scope="col">Время работы</th>
+        <th scope="col">Название передачи</th>
+        <th scope="col">ФИО Режиссера</th>
+        <th scope="col">Имя ПТС</th>
+        <th scope="col">Конфигурация ПТС</th>
+        <th scope="col">Место работы</th>
+      </tr>
+    </thead>
+    {% for request in ptsrequest_list %}
+      <tbody>
+        <tr>
+          <th scope="row">
             <a href="{% url 'pts_requests:request_detail' request.pk %}">
-              detailed information
-            </a> 
-          </li>
-        </ul>
-      </article>
-      {% if not forloop.last %}<hr>{% endif %}
-    {% endfor %} 
-  </div>
-{% endblock %} 
+              {{request.pk}}
+            </a>
+          </th>
+          <td>{{ request.broadcast_start_date|date:'d E Y' }}</td>
+          <td>{{ request.broadcast_start_date|date:'hh:mm' }}</td>
+          <td>НЕТ ПОЛЯ</td>
+          <td>{{ request.author.get_full_name }}</td>
+          <td>{{ request.pts_name.name }}</td>
+          <td>{{ request.pts_cfg.name }}</td>
+          <td>{{ request.place.name }}</td>
+        </tr>
+      </tbody>
+      {% comment %} {% if not forloop.last %}
+      <hr />
+      {% endif %} {% endcomment %} 
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
