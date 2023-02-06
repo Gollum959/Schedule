@@ -63,37 +63,8 @@
                 </div>
               {% endfor %}
               
-              <div class="form-group row my-3 p-3">
-                {% include 'includes/form.html' with form=commline style='commline' descr='Communication lines:'%}
-
-                {% comment %} <b>Communication lines</b>
-                {{ commline.management_form }}
-                <div id="commline-form-list">
-                  {% for form in commline %}
-                    <div class='commline-form'>
-                      {{ form.as_p }}
-                    </div>
-                  {% endfor %}
-                </div> {% endcomment %}
-                <div id="comm-id" class="hidden">{{ commline.empty_form.as_p }}</div>
-                <button id="add-more-commline" type="button" class="button_add">Add more</button>
-                <button id="remove-commline" type="button" class="hidden">Remove</button>
-              </div>
-
-              <div class="form-group row my-3 p-3">
-                <b>Communication tech lines</b>
-                {{ techcommline.management_form }}
-                <div id="techcommline-form-list">
-                  {% for form in techcommline %}
-                    <div class='techcommline-form'>
-                      {{ form.as_p }}
-                    </div>
-                  {% endfor %}
-                </div>
-                <div id="tech-comm-id" class="hidden">{{ techcommline.empty_form.as_p }}</div>
-                <button id="add-more-techcommline" type="button" class="button_add">Add more</button>
-                <button id="remove-techcommline" type="button" class="hidden">Remove</button>
-              </div>
+              {% include 'includes/form.html' with form=commline style='commline' descr='Communication lines:' hiddenid='comm-id'%}
+              {% include 'includes/form.html' with form=techcommline style='techcommline' descr='Communication tech lines:' hiddenid='tech-comm-id'%}
 
               <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-primary">Create

@@ -9,7 +9,7 @@
             Customer: {{ request.author.get_full_name }}, {{request.author.direction}}: {{request.author.position}}
           </li>
           <li>
-            Broadcast date: {{ request.broadcast_date|date:'d E Y' }}
+            Broadcast date: {{ request.broadcast_start_date|date:'d E Y H i' }}
           </li>
           <li>
             Broadcast place: {{ request.place.name }}

@@ -25,7 +25,7 @@ class AddCamera(ModelForm):
 CameraFormset = inlineformset_factory(
     PtsConstructor, CameraPtsConstructor,
     form=AddCamera,
-    extra=2,
+    extra=0,
     can_delete=True
 )
 
@@ -40,7 +40,7 @@ class AddOptic(ModelForm):
 OpticFormset = inlineformset_factory(
     PtsConstructor, OpticPtsConstructor,
     form=AddOptic,
-    extra=2,
+    extra=0,
     can_delete=True
 )
 
@@ -55,7 +55,7 @@ class AddServer(ModelForm):
 ServerFormset = inlineformset_factory(
     PtsConstructor, ServerRecordingRepeatConstructor,
     form=AddServer,
-    extra=2,
+    extra=0,
     can_delete=True
 )
 
@@ -70,7 +70,7 @@ class AddMicrophone(ModelForm):
 MicroFormset = inlineformset_factory(
     PtsConstructor, MicrophonePtsConstructor,
     form=AddMicrophone,
-    extra=2,
+    extra=0,
     can_delete=True
 )
 
@@ -86,6 +86,6 @@ class AddGfx(ModelForm):
 GfxFormset = inlineformset_factory(
     PtsConstructor, GfxPtsConstructor,
     form=AddGfx,
-    extra=2,
+    extra=0,
     can_delete=True
 )

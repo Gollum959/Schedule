@@ -74,46 +74,12 @@
                   {% endif %}
                 </div>
               {% endfor %}
-              <div class="form-group row my-3 p-3">
-                {% include 'includes/form.html' with form=camera style='camera' descr='Cameras:'%}
-              </div>
-              <div class="form-group row my-3 p-3">
-                {% include 'includes/form.html' with form=optic style='optic' descr='Optics:'%}
-              </div>
-              <div class="form-group row my-3 p-3">
-                {% include 'includes/form.html' with form=server style='server' descr='Servers:'%}
-              </div>
-              <div class="form-group row my-3 p-3">
-                {% include 'includes/form.html' with form=micro style='micro' descr='Microphone:'%}
-              </div>
-              <div class="form-group row my-3 p-3">
-                {% include 'includes/form.html' with form=gfx style='gfx' descr='GFX:'%} 
-              </div>
-                           
-              {% comment %} <div class="form-group row my-3 p-3">
-                <b>Cameras:</b>
-                {{ camera.management_form }}
-                <div id="camera-form-list">
-                  {% for form in camera %}
-                    <div class='camera-form'>
-                      {{ form.as_p }}
-                    </div>
-                  {% endfor %}
-                </div>
-              </div> {% endcomment %}
 
-              {% comment %} <div class="form-group row my-3 p-3">
-                <b>Optics:</b>
-                {{ optic.management_form }}
-                <div id="optic-form-list">
-                  {% for form in optic %}
-                    <div class='optic-form'>
-                      {{ form.as_p }}
-                    </div>
-                  {% endfor %}
-                </div>
-              </div> {% endcomment %}
-
+              {% include 'includes/form.html' with form=camera style='camera' descr='Cameras:' hiddenid='camera-id'%}
+              {% include 'includes/form.html' with form=optic style='optic' descr='Optics:' hiddenid='optic-id'%}
+              {% include 'includes/form.html' with form=server style='server' descr='Servers:' hiddenid='server-id'%}
+              {% include 'includes/form.html' with form=micro style='micro' descr='Microphone:' hiddenid='micro-id'%}
+              {% include 'includes/form.html' with form=gfx style='gfx' descr='GFX:' hiddenid='gfx-id'%} 
 
               <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-primary">Create:
@@ -132,91 +98,106 @@
   </div>
 
   <script>
-    const addMoreLineBtn = document.getElementById('add-more-commline')
-    const removeLineBtn = document.getElementById('remove-commline')
-    const totalNewForms = document.getElementById('id_commlineconstructor_set-TOTAL_FORMS')
-    const currentCommlineForms = document.getElementsByClassName('commline-form')
-    const FormCount = currentCommlineForms.length
-    var currentFormCount = 0
+    const addMoreCameraLineBtn = document.getElementById('add-more-camera')
+    const removeCameraLineBtn = document.getElementById('remove-camera')
+    const InitialCameralineFormCount = document.getElementsByClassName('camera-form').length
 
-    addMoreLineBtn.addEventListener('click', add_new_form)
-    removeLineBtn.addEventListener('click', remove_form)
+    addMoreCameraLineBtn.addEventListener('click', e => add_new_form(
+      'camera-form-list',
+      'camera-id', 
+      'camera-form',
+      'id_cameraptsconstructor_set-TOTAL_FORMS',
+      removeCameraLineBtn,
+      e))
+    removeCameraLineBtn.addEventListener('click', e => remove_form(
+      'camera-form-list',
+      'camera-form',
+      'id_cameraptsconstructor_set-TOTAL_FORMS',
+      InitialCameralineFormCount,
+      removeCameraLineBtn,
+      e
+    ))
 
-    function add_new_form(event) {
-      if (event) {
-        event.preventDefault()
-      }
-      const formCopyTarget = document.getElementById('commline-form-list')
-      
-      currentFormCount = currentCommlineForms.length
-      if (currentFormCount>=0) {
-        removeLineBtn.setAttribute('class', '')
-      }
-      const copyemptyFormEl = document.getElementById('comm-id').cloneNode(true)
-      copyemptyFormEl.setAttribute('class', 'commline-form')
-      copyemptyFormEl.setAttribute('id', `form-${currentFormCount}`)
-      const regex = new RegExp('__prefix__', 'g')
-      copyemptyFormEl.innerHTML = copyemptyFormEl.innerHTML.replace(regex, currentFormCount)
-      totalNewForms.setAttribute('value', currentFormCount + 1)
-      formCopyTarget.append(copyemptyFormEl)
-    }
+    const addMoreOpticLineBtn = document.getElementById('add-more-optic')
+    const removeOpticLineBtn = document.getElementById('remove-optic')
+    const InitialOpticlineFormCount = document.getElementsByClassName('optic-form').length
 
-    function remove_form(event) {
-      if (event) {
-        event.preventDefault()
-      }
-      const emptyFormEl = document.getElementById(`form-${currentFormCount}`)
-      currentFormCount = currentFormCount - 1
-      emptyFormEl.remove()
-      totalNewForms.setAttribute('value', currentFormCount + 1)
-      console.log(currentFormCount)
-      if (currentFormCount-FormCount<0) {
-        removeLineBtn.setAttribute('class', 'hidden')
-      }
-    }
+    addMoreOpticLineBtn.addEventListener('click', e => add_new_form(
+      'optic-form-list',
+      'optic-id', 
+      'optic-form',
+      'id_opticptsconstructor_set-TOTAL_FORMS',
+      removeOpticLineBtn,
+      e))
+    removeOpticLineBtn.addEventListener('click', e => remove_form(
+      'optic-form-list',
+      'optic-form',
+      'id_opticptsconstructor_set-TOTAL_FORMS',
+      InitialOpticlineFormCount,
+      removeOpticLineBtn,
+      e
+    ))
 
+    const addMoreServerLineBtn = document.getElementById('add-more-server')
+    const removeServerLineBtn = document.getElementById('remove-server')
+    const InitialServerlineFormCount = document.getElementsByClassName('server-form').length
 
-    const addMoreTechLineBtn = document.getElementById('add-more-techcommline')
-    const removeTechLineBtn = document.getElementById('remove-techcommline')
-    const totalTechNewForms = document.getElementById('id_techcommlineconstructor_set-TOTAL_FORMS')
-    const currentTechCommlineForms = document.getElementsByClassName('techcommline-form')
-    const TechFormCount = currentTechCommlineForms.length
+    addMoreServerLineBtn.addEventListener('click', e => add_new_form(
+      'server-form-list',
+      'server-id', 
+      'server-form',
+      'id_serverrecordingrepeatconstructor_set-TOTAL_FORMS',
+      removeServerLineBtn,
+      e))
+    removeServerLineBtn.addEventListener('click', e => remove_form(
+      'server-form-list',
+      'server-form',
+      'id_serverrecordingrepeatconstructor_set-TOTAL_FORMS',
+      InitialServerlineFormCount,
+      removeServerLineBtn,
+      e
+    ))
 
-    var currentTechFormCount = 0
+    const addMoreMicroLineBtn = document.getElementById('add-more-micro')
+    const removeMicroLineBtn = document.getElementById('remove-micro')
+    const InitialMicrolineFormCount = document.getElementsByClassName('micro-form').length
 
-    addMoreTechLineBtn.addEventListener('click', add_tech_new_form)
-    removeTechLineBtn.addEventListener('click', remove_tech_form)
+    addMoreMicroLineBtn.addEventListener('click', e => add_new_form(
+      'micro-form-list',
+      'micro-id', 
+      'micro-form',
+      'id_microphoneptsconstructor_set-TOTAL_FORMS',
+      removeMicroLineBtn,
+      e))
+    removeMicroLineBtn.addEventListener('click', e => remove_form(
+      'micro-form-list',
+      'micro-form',
+      'id_microphoneptsconstructor_set-TOTAL_FORMS',
+      InitialMicrolineFormCount,
+      removeMicroLineBtn,
+      e
+    ))
 
-    function add_tech_new_form(event) {
-      if (event) {
-        event.preventDefault()
-      }
-      const formTechCopyTarget = document.getElementById('techcommline-form-list')
-      currentTechFormCount = currentTechCommlineForms.length
-      if (currentTechFormCount>=0) {
-        removeTechLineBtn.setAttribute('class', '')
-      }
-      const copyemptyTechFormEl = document.getElementById('tech-comm-id').cloneNode(true)
-      copyemptyTechFormEl.setAttribute('class', 'techcommline-form')
-      copyemptyTechFormEl.setAttribute('id', `form-${currentTechFormCount}`)
-      const regex = new RegExp('__prefix__', 'g')
-      copyemptyTechFormEl.innerHTML = copyemptyTechFormEl.innerHTML.replace(regex, currentTechFormCount)
-      totalTechNewForms.setAttribute('value', currentTechFormCount + 1)
-      formTechCopyTarget.append(copyemptyTechFormEl)
-    }
+    const addMoreGfxBtn = document.getElementById('add-more-gfx')
+    const removeGfxBtn = document.getElementById('remove-gfx')
+    const InitialGfxFormCount = document.getElementsByClassName('gfx-form').length
 
-    function remove_tech_form(event) {
-      if (event) {
-        event.preventDefault()
-      }
-      const copyemptyTechFormEl = document.getElementById(`form-${currentTechFormCount}`)
-      currentTechFormCount = currentTechFormCount - 1
-      copyemptyTechFormEl.remove()
-      totalTechNewForms.setAttribute('value', currentTechFormCount + 1)
-      if (currentTechFormCount-TechFormCount<0) {
-        removeTechLineBtn.setAttribute('class', 'hidden')
-      }
-    }
+    addMoreGfxBtn.addEventListener('click', e => add_new_form(
+      'gfx-form-list',
+      'gfx-id', 
+      'gfx-form',
+      'id_gfxptsconstructor_set-TOTAL_FORMS',
+      removeGfxBtn,
+      e))
+    removeGfxBtn.addEventListener('click', e => remove_form(
+      'gfx-form-list',
+      'gfx-form',
+      'id_gfxptsconstructor_set-TOTAL_FORMS',
+      InitialGfxFormCount,
+      removeGfxBtn,
+      e
+    ))
+
   </script>
 
 {% endblock %} 
