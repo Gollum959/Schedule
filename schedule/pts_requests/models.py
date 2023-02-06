@@ -73,6 +73,12 @@ class PtsRequest(models.Model):
         (TWO_HEADSEAT, 'Две гарнитуры'),
     ]
 
+    name = models.CharField(
+        'Name of the request',
+        max_length=200,
+        default='None'
+    )
+
     broadcast_start_date = models.DateTimeField(
         help_text='Broadcast start date and time(YYYY-MM-DD hh:mm)',
     )

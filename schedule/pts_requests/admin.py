@@ -48,8 +48,8 @@ class TechCommLineConstructors(admin.TabularInline):
 class PtsRequestAdmin(admin.ModelAdmin):
     """Displaying the PtsRequest model in the admin panel."""
 
-    list_display = ('broadcast_start_date', 'place', 'type', 'start_date',
-                    'end_date', 'get_pts', 'pts_cfg', 'author')
+    list_display = ('name', 'broadcast_start_date', 'place', 'type',
+                    'start_date', 'end_date', 'get_pts', 'pts_cfg', 'author')
     list_filter = ('author', 'broadcast_start_date', )
     search_fields = ('author', )
     inlines = (CommLineConstructors, TechCommLineConstructors)
