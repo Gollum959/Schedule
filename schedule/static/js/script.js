@@ -51,5 +51,3 @@ function add_new_form(
       removeLineBtn.setAttribute('class', 'hidden')
     }
   }
-
-  
