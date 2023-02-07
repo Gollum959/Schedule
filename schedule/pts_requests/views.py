@@ -1,10 +1,12 @@
-from typing import Any, Dict
+from datetime import date, timedelta, datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.urls import reverse_lazy
+from typing import Any, Dict
 
 from pts_requests.models import PtsRequest
 from pts_requests.forms import (AddRequestFrom,
+                                ModerateRequestFrom,
                                 CommLineFormset,
                                 TechCommLineFormset)
 from core.custom_view import (DetalInformationMixin,
@@ -19,9 +21,36 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
     template_name = 'pts_requests/list_requests.html'
 
     def get_queryset(self):
+        requests = PtsRequest.objects.all()
+        today = date.today()
+        start_week = today - timedelta(days=today.weekday())
+        end_week = start_week + timedelta(days=6)
+
+        if self.request.GET.get('week') == 'next':
+            start_week = start_week + timedelta(days=7)
+            end_week = start_week + timedelta(days=6)
+
+        format = '%Y-%m-%d'
+        try:
+            res = bool(datetime.strptime(
+                self.request.GET.get('date', ''), format)
+            )
+        except ValueError:
+            res = False
+
+        if res:
+            requests = requests.filter(
+                broadcast_start_date__date=self.request.GET.get('date')
+            )
+        else:
+            requests = requests.filter(
+                broadcast_start_date__range=[start_week, end_week]
+            )
+
         if self.request.user.is_admin or self.request.user.is_moderator:
-            return PtsRequest.objects.all()
-        return PtsRequest.objects.filter(author=self.request.user)
+            return requests
+
+        return requests.filter(author=self.request.user)
 
 
 class PtsRequestDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
@@ -104,3 +133,10 @@ class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
             techcommlines.save()
 
         return super().form_valid(form)
+
+
+class PtsRequestModerate(LoginRequiredMixin, UpdateView):
+    login_url = reverse_lazy('users:login')
+    form_class = ModerateRequestFrom
+    model = PtsRequest
+    template_name = 'pts_requests/request_detail2.html'

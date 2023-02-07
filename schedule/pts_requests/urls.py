@@ -1,7 +1,7 @@
 from django.urls import path
 from pts_requests.views import (
     PtsRequestsView, PtsRequestDetail, PtsRequestCreate,
-    PtsRequestEdit
+    PtsRequestEdit, PtsRequestModerate
 )
 
 app_name = 'pts_requests'
@@ -15,4 +15,9 @@ urlpatterns = [
     ),
     path('create/', PtsRequestCreate.as_view(), name='request_create'),
     path('create/<int:pk>/', PtsRequestEdit.as_view(), name='request_edit'),
+    path(
+        'moderate/<int:pk>/',
+        PtsRequestModerate.as_view(),
+        name='request_moderate'
+    ),
 ]

@@ -24,9 +24,18 @@ class AddRequestFrom(ModelForm):
     class Meta:
         model = PtsRequest
         fields = [
-            'broadcast_start_date', 'broadcast_end_date', 'place', 'type',
-            'pts_cfg', 'commentator_monitor', 'commentator_console',
+            'name', 'broadcast_start_date', 'broadcast_end_date', 'place',
+            'type', 'pts_cfg', 'commentator_monitor', 'commentator_console',
             'commentator_headset'
+        ]
+
+
+class ModerateRequestFrom(ModelForm):
+
+    class Meta:
+        model = PtsRequest
+        fields = [
+            'start_date', 'end_date',
         ]
 
 
