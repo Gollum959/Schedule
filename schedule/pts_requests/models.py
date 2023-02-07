@@ -30,7 +30,7 @@ class PtsName(NameModel):
         'Contact of the deputy head of the PTS shift',
         max_length=100
     )
-    other_informatio = models.TextField(
+    other_information = models.TextField(
         'Other information',
         max_length=2000,
         blank=True)
@@ -71,6 +71,16 @@ class PtsRequest(models.Model):
     HEADSEAT = [
         (ONE_HEADSEAT, 'Одна ганитура'),
         (TWO_HEADSEAT, 'Две гарнитуры'),
+    ]
+    APPROVED = 'approved'
+    REJECTED = 'rejected'
+    ON_APPROVAL = 'approval'
+    UNDER_REVISION = 'revision'
+    STATUS = [
+        (APPROVED, 'Утверждено'),
+        (REJECTED, 'Отклонено'),
+        (ON_APPROVAL, 'На утверждении'),
+        (UNDER_REVISION, 'На доработке'),
     ]
 
     name = models.CharField(
@@ -126,6 +136,16 @@ class PtsRequest(models.Model):
         blank=True,
         null=True
     )
+    status = models.CharField(
+        verbose_name='Status of the request',
+        max_length=30,
+        choices=STATUS,
+        default=ON_APPROVAL
+    )
+    comment = models.TextField(
+        'Comment of the request',
+        max_length=2000,
+        blank=True)
     create_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
         User,
