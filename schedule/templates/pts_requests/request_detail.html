@@ -1,48 +1,84 @@
 {% extends 'base.html' %}
 {% block title %}<title></title>{% endblock %}
 {% block content %}
-<div class="container py-5">
-  <div class="row">
-    <li>
-      Customer: {{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.direction}}, {{ptsrequest.author.position}}
-    </li>
-    <li>
-      Broadcast date: {{ ptsrequest.broadcast_start_date|date:'d E Y' }}
-    </li>
-    <li>
-      Название передачи: {{ ptsrequest.name }}
-    </li>
-    <li>
-      <a href="{% url 'place:place_detail' ptsrequest.place.pk %}">Broadcast place</a>: {{ ptsrequest.place.name  }}. {{ ptsrequest.place.city  }}, {{ ptsrequest.place.address  }}
-    </li>
-    <li>
-      Responsible person at the facility: {{ ptsrequest.place.contact_name  }}. Phone: {{ ptsrequest.place.phone  }}
-    </li>
-    <li>
-      Type of work: {{ ptsrequest.type }}
-    </li>
-    <li>
-      Start date: {{ ptsrequest.start_date|date:'d E Y H:i' }}
-    </li>
-    <li>
-      End date: {{ ptsrequest.end_date|date:'d E Y H:i' }}
-    </li>
-    <li>
-      <a href="{% url 'config:config_detail' ptsrequest.pts_cfg.pk %}">PTS Configurations</a>: {{  ptsrequest.pts_cfg }}
-    </li>
-    <li>
-      {% for commline in ptsrequest.commlineconstructor_set.all %}
-        <p>
-            {{ commline.str_directions}}
-        </p>
-      {% endfor %}
-      PTS: {{  ptsrequest.get_pts  }}
-    </li>
+
+
+<div class="card">
+  <h5 class="card-header">{{ ptsrequest.broadcast_start_date|date:'d E Y' }}</h5>
+  <div class="card-body">
+    <h4 class="card-title">{{ ptsrequest.name }} </h4>
+    <h7 class="card-title">{{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.position}}, {{ptsrequest.author.direction}}</h7>
+
+    <div class="row">
+      <div class="w-auto col-sm-6 mb-3 mb-sm-0">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-footer">
+              Место проведения трансляции
+            </div>
+            <div class="card" style="width: 18rem;">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">{{ ptsrequest.place.name  }}</li>
+                <li class="list-group-item">{{ ptsrequest.place.city  }}</li>
+                <li class="list-group-item">{{ ptsrequest.place.address  }}</li>
+                <li class="list-group-item">{{ ptsrequest.place.contact_name  }} - {{ ptsrequest.place.phone  }}</li>
+              </ul>
+              <a href="#" class="btn btn-primary">Редактировать</a>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      <div class="w-auto col-sm-6 mb-3 mb-sm-0">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-footer">
+              Характеристики передачи
+            </div>
+            <div class="card" style="width: 18rem;">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">Тракт</li>
+                <li class="list-group-item" id="timecalc">Начало тракта - конец тракта</li>
+                <li class="list-group-item">{{ ptsrequest.type }}</li>
+                <li class="list-group-item">{{ ptsrequest.broadcast_start_date|date:'H:i' }} - {{ ptsrequest.broadcast_end_date|date:'H:i' }} </li>
+              </ul>
+              <a href="#" class="btn btn-primary">Редактировать</a>
+                </div>
+          </div>
+        </div>
+      </div>
+      <div class=" w-auto col-sm-6 mb-3 mb-sm-0">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-footer">
+              ПАРАМЕТРЫ ПТС
+            </div>
+            <div class="card" style="width: 18rem;">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">{{  ptsrequest.pts_name }}</li>
+                <li class="list-group-item"><a href="{% url 'config:config_detail' ptsrequest.pts_cfg.pk %}"> {{  ptsrequest.pts_cfg }}</a>
+                <li class="list-group-item">{% for commline in ptsrequest.commlineconstructor_set.all %}
+                  {{ commline.str_directions}} 
+                  
+                {% endfor %}</li>
+                <li class="list-group-item">Время выезда: {{ ptsrequest.start_date|date:' H:i' }}</li>
+                <li class="list-group-item">Время Приезда: {{ ptsrequest.end_date|date:'H:i' }}</li>
+              </ul>
+              <a href="#" class="btn btn-primary">Редактировать</a>
+                </div>
+          </div>
+        </div>
+      </div>
+    </div> 
     {% if user == ptsrequest.author or user.is_admin %}
       <a class="btn btn-primary" href="{% url 'pts_requests:request_edit' ptsrequest.pk %}">
-        edit request
+        Редактировать всю заявку
       </a> 
     {% endif %}
   </div>
 </div>
+<script>
+  const TimeCalc = document.getElementById('timecalc');
+  {% comment %} console.log(TimeCalc); {% endcomment %}
+</script>
 {% endblock %} 
