@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">     
+  <h1>Adress template</h1>
+    {% for place in placeconstructor_list %}  
+      <article>    
+        <ul>
+          <li>
+            Name of the facility': {{ place.name }}
+          </li>
+          <li>
+            City: {{ place.city }}
+          </li>
+          <li>
+            Address: {{ place.address }}
+          </li>
+          <li>
+            <a href="{% url 'place:place_detail' place.pk %}">
+              detailed information
+            </a> 
+          </li>
+        </ul>
+      </article>
+      {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %} 
+    <a class="btn btn-primary" href="{% url 'place:place_create' %}">
+      add place
+    </a> 
+  </div>
+{% endblock %} 

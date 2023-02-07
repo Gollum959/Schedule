@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}<title></title>{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <li>
+      Customer: {{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.direction}}, {{ptsrequest.author.position}}
+    </li>
+    <li>
+      Broadcast date: {{ ptsrequest.broadcast_start_date|date:'d E Y' }}
+    </li>
+    <li>
+      Название передачи: {{ ptsrequest.name }}
+    </li>
+    <li>
+      <a href="{% url 'place:place_detail' ptsrequest.place.pk %}">Broadcast place</a>: {{ ptsrequest.place.name  }}. {{ ptsrequest.place.city  }}, {{ ptsrequest.place.address  }}
+    </li>
+    <li>
+      Responsible person at the facility: {{ ptsrequest.place.contact_name  }}. Phone: {{ ptsrequest.place.phone  }}
+    </li>
+    <li>
+      Type of work: {{ ptsrequest.type }}
+    </li>
+    <li>
+      Start date: {{ ptsrequest.start_date|date:'d E Y H:i' }}
+    </li>
+    <li>
+      End date: {{ ptsrequest.end_date|date:'d E Y H:i' }}
+    </li>
+    <li>
+      <a href="{% url 'config:config_detail' ptsrequest.pts_cfg.pk %}">PTS Configurations</a>: {{  ptsrequest.pts_cfg }}
+    </li>
+    <li>
+      {% for commline in ptsrequest.commlineconstructor_set.all %}
+        <p>
+            {{ commline.str_directions}}
+        </p>
+      {% endfor %}
+      PTS: {{  ptsrequest.get_pts  }}
+    </li>
+    {% if user == ptsrequest.author or user.is_admin %}
+      <a class="btn btn-primary" href="{% url 'pts_requests:request_edit' ptsrequest.pk %}">
+        edit request
+      </a> 
+    {% endif %}
+  </div>
+</div>
+{% endblock %} 

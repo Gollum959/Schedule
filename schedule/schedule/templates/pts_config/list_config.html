@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">     
+  <h1>Config template</h1>
+    {% for config in ptsconstructor_list %}  
+      <article>    
+        <ul>
+          <li>
+            Configurations name: {{ config.name }}
+          </li>
+          <li>
+            Date of creation: {{ config.create_date }}
+          </li>
+          <li>
+            <a href="{% url 'config:config_detail' config.pk %}">
+              detailed information
+            </a> 
+          </li>
+        </ul>
+      </article>
+      {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}
+    <a class="btn btn-primary" href="{% url 'config:config_create' %}">
+      add config
+    </a> 
+  </div>
+{% endblock %} 
