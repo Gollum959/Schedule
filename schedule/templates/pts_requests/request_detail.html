@@ -7,7 +7,10 @@
       Customer: {{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.direction}}, {{ptsrequest.author.position}}
     </li>
     <li>
-      Broadcast date: {{ ptsrequest.broadcast_date|date:'d E Y' }}
+      Broadcast date: {{ ptsrequest.broadcast_start_date|date:'d E Y' }}
+    </li>
+    <li>
+      Название передачи: {{ ptsrequest.name }}
     </li>
     <li>
       <a href="{% url 'place:place_detail' ptsrequest.place.pk %}">Broadcast place</a>: {{ ptsrequest.place.name  }}. {{ ptsrequest.place.city  }}, {{ ptsrequest.place.address  }}
@@ -33,9 +36,9 @@
             {{ commline.str_directions}}
         </p>
       {% endfor %}
-      PTS: {{  ptsrequest.pts_name }}
+      PTS: {{  ptsrequest.get_pts  }}
     </li>
-    {% if user == ptsrequest.author %}
+    {% if user == ptsrequest.author or user.is_admin %}
       <a class="btn btn-primary" href="{% url 'pts_requests:request_edit' ptsrequest.pk %}">
         edit request
       </a> 

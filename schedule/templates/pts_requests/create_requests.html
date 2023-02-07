@@ -83,6 +83,20 @@
   </div>
 
   <script>
+    $(document).ready(function() 
+    {
+       $('#id_broadcast_start_date').datetimepicker
+       ({
+          format:'Y-m-d h:m',
+          step: 5
+       });
+       $('#id_broadcast_end_date').datetimepicker
+       ({
+            format:'Y-m-d h:m',
+            step: 5
+       });
+    });
+    
     const addMoreCommLineBtn = document.getElementById('add-more-commline')
     const removeCommLineBtn = document.getElementById('remove-commline')
     const InitialCommlineFormCount = document.getElementsByClassName('commline-form').length
@@ -107,8 +121,6 @@
     const removeTechLineBtn = document.getElementById('remove-techcommline')
     const InitialTechFormCount = document.getElementsByClassName('techcommline-form').length
 
-    var currentTechFormCount = 0
-
     addMoreTechLineBtn.addEventListener('click', e => add_new_form(
       'techcommline-form-list',
       'tech-comm-id', 
@@ -125,6 +137,4 @@
       e
     ))
   </script>
-   
-
 {% endblock %} 
