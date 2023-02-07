@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}<title></title>{% endblock %}
+{% block content %}
+  <div class="container py-5">
+    <div class="row">
+      <ul>
+        <li>
+          Name of the configurations: {{ ptsconstructor.name }}
+        </li>
+        <li>
+          Date of creation: {{ ptsconstructor.create_date }}
+        </li>
+        <li>
+          <b>Cameras</b>
+          {% for camera in ptsconstructor.cameraptsconstructor_set.all %}
+            <ul>
+              <li>
+                {{ camera.cameras.name }}: {{ camera.quantity }}
+              </li>
+            </ul>
+          {% endfor %}
+        </li>
+        <li>
+          <b>Optics</b>
+          {% for optic in ptsconstructor.opticptsconstructor_set.all %}
+            <ul>
+              <li>
+                {{ optic.optics.name }}: {{ optic.quantity }}
+              </li>
+            </ul>
+          {% endfor %}
+        </li>
+         <li>
+          <b>Microphones</b>
+          {% for microphone in ptsconstructor.microphoneptsconstructor_set.all %}
+            <ul>
+              <li>
+                {{ microphone.microphones.name }}: {{ microphone.quantity }}
+              </li>
+            </ul>
+          {% endfor %}
+        </li>
+        <li>
+          <b>Commentator equipments</b>
+          {% for commentator in ptsconstructor.commentatorptsconstructor_set.all %}
+            <ul>
+              <li>
+                {{ commentator.commentators.name }}: {{ commentator.quantity }}
+              </li>
+            </ul>
+          {% endfor %}
+        </li>
+        <li>
+          <b>GFX</b>
+          {% for gfx in ptsconstructor.gfxptsconstructor_set.all %}
+            <ul>
+              <li>
+                {{ gfx.gfx.name }}: {{ gfx.quantity }}
+              </li>
+            </ul>
+          {% endfor %}
+        </li>
+          {% if user == ptsconstructor.author %}
+            <a class="btn btn-primary" href="{% url 'config:config_edit' ptsconstructor.pk %}">
+              edit config
+            </a> 
+          {% endif %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}
