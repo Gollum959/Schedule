@@ -21,7 +21,7 @@
     <div class="row justify-content-center">
       <div class="col-md-8 p-5">
         <div class="card">
-           {% comment %} <div class="card-header">   
+          {% comment %} <div class="card-header">   
             {% if is_edit %}
               Редактировать запись
             {% else %}
@@ -97,7 +97,6 @@
        });
     });
     
-    
     const addMoreCommLineBtn = document.getElementById('add-more-commline')
     const removeCommLineBtn = document.getElementById('remove-commline')
     const InitialCommlineFormCount = document.getElementsByClassName('commline-form').length
@@ -122,8 +121,6 @@
     const removeTechLineBtn = document.getElementById('remove-techcommline')
     const InitialTechFormCount = document.getElementsByClassName('techcommline-form').length
 
-    var currentTechFormCount = 0
-
     addMoreTechLineBtn.addEventListener('click', e => add_new_form(
       'techcommline-form-list',
       'tech-comm-id', 
@@ -140,6 +137,4 @@
       e
     ))
   </script>
-   
-
 {% endblock %} 
