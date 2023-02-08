@@ -112,6 +112,16 @@ class PtsRequest(models.Model):
         blank=True,
         null=True
     )
+    trakt_start_date = models.DateTimeField(
+        help_text='Trakt date and time (YYYY-MM-DD hh:mm)',
+        blank=True,
+        null=True
+    )
+    trakt_end_date = models.DateTimeField(
+        help_text='Trakt date and time (YYYY-MM-DD hh:mm)',
+        blank=True,
+        null=True
+    )
     pts_name = models.ManyToManyField(
         PtsName,
         blank=True,

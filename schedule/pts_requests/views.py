@@ -59,6 +59,13 @@ class PtsRequestDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
     model = PtsRequest
     template_name = 'pts_requests/request_detail.html'
 
+    # def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    #     data = super().get_context_data(**kwargs)
+    #     data['trakt'] = (
+    #         data['object'].broadcast_start_date - timedelta(hours=1)
+    #     )
+    #     return data
+
 
 class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
     login_url = reverse_lazy('users:login')
@@ -140,3 +147,15 @@ class PtsRequestModerate(LoginRequiredMixin, UpdateView):
     form_class = ModerateRequestFrom
     model = PtsRequest
     template_name = 'pts_requests/request_detail2.html'
+
+    def get_initial(self):
+        initial = super(PtsRequestModerate, self).get_initial()
+        if not self.object.trakt_start_date:
+            initial['trakt_start_date'] = (
+                self.object.broadcast_start_date - timedelta(hours=1)
+            )
+        if not self.object.trakt_end_date:
+            initial['trakt_end_date'] = (
+                self.object.broadcast_end_date - timedelta(hours=0, minutes=15)
+            )
+        return initial

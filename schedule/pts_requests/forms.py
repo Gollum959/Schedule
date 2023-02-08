@@ -35,7 +35,8 @@ class ModerateRequestFrom(ModelForm):
     class Meta:
         model = PtsRequest
         fields = [
-            'start_date', 'end_date',
+            'start_date', 'end_date', 'trakt_start_date',
+            'trakt_end_date', 'pts_name', 'status', 'comment'
         ]
 
 
