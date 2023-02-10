@@ -35,5 +35,19 @@
     </form>
   </div>
 </div>
-
+<script>
+  $(document).ready(function() 
+  {
+     $('#id_start_date').datetimepicker
+     ({
+        format:'Y-m-d H:i',
+        step: 5
+     });
+     $('#id_end_date').datetimepicker
+     ({
+          format:'Y-m-d H:i',
+          step: 5
+     });
+  });
+</script>
 {% endblock %} 
