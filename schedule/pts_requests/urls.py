@@ -1,7 +1,7 @@
 from django.urls import path
 from pts_requests.views import (
     PtsRequestsView, PtsRequestDetail, PtsRequestCreate,
-    PtsRequestEdit, PtsRequestModerate
+    PtsRequestEdit, PtsRequestModerate, load_places
 )
 
 app_name = 'pts_requests'
@@ -20,4 +20,5 @@ urlpatterns = [
         PtsRequestModerate.as_view(),
         name='request_moderate'
     ),
+    path('ajax/load-places/', load_places, name='ajax_load_places'),
 ]

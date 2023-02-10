@@ -1,9 +1,11 @@
 from datetime import date, timedelta, datetime
+from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.urls import reverse_lazy
 from typing import Any, Dict
 
+from place_broadcast.models import PlaceConstructor
 from pts_requests.models import PtsRequest
 from pts_requests.forms import (AddRequestFrom,
                                 ModerateRequestFrom,
@@ -159,3 +161,15 @@ class PtsRequestModerate(LoginRequiredMixin, UpdateView):
                 self.object.broadcast_end_date - timedelta(hours=0, minutes=15)
             )
         return initial
+
+
+def load_places(request):
+    city_id = request.GET.get('city_name')
+    places = PlaceConstructor.objects.filter(city_name=city_id).order_by(
+        'name'
+    )
+    return render(
+        request,
+        'pts_requests/place_dropdown_list_options.html',
+        {'places': places}
+    )
