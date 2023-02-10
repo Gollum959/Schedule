@@ -2,7 +2,8 @@ from django.urls import path
 from place_broadcast.views import (PlacesBroadcastView,
                                    PlacesBroadcastDetail,
                                    PlacesBroadcastCreate,
-                                   PlacesBroadcastEdit,)
+                                   PlacesBroadcastEdit,
+                                   CityBroadcastCreate,)
 
 
 app_name = 'pts_broadcast'
@@ -13,6 +14,11 @@ urlpatterns = [
         '<int:pk>/',
         PlacesBroadcastDetail.as_view(),
         name='place_detail'
+    ),
+    path(
+        'city_create/',
+        CityBroadcastCreate.as_view(),
+        name='city_create'
     ),
     path(
         'create/',

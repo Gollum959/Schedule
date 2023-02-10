@@ -29,7 +29,7 @@
             {% endif %}                 
           </div> {% endcomment %}
           <div class="card-body">        
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" id="requestForm" data-places-url="{% url 'pts_requests:ajax_load_places' %}">
               {% load user_filters %}
               {% csrf_token %}
               {% if form.errors %}
@@ -97,6 +97,22 @@
        });
     });
     
+    $("#id_city_name").change(function () {
+      var url = $("#requestForm").attr("data-places-url");  // get the url of the `load_cities` view
+      var cityId = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+        data: {
+          'city_name': cityId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_place").html(data);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+
     const addMoreCommLineBtn = document.getElementById('add-more-commline')
     const removeCommLineBtn = document.getElementById('remove-commline')
     const InitialCommlineFormCount = document.getElementsByClassName('commline-form').length

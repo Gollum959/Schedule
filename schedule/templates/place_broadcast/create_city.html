@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}<title></title>{% endblock %}
+{% block content %}
+  <div class="container py-5">
+    <h2>Добавить город</h2>
+    <form method="post">
+        {% csrf_token %}
+        <table>
+          {{ form.as_table }}
+        </table>
+        <button type="submit">Add</button>
+      </form>
+    <h2>Добавить площаку</h2>
+    <form method="get" action="{% url 'place:place_create' %}">
+      {% csrf_token %}
+      <label for="id_cities">Choose a city:</label>
+      <select id="id_cities" name="cities">
+        <option value="">---------</option>
+        {% for city in cities %}
+          <option value="{{ city.pk }}">{{ city.name }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Add</button>
+    </form>
+  <div class="container py-5">
+{% endblock %} 
