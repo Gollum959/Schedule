@@ -2,83 +2,134 @@
 {% block title %}<title></title>{% endblock %}
 {% block content %}
 
-
 <div class="card">
-  <h5 class="card-header">{{ ptsrequest.broadcast_start_date|date:'d E Y' }}</h5>
   <div class="card-body">
-    <h4 class="card-title">{{ ptsrequest.name }} </h4>
-    <h7 class="card-title">{{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.position}}, {{ptsrequest.author.direction}}</h7>
-
-    <div class="row">
-      <div class="w-auto col-sm-6 mb-3 mb-sm-0">
-        <div class="card">
-          <div class="card-body">
-            <div class="card-footer">
-              Место проведения трансляции
-            </div>
-            <div class="card" style="width: 18rem;">
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item">{{ ptsrequest.place.name  }}</li>
-                <li class="list-group-item">{{ ptsrequest.place.city  }}</li>
-                <li class="list-group-item">{{ ptsrequest.place.address  }}</li>
-                <li class="list-group-item">{{ ptsrequest.place.contact_name  }} - {{ ptsrequest.place.phone  }}</li>
-              </ul>
-              <a href="#" class="btn btn-primary">Редактировать</a>
-            </div>
-          </div>
-          
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-header">{{ ptsrequest.broadcast_start_date|date:'d E Y' }}</h5>
+        <h4 class="card-title">{{ ptsrequest.name }} </h4>
+        <h7 class="card-title">{{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.position}}, {{ptsrequest.author.direction}}</h7>
+      </div>
+    </div>  
+    <div class="card-body">
+      <div class="card w-100 mb-3">
+        <div class="card-body">
+          <h5 class="card-title">{{ ptsrequest.place.name  }}</h5>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Город</th>
+                <th scope="col">Адрес</th>
+                <th scope="col">Контакт на объекте</th>
+                <th scope="col">Телефон контакта</th>
+                <th scope="col">Вебсайт</th>
+                <th scope="col">Примечание</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ ptsrequest.place.city  }}</td>
+                <td>{{ ptsrequest.place.address  }}</td>
+                <td>{{ ptsrequest.place.contact_name  }}</td>
+                <td>{{ ptsrequest.place.phone  }}</td>
+                <td>Вебсайт</td>
+                <td>Детали</td>
+              </tr>
+              
+            </tbody>
+          </table>
         </div>
       </div>
-      <div class="w-auto col-sm-6 mb-3 mb-sm-0">
-        <div class="card">
-          <div class="card-body">
-            <div class="card-footer">
-              Характеристики передачи
-            </div>
-            <div class="card" style="width: 18rem;">
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item">Тракт</li>
-                <li class="list-group-item" id="timecalc">Начало тракта - конец тракта</li>
-                <li class="list-group-item">{{ ptsrequest.type }}</li>
-                <li class="list-group-item">{{ ptsrequest.broadcast_start_date|date:'H:i' }} - {{ ptsrequest.broadcast_end_date|date:'H:i' }} </li>
-              </ul>
-              <a href="#" class="btn btn-primary">Редактировать</a>
-                </div>
+      
+      <div class="card w-100 mb-3">
+        <div class="card-body">
+          <h5 class="card-title">
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#ptscollapse" aria-expanded="false" aria-controls="ptscollapse">
+            Конфигурация ПТС {{  ptsrequest.get_pts }}.
+          </button></h5>
+          <div class="collapse" id="ptscollapse">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col">Handle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td colspan="2">Larry the Bird</td>
+                    <td>@twitter</td>
+                  </tr>
+                </tbody>
+              </table>
           </div>
         </div>
       </div>
-      <div class=" w-auto col-sm-6 mb-3 mb-sm-0">
-        <div class="card">
-          <div class="card-body">
-            <div class="card-footer">
-              ПАРАМЕТРЫ ПТС
-            </div>
-            <div class="card" style="width: 18rem;">
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item">{{  ptsrequest.pts_name }}</li>
-                <li class="list-group-item"><a href="{% url 'config:config_detail' ptsrequest.pts_cfg.pk %}"> {{  ptsrequest.pts_cfg }}</a>
-                <li class="list-group-item">{% for commline in ptsrequest.commlineconstructor_set.all %}
-                  {{ commline.str_directions}} 
-                  
-                {% endfor %}</li>
-                <li class="list-group-item">Время выезда: {{ ptsrequest.start_date|date:' H:i' }}</li>
-                <li class="list-group-item">Время Приезда: {{ ptsrequest.end_date|date:'H:i' }}</li>
-              </ul>
-              <a href="#" class="btn btn-primary">Редактировать</a>
-                </div>
+      <div class="card w-100 mb-3">
+        <div class="card-body">
+          <h5 class="card-title">
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#linecollapse" aria-expanded="false" aria-controls="linecollapse">
+            ЛИНИИ СВЯЗИ
+          </button></h5>
+          <div class="collapse" id="linecollapse">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col">Handle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td colspan="2">Larry the Bird</td>
+                    <td>@twitter</td>
+                  </tr>
+                </tbody>
+              </table>
           </div>
         </div>
       </div>
-    </div> 
-    {% if user == ptsrequest.author or user.is_admin %}
-      <a class="btn btn-primary" href="{% url 'pts_requests:request_edit' ptsrequest.pk %}">
-        Редактировать всю заявку
-      </a> 
-    {% endif %}
+      <h5 class="card-title">КАРТА КНОПКИ</h5>
+      <p class="card-text">Если нужно выполнить изменение - то нажмите кнопку</p>
+      {% if user == ptsrequest.author or user.is_admin %}
+        <a class="btn btn-primary" href="{% url 'pts_requests:request_edit' ptsrequest.pk %}">
+          Редактировать всю заявку
+        </a> 
+      {% endif %}
   </div>
 </div>
-<script>
-  const TimeCalc = document.getElementById('timecalc');
-  {% comment %} console.log(TimeCalc); {% endcomment %}
-</script>
+
+    
+  
+
 {% endblock %} 
