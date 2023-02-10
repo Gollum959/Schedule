@@ -1,10 +1,30 @@
+from typing import Any, Dict
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
 
 from place_broadcast.forms import AddBroadcastPlace
-from place_broadcast.models import PlaceConstructor
+from place_broadcast.models import PlaceConstructor, PlaceCity
 from core.custom_view import DetalInformationMixin, EditOnlyAuthorMixin
+
+
+class CityBroadcastCreate(LoginRequiredMixin, CreateView):
+
+    login_url = reverse_lazy('users:login')
+    model = PlaceCity
+    fields = ('name', )
+    template_name = 'place_broadcast/create_city.html'
+    success_url = reverse_lazy('place:city_create')
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        data = super().get_context_data(**kwargs)
+        data['cities'] = PlaceCity.objects.filter(author=self.request.user)
+        return data
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        self.object = form.save()
+        return super().form_valid(form)
 
 
 class PlacesBroadcastView(LoginRequiredMixin, ListView):
@@ -32,6 +52,12 @@ class PlacesBroadcastCreate(LoginRequiredMixin, CreateView):
     login_url = reverse_lazy('users:login')
     form_class = AddBroadcastPlace
     template_name = 'place_broadcast/create_places.html'
+
+    def get_form_kwargs(self):
+        kwargs = super(PlacesBroadcastCreate, self).get_form_kwargs()
+        kwargs.update({'cities': self.request.GET.get('cities')})
+        kwargs.update({'user': self.request.user})
+        return kwargs
 
     def form_valid(self, form):
         form.instance.author = self.request.user

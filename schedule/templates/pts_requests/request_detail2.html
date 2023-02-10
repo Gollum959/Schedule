@@ -10,7 +10,7 @@
       Broadcast date: {{ ptsrequest.broadcast_start_date|date:'d E Y' }}
     </li>
     <li>
-      <a href="{% url 'place:place_detail' ptsrequest.place.pk %}">Broadcast place</a>: {{ ptsrequest.place.name  }}. {{ ptsrequest.place.city  }}, {{ ptsrequest.place.address  }}
+      <a href="{% url 'place:place_detail' ptsrequest.place.pk %}">Broadcast place</a>: {{ ptsrequest.place.name  }}. {{ ptsrequest.place.city_name  }}, {{ ptsrequest.place.address  }}
     </li>
     <li>
       Responsible person at the facility: {{ ptsrequest.place.contact_name  }}. Phone: {{ ptsrequest.place.phone  }}

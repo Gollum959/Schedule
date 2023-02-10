@@ -3,10 +3,27 @@ from django.urls import reverse
 from users.models import User
 
 
+class PlaceCity(models.Model):
+    name = models.CharField('City name', max_length=30)
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self) -> str:
+        return f'{self.name}'
+
+    class Meta:
+        unique_together = ('name', 'author',)
+
+
 class PlaceConstructor(models.Model):
     """Broadcast address constructor"""
-    name = models.CharField('Name of the facility', max_length=30, unique=True)
-    city = models.CharField('City', max_length=30)
+    name = models.CharField('Name of the facility', max_length=70)
+    city_name = models.ForeignKey(
+        'PlaceCity',
+        on_delete=models.CASCADE,
+    )
     address = models.CharField('Address', max_length=300)
     contact_name = models.CharField(
         'Name of person in charge at the facility',
