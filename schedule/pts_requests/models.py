@@ -15,23 +15,23 @@ class BroadCastType(NameModel):
 class PtsName(NameModel):
     """Names and teams of PTS"""
     head_fullname = models.CharField(
-        'Full name of the head of the PTS shift',
+        'ФИО Начальника смены ПТС',
         max_length=70
     )
     head_contact = models.CharField(
-        'Contact of the head of the PTS shift',
+        'Контактный телефон  Начальника смены ПТС',
         max_length=100
     )
     deputi_head_fullname = models.CharField(
-        'Full name of the deputy head of the PTS shift',
+        'ФИО Заместителя начальника смены ПТС',
         max_length=70
     )
     deputi_head_contact = models.CharField(
-        'Contact of the deputy head of the PTS shift',
+        'Контактный телефон  Заместителя Начальника смены ПТС',
         max_length=100
     )
     other_information = models.TextField(
-        'Other information',
+        'Примечание',
         max_length=2000,
         blank=True)
 
@@ -39,11 +39,11 @@ class PtsName(NameModel):
 class CommLineConstructor(LineConstructor):
     """Line of communication model."""
     internet = models.BooleanField(
-        'The Internet yes or no',
+        'Предоставить Интернет на борт ПТС?',
         default=False
     )
     quantity = models.PositiveSmallIntegerField(
-        'Quantity',
+        'Количество',
         validators=(
             MinValueValidator(0),
             MaxValueValidator(25),
@@ -55,11 +55,11 @@ class CommLineConstructor(LineConstructor):
 class TechCommLineConstructor(LineConstructor):
     """Line of technical communication model."""
     four_wire_comm = models.BooleanField(
-        'Four wire communication yes or no',
+        'Предоставить четырехпроводный канал связи?',
         default=False
     )
     vpn = models.BooleanField(
-        'VPN communication yes or no',
+        'Предоставить VPN?',
         default=False
     )
 
@@ -74,7 +74,7 @@ class PtsRequest(models.Model):
     ]
     APPROVED = 'approved'
     REJECTED = 'rejected'
-    ON_APPROVAL = 'approval'
+    ON_APPROVAL = 'На утверждении'
     UNDER_REVISION = 'revision'
     STATUS = [
         (APPROVED, 'Утверждено'),
@@ -84,16 +84,18 @@ class PtsRequest(models.Model):
     ]
 
     name = models.CharField(
-        'Name of the request',
+        'Название Трансляции',
         max_length=200,
         default='None'
     )
 
     broadcast_start_date = models.DateTimeField(
-        help_text='Broadcast start date and time(YYYY-MM-DD hh:mm)',
+        verbose_name='Дата и время начала трансляции',
+        help_text='Дата и время начала трансляции(YYYY-MM-DD hh:mm)',
     )
     broadcast_end_date = models.DateTimeField(
-        help_text='Broadcast end date and time(YYYY-MM-DD hh:mm)',
+        verbose_name='Дата и время окончания трансляции',
+        help_text='Дата и время окончания трансляции(YYYY-MM-DD hh:mm)',
     )
     place = models.ForeignKey(
         PlaceConstructor,
@@ -103,22 +105,26 @@ class PtsRequest(models.Model):
         BroadCastType, on_delete=models.CASCADE,
     )
     start_date = models.DateTimeField(
-        help_text='Arrival date and time (YYYY-MM-DD hh:mm)',
+        verbose_name='Дата и время выезда ПТС',
+        help_text='Дата и время выезда ПТС (YYYY-MM-DD hh:mm)',
         blank=True,
         null=True
     )
     end_date = models.DateTimeField(
-        help_text='Departure date and time (YYYY-MM-DD hh:mm)',
+        verbose_name='Дата и время отьезда ПТС',
+        help_text='Дата и время отьезда ПТС (YYYY-MM-DD hh:mm)',
         blank=True,
         null=True
     )
     trakt_start_date = models.DateTimeField(
-        help_text='Trakt date and time (YYYY-MM-DD hh:mm)',
+        verbose_name='Дата и время начала тракта',
+        help_text='Дата и время начала тракта (YYYY-MM-DD hh:mm)',
         blank=True,
         null=True
     )
     trakt_end_date = models.DateTimeField(
-        help_text='Trakt date and time (YYYY-MM-DD hh:mm)',
+        verbose_name='Дата и время окончания тракта',
+        help_text='Дата и время окончания тракта (YYYY-MM-DD hh:mm)',
         blank=True,
         null=True
     )
@@ -129,31 +135,31 @@ class PtsRequest(models.Model):
     pts_cfg = models.ForeignKey(
         PtsConstructor,
         on_delete=models.CASCADE,
-        verbose_name='PTS configuration',
+        verbose_name='Конфигурация ПТС',
     )
     commentator_monitor = models.BooleanField(
-        'Monitor for commentator',
+        'Комментаторский монитор',
         default=False
     )
     commentator_console = models.BooleanField(
-        'Sound console for commentator',
+        'Комментаторская панель',
         default=False
     )
     commentator_headset = models.CharField(
-        verbose_name='Number of headsets',
+        verbose_name='Количество комментаторских гарнитур',
         max_length=30,
         choices=HEADSEAT,
         blank=True,
         null=True
     )
     status = models.CharField(
-        verbose_name='Status of the request',
+        verbose_name='Статус Заявки',
         max_length=30,
         choices=STATUS,
         default=ON_APPROVAL
     )
     comment = models.TextField(
-        'Comment of the request',
+        'Комментарий к Заявке',
         max_length=2000,
         blank=True)
     create_date = models.DateTimeField(auto_now_add=True)
@@ -169,6 +175,6 @@ class PtsRequest(models.Model):
         return ", ".join([pts.name for pts in self.pts_name.all()])
 
     class Meta:
-        verbose_name = 'PTS Request'
-        verbose_name_plural = 'PTS Requests'
+        verbose_name = 'Заявка ПТС'
+        verbose_name_plural = 'Заявка ПТС'
         ordering = ('broadcast_start_date', )

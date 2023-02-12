@@ -19,12 +19,12 @@ class PlaceCity(models.Model):
 
 class PlaceConstructor(models.Model):
     """Broadcast address constructor"""
-    name = models.CharField('Name of the facility', max_length=70)
+    name = models.CharField('Название Объекта', max_length=70)
     city_name = models.ForeignKey(
         'PlaceCity',
         on_delete=models.CASCADE,
     )
-    address = models.CharField('Address', max_length=300)
+    address = models.CharField('Адрес', max_length=300)
     contact_name = models.CharField(
         'Name of person in charge at the facility',
         max_length=120,

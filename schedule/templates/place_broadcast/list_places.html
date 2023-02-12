@@ -6,17 +6,17 @@
       <article>    
         <ul>
           <li>
-            Name of the facility': {{ place.name }}
+            Название объекта': {{ place.name }}
           </li>
           <li>
-            City: {{ place.city_name }}
+            Город: {{ place.city_name }}
           </li>
           <li>
-            Address: {{ place.address }}
+            Адрес: {{ place.address }}
           </li>
           <li>
             <a href="{% url 'place:place_detail' place.pk %}">
-              detailed information
+              Детальная информация по объекту
             </a> 
           </li>
         </ul>
@@ -24,7 +24,7 @@
       {% if not forloop.last %}<hr>{% endif %}
     {% endfor %} 
     <a class="btn btn-primary" href="{% url 'place:place_create' %}">
-      add place
+      Добавить новый объект
     </a> 
   </div>
 {% endblock %} 
