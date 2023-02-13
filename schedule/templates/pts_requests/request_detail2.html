@@ -1,40 +1,216 @@
 {% extends 'base.html' %}
 {% block title %}<title></title>{% endblock %}
 {% block content %}
-<div class="container py-5">
-  <div class="row">
-    <li>
-      Customer: {{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.direction}}, {{ptsrequest.author.position}}
-    </li>
-    <li>
-      Broadcast date: {{ ptsrequest.broadcast_start_date|date:'d E Y' }}
-    </li>
-    <li>
-      <a href="{% url 'place:place_detail' ptsrequest.place.pk %}">Broadcast place</a>: {{ ptsrequest.place.name  }}. {{ ptsrequest.place.city_name  }}, {{ ptsrequest.place.address  }}
-    </li>
-    <li>
-      Responsible person at the facility: {{ ptsrequest.place.contact_name  }}. Phone: {{ ptsrequest.place.phone  }}
-    </li>
-    <li>
-      Type of work: {{ ptsrequest.type }}
-    </li>
-    <li>
-      <a href="{% url 'config:config_detail' ptsrequest.pts_cfg.pk %}">PTS Configurations</a>: {{  ptsrequest.pts_cfg }}
-    </li>
-    <li>
-      {% for commline in ptsrequest.commlineconstructor_set.all %}
-        <p>
-            {{ commline.str_directions}}
-        </p>
-      {% endfor %}
-    </li>
-    <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="btn btn-primary">Add</button>
-    </form>
+<div class="card">
+   <div class="card-body">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-header">{{ ptsrequest.broadcast_start_date|date:'d E Y' }}</h5>
+        <h4 class="card-title">{{ ptsrequest.name }} </h4>
+        <h5 class="card-title">Статус заявки - {{ ptsrequest.get_status_display }} </h5>
+        <h7 class="card-title">{{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.position}}, {{ptsrequest.author.direction}}</h7>  
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="card w-100 mb-3">
+       <div class="card-body">
+          <h5 class="card-title">Временные рамки трансляции</h5>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Тип передачи</th>
+                <th scope="col">Время начала</th>
+                <th scope="col">Время окончания</th>
+                <th scope="col">Детали</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              <tr>
+                <td>{{ ptsrequest.type  }}</td>
+                <td>{{ ptsrequest.broadcast_start_date|date:'H:i'  }}</td>
+                <td>{{ ptsrequest.broadcast_end_date|date:'H:i'  }}</td>
+                <td>Details</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div> 
+    </div> 
+    <div class="card-body">
+      <div class="card w-100 mb-3">
+        <div class="card-body">
+          <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#objectcollapse" aria-expanded="false" aria-controls="objectcollapse">
+          Сведения об объекте съемки
+          </button>
+          <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#ptscollapse" aria-expanded="false" aria-controls="ptscollapse">
+          Конфигурация ПТС {{ ptsrequest.get_pts }}
+          </button>
+          <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#linecollapse" aria-expanded="false" aria-controls="linecollapse">
+          Линии Связи
+          </button>
+          <div class="collapse" id="objectcollapse">
+            <div class="card-body">
+              <h5 class="card-title">{{ ptsrequest.place.name  }}</h5>
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Город</th>
+                    <th scope="col">Адрес</th>
+                    <th scope="col">ФИО ответственного за объект</th>
+                    <th scope="col">Телефон ответственного</th>
+                    <th scope="col">Вебсайт</th>
+                    <th scope="col">Детали</th>
+                  </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                  <tr>
+                    <td>{{ ptsrequest.place.city_name  }}</td>
+                    <td>{{ ptsrequest.place.address  }}</td>
+                    <td>{{ ptsrequest.place.contact_name  }}</td>
+                    <td>{{ ptsrequest.place.phone  }}</td>
+                    <td>Вебсайт</td>
+                    <td><a href="{% url 'place:place_detail' ptsrequest.place.pk %}" target="_blank" rel="noopener noreferrer">
+                      Детальная информация по объекту
+                    </a> 
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="collapse" id="ptscollapse">
+            <div class="container py-5">
+              <div class="row">
+                <ul>
+                  <li>
+                    Название Конфигурации: {{ ptsrequest.pts_cfg.name }}
+                  </li>
+                  <li>
+                    Дата создания конфигурации: {{ ptsrequest.pts_cfg.create_date }}
+                  </li><li>
+                    Камерный план: НОВОЕ ПОЛЕ БАЗЫ
+                  </li>
+                  <li>
+                    <b>Камеры для трансляции</b>
+                    {% for camera in ptsrequest.pts_cfg.cameraptsconstructor_set.all %}
+                      <ul>
+                        <li>
+                          {{ camera.cameras.name }}: {{ camera.quantity }}
+                        </li>
+                      </ul>
+                    {% endfor %}
+                  </li>
+                  <li>
+                    <b>Оптика для камер</b>
+                    {% for optic in ptsrequest.pts_cfg.opticptsconstructor_set.all %}
+                      <ul>
+                        <li>
+                          {{ optic.optics.name }}: {{ optic.quantity }}
+                        </li>
+                      </ul>
+                    {% endfor %}
+                  </li>
+                   <li>
+                    <b>Микрофоны</b>
+                    {% for microphone in ptsrequest.pts_cfg.microphoneptsconstructor_set.all %}
+                      <ul>
+                        <li>
+                          {{ microphone.microphones.name }}: {{ microphone.quantity }}
+                        </li>
+                      </ul>
+                    {% endfor %}
+                  </li>
+                  <li>
+                    <b>Оборудование для комментатора</b>
+                    {% if ptsrequest.commentator_monitor == True%}
+                      Монитор комментатора, 
+                    {% endif %}
+                    {% if ptsrequest.commentator_console == True%}
+                      Комментаторский пульт, 
+                    {% endif %}
+                    Количество гарнитур - {{ ptsrequest.commentator_headset }}
+                  </li>
+                  <li>
+                    <b>Графическое обеспечение</b>
+                    {% for gfx in ptsrequest.pts_cfg.gfxptsconstructor_set.all %}
+                      <ul>
+                        <li>
+                          {{ gfx.gfx.name }}: {{ gfx.quantity }}
+                        </li>
+                      </ul>
+                    {% endfor %}
+                  </li>
+                 
+                    {% if user == ptsrequest.pts_cfg.author or user.is_admin %}
+                      <a class="btn btn-primary" href="{% url 'config:config_edit' ptsrequest.pts_cfg.pk %}">
+                        Изменить конфигурацию 
+                      </a> 
+                    {% endif %}
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#ptscollapse" aria-expanded="false" aria-controls="ptscollapse">
+                      Скрыть конфигурацию ПТС 
+                      </button>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="collapse" id="linecollapse">
+              <li>
+                {% for commline in ptsrequest.commlineconstructor_set.all %}
+                  <p>
+                    Организовать подачу видео по направлению: {{ commline.str_directions}} -
+                    Количество линий: {{ commline.quantity}}
+                  </p>
+                  <p>
+                    {% if commline.internet == True %}
+                      Интернет на скорости ХХХ подать на борт ПТС
+                    {% endif %}
+                    
+                  </p>
+               {% endfor %}
+                
+              </li>
+            <div> Служебная связь </div>
+            <li>
+              {% for techcommline in ptsrequest.techcommlineconstructor_set.all %}
+                <p>
+                  {% if techcommline.four_wire_comm == True %}
+                  Организовать подачу служебной связи черех четырехпроводный канал связи
+                 {% endif %}
+                 {% if techcommline.vpn == True %}
+                 Организовать подачу служебной связи через VPN 
+                 {% endif %}
+                   по маршруту -- {{ techcommline.str_directions}}
+                </p>
+                
+              {% endfor %}
+            </li>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card w-100 mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Ваша роль {{ user }} </h5>
+          <p class="card-text">Внесите дополнительные данные</p>
+          <div class="card">
+            <div class="card-body">
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Внести изменения в заявку</button>
+              </form>
+            </div> 
+          </div> 
+          
+        </div>
+      </div>
   </div>
 </div>
+
+
 <script>
   $(document).ready(function() 
   {
@@ -44,6 +220,16 @@
         step: 5
      });
      $('#id_end_date').datetimepicker
+     ({
+          format:'Y-m-d H:i',
+          step: 5
+     });
+     $('#id_trakt_start_date').datetimepicker
+     ({
+          format:'Y-m-d H:i',
+          step: 5
+     });
+     $('#id_trakt_end_date').datetimepicker
      ({
           format:'Y-m-d H:i',
           step: 5

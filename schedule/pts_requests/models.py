@@ -74,7 +74,7 @@ class PtsRequest(models.Model):
     ]
     APPROVED = 'approved'
     REJECTED = 'rejected'
-    ON_APPROVAL = 'На утверждении'
+    ON_APPROVAL = 'approval'
     UNDER_REVISION = 'revision'
     STATUS = [
         (APPROVED, 'Утверждено'),
@@ -174,6 +174,11 @@ class PtsRequest(models.Model):
     def get_pts(self):
         return ", ".join([pts.name for pts in self.pts_name.all()])
 
+    @property
+    def is_approval(self):
+        """Return True if status is ON APPROVAL."""
+        return self.status == self.ON_APPROVAL
+        
     class Meta:
         verbose_name = 'Заявка ПТС'
         verbose_name_plural = 'Заявка ПТС'

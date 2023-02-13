@@ -5,7 +5,6 @@
   <table class="table table-hover">
     <thead>
       <tr>
-        <th scope="col">ID</th>
         <th scope="col">Дата работы</th>
         <th scope="col">Время работы</th>
         <th scope="col">Название передачи</th>
@@ -20,18 +19,21 @@
       <tbody>
         <tr>
           <th scope="row">
-            <a href="{% url 'pts_requests:request_detail' request.pk %}">
-              {{request.pk}}
-            </a>
+            {{ request.broadcast_start_date|date:'d E Y' }}
           </th>
-          <td>{{ request.broadcast_start_date|date:'d E Y' }}</td>
           <td>{{ request.broadcast_start_date|date:'h:m' }} - {{ request.broadcast_end_date|date:'h:m' }}</td>
-          <td>{{ request.name }}</td>
+          <td>
+            {%if request.is_approval and user.is_admin %}
+            <a href="{% url 'pts_requests:request_moderate' request.pk %}">{{ request.name }} {{request.pk}} </a>  
+            {% else %} 
+            <a href="{% url 'pts_requests:request_detail' request.pk %}">{{ request.name }} {{request.pk}} </a>
+            {% endif %} 
+          </td>
           <td>{{ request.get_status_display }}</td>
           <td>{{ request.author.get_full_name }}</td>
           <td>{{ request.get_pts }}</td>
           <td>{{ request.pts_cfg.name }}</td>
-          <td>{{ request.place.name }}</td>
+          <td>{{ request.place.city_name}},<br><h6>{{request.place.name }}</h6> </td>
         </tr>
       </tbody>
       {% comment %} {% if not forloop.last %}
@@ -39,5 +41,6 @@
       {% endif %} {% endcomment %} 
     {% endfor %}
   </table>
+  <a class="btn btn-primary" href="http://localhost:8000/?week=next" role="button">Показать трансляции на следующей неделе</a>
 </div>
 {% endblock %}
