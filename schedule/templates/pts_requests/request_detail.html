@@ -380,12 +380,19 @@
   <div class="card w-100 mb-3">
     <div class="card-body">
       <h5 class="card-title">Ваша роль {{ user }} </h5>
-      <p class="card-text">Если нужно выполнить изменение - то нажмите кнопку</p>
-      {% if user == ptsrequest.author or user.is_admin %}
+      {% if ptsrequest.get_status == approved %}
+      <a class="btn btn-primary" href="http://localhost:8000">На главную</a>
+      {% else%}
+        {% if user == ptsrequest.author or user.is_admin %}
+        <p class="card-text">Если нужно выполнить изменение - то нажмите кнопку</p>  
         <a class="btn btn-primary" href="{% url 'pts_requests:request_edit' ptsrequest.pk %}">
-          Редактировать всю заявку
-        </a> 
+            Редактировать всю заявку
+          </a> 
+        {% endif %}
+      {% endif %}
       
+      {% if ptsrequest.get_status == approved %}
+      <a class="btn btn-primary" href="">Расчпечатать письмо в БТК</a>
       {% endif %}
     </div>
   </div>
