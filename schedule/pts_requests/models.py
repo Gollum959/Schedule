@@ -178,7 +178,7 @@ class PtsRequest(models.Model):
     def is_approval(self):
         """Return True if status is ON APPROVAL."""
         return self.status == self.ON_APPROVAL
-        
+
     class Meta:
         verbose_name = 'Заявка ПТС'
         verbose_name_plural = 'Заявка ПТС'

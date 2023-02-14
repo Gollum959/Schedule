@@ -1,9 +1,14 @@
 from typing import Any, Dict
+from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
 
-from pts_config.models import PtsConstructor
+from pts_config.models import (PtsConstructor,
+                               CameraModelBrend,
+                               OpticModelBrend,
+                               ServerRecordingRepeatModelBrend,
+                               MicrophoneModelBrend)
 from pts_config.forms import (AddPtsConfigFrom,
                               CameraFormset,
                               OpticFormset,
@@ -61,7 +66,6 @@ class PtsConfigCreate(LoginRequiredMixin, CreateView):
                          context['server'], context['micro'],
                          context['gfx'],]
         self.object = form.save()
-
         for cfg_form in pts_cfg_forms:
             if cfg_form.is_valid():
                 cfg_form.instance = self.object
@@ -109,3 +113,47 @@ class PtsConfigEdit(EditOnlyAuthorMixin, LoginRequiredMixin, UpdateView):
                 cfg_form.save()
 
         return super().form_valid(form)
+
+
+def load_camera_brend(request):
+    camera_brend_id = request.GET.get('id')
+    camera_models = CameraModelBrend.objects.filter(
+        brend=camera_brend_id).order_by('name')
+    return render(
+        request,
+        'pts_config/camera_model_dropdown_list_options.html',
+        {'camera_models': camera_models}
+    )
+
+
+def load_optic_brend(request):
+    optic_brend_id = request.GET.get('id')
+    optic_models = OpticModelBrend.objects.filter(
+        brend=optic_brend_id).order_by('name')
+    return render(
+        request,
+        'pts_config/optic_model_dropdown_list_options.html',
+        {'optic_models': optic_models}
+    )
+
+
+def load_server_brend(request):
+    server_brend_id = request.GET.get('id')
+    server_models = ServerRecordingRepeatModelBrend.objects.filter(
+        brend=server_brend_id).order_by('name')
+    return render(
+        request,
+        'pts_config/server_model_dropdown_list_options.html',
+        {'server_models': server_models}
+    )
+
+
+def load_micro_brend(request):
+    micro_brend_id = request.GET.get('id')
+    micro_models = MicrophoneModelBrend.objects.filter(
+        brend=micro_brend_id).order_by('name')
+    return render(
+        request,
+        'pts_config/micro_model_dropdown_list_options.html',
+        {'micro_models': micro_models}
+    )
