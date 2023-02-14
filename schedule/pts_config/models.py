@@ -30,11 +30,12 @@ class CameraPtsConstructor(ConstrQuantity):
     cameras = models.ForeignKey(
         'Camera',
         on_delete=models.CASCADE,
-        verbose_name='Camera type'
+        verbose_name='Тип Камеры'
     )
     brend = models.ForeignKey(
         'CameraBrend',
         on_delete=models.CASCADE,
+        verbose_name='Производитель камеры'
     )
     model = models.ForeignKey(
         'CameraModelBrend',
@@ -67,7 +68,7 @@ class OpticPtsConstructor(ConstrQuantity):
     optics = models.ForeignKey(
         'Optic',
         on_delete=models.CASCADE,
-        verbose_name='Optical magnification'
+        verbose_name='Кратность Оптики'
     )
     brend = models.ForeignKey(
         'OpticBrend',
@@ -196,6 +197,7 @@ class GfxPtsConstructor(ConstrQuantity):
         on_delete=models.CASCADE,
     )
     judicial_system = models.BooleanField(
+        'Подключение к судейской системе?',
         default=False
     )
     license_type = models.ManyToManyField(
@@ -207,7 +209,7 @@ class GfxPtsConstructor(ConstrQuantity):
 class PtsConstructor(models.Model):
     """PTS configuration model."""
 
-    name = models.CharField('PTS config name', max_length=50, unique=True)
+    name = models.CharField('Название конфигурации ПТС', max_length=50, unique=True)
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -221,6 +223,6 @@ class PtsConstructor(models.Model):
         return reverse('config:config_detail', kwargs={'pk': self.pk})
 
     class Meta:
-        verbose_name = 'PTS config'
+        verbose_name = 'Конфигурация ПТС'
         verbose_name_plural = 'PTS configs'
         ordering = ('create_date', )
