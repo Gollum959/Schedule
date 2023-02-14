@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for optic_model in optic_models %}
+    <option value="{{ optic_model.pk }}">{{ optic_model.name }}</option>
+{% endfor %}
