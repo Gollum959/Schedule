@@ -41,7 +41,7 @@
             {% endif %}                 
           </div> {% endcomment %}
           <div class="card-body">        
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" data-micro-url="{% url 'config:ajax_load_micro_model' %}" data-cam-url="{% url 'config:ajax_load_cam_model' %}" data-opt-url="{% url 'config:ajax_load_optic_model' %}" data-server-url="{% url 'config:ajax_load_server_model' %}" id="cfgForm">
               {% load user_filters %}
               {% csrf_token %}
               {% if form.errors %}
@@ -98,6 +98,7 @@
   </div>
 
   <script>
+
     const addMoreCameraLineBtn = document.getElementById('add-more-camera')
     const removeCameraLineBtn = document.getElementById('remove-camera')
     const InitialCameralineFormCount = document.getElementsByClassName('camera-form').length
@@ -107,6 +108,8 @@
       'camera-id', 
       'camera-form',
       'id_cameraptsconstructor_set-TOTAL_FORMS',
+      'id_cameraptsconstructor_set',
+      'data-cam-url',
       removeCameraLineBtn,
       e))
     removeCameraLineBtn.addEventListener('click', e => remove_form(
@@ -127,6 +130,8 @@
       'optic-id', 
       'optic-form',
       'id_opticptsconstructor_set-TOTAL_FORMS',
+      'id_opticptsconstructor_set',
+      'data-opt-url',
       removeOpticLineBtn,
       e))
     removeOpticLineBtn.addEventListener('click', e => remove_form(
@@ -147,6 +152,8 @@
       'server-id', 
       'server-form',
       'id_serverrecordingrepeatconstructor_set-TOTAL_FORMS',
+      'id_serverrecordingrepeatconstructor_set',
+      'data-server-url',
       removeServerLineBtn,
       e))
     removeServerLineBtn.addEventListener('click', e => remove_form(
@@ -167,6 +174,8 @@
       'micro-id', 
       'micro-form',
       'id_microphoneptsconstructor_set-TOTAL_FORMS',
+      'id_microphoneptsconstructor_set',
+      'data-micro-url',
       removeMicroLineBtn,
       e))
     removeMicroLineBtn.addEventListener('click', e => remove_form(
@@ -187,6 +196,8 @@
       'gfx-id', 
       'gfx-form',
       'id_gfxptsconstructor_set-TOTAL_FORMS',
+      'id_gfxptsconstructor_set',
+      '',
       removeGfxBtn,
       e))
     removeGfxBtn.addEventListener('click', e => remove_form(

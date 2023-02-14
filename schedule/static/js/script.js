@@ -3,6 +3,8 @@ function add_new_form(
     hiddenElementId,
     clonedElementClassName, 
     totalNumberOfElementId,
+    elementPrefix,
+    brend_url,
     removeLineBtn,
     event) {
     if (event) {
@@ -24,6 +26,26 @@ function add_new_form(
     const totalNewForms = document.getElementById(totalNumberOfElementId)
     totalNewForms.setAttribute('value', addedFormCount + 1)
     formCopyTarget.append(copyemptyFormEl)
+
+    if (brend_url!==''){
+      var brendId = `${elementPrefix}-${addedFormCount}-brend`
+      var modelId = `${elementPrefix}-${addedFormCount}-model`
+
+      var idOfSelect = $(`#${brendId}`)
+      idOfSelect.change(function () {
+        var url = $("#cfgForm").attr(brend_url);  // get the url of the `load_cities` view
+        var camId = $(this).val();  // get the selected country ID from the HTML input
+        $.ajax({                       // initialize an AJAX request
+          url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+          data: {
+            'id': camId       // add the country id to the GET parameters
+          },
+          success: function (data) {   // `data` is the return of the `load_cities` view function
+            $(`#${modelId}`).html(data);  // replace the contents of the city input with the data that came from the server
+          }
+        });
+      });
+    }
   }
 
   function remove_form(

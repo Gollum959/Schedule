@@ -168,6 +168,11 @@ class PtsRequest(models.Model):
     def get_pts(self):
         return ", ".join([pts.name for pts in self.pts_name.all()])
 
+    @property
+    def is_approval(self):
+        """Return True if status is ON APPROVAL."""
+        return self.status == self.ON_APPROVAL
+
     class Meta:
         verbose_name = 'PTS Request'
         verbose_name_plural = 'PTS Requests'
