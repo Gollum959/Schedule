@@ -41,6 +41,16 @@
       {% endif %} {% endcomment %} 
     {% endfor %}
   </table>
-  <a class="btn btn-primary" href="http://localhost:8000/?week=next" role="button">Показать трансляции на следующей неделе</a>
+  {% if request.GET.week or request.GET.date %}
+    <a class="btn btn-primary" href="{% url 'pts_requests:index' %}" role="button">Показать трансляции на текущей неделе</a>
+  {% else %}
+    <a class="btn btn-primary" href="{% url 'pts_requests:index'%}?week=next" role="button">Показать трансляции на следующей неделе</a>
+  {% endif %}
+  <form method="get" action="{% url 'pts_requests:index' %}">
+    {% csrf_token %}
+    <label for="id_date">Choose a date:</label>
+    <input type="date" id="id_date" name="date">
+    <button type="submit">Search</button>
+  </form>
 </div>
 {% endblock %}
