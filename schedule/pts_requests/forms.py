@@ -1,4 +1,6 @@
+import os
 from django.forms import ModelForm, ModelChoiceField, inlineformset_factory
+from django import forms
 
 from place_broadcast.models import PlaceConstructor, PlaceCity
 from pts_requests.models import (PtsRequest,
@@ -19,6 +21,7 @@ class AddRequestFrom(ModelForm):
             author=self.user
         )
         self.fields['place'].queryset = PlaceConstructor.objects.none()
+
         if 'city_name' in self.data:
             try:
                 city_id = int(self.data.get('city_name'))
@@ -30,6 +33,7 @@ class AddRequestFrom(ModelForm):
                 )
             except (ValueError, TypeError):
                 pass
+
         elif self.instance.pk:
             place = PlaceConstructor.objects.get(pk=self.instance.place_id)
             self.fields['city_name'].initial = place.city_name
@@ -37,20 +41,30 @@ class AddRequestFrom(ModelForm):
                 author=self.user,
                 city_name=place.city_name.pk
             )
+
         self.fields['pts_cfg'] = ModelChoiceField(
             queryset=PtsConstructor.objects.filter(author=self.user),
             empty_label="(Nothing)"
         )
 
-    def validate(self, value):
-        """Check if value consists only of valid emails."""
-        super().validate(value)
+    image = forms.FileField()
+
+    def clean_image(self):
+        uploaded_file = self.cleaned_data['image']
+        try:
+            im = forms.ImageField()
+            im.to_python(uploaded_file)
+        except forms.ValidationError:
+            name, ext = os.path.splitext(uploaded_file.name)
+            if ext not in ['.pdf', '.PDF']:
+                raise forms.ValidationError("Only images and PDF files allowed")
+        return uploaded_file
 
     class Meta:
         model = PtsRequest
         fields = [
             'name', 'broadcast_start_date', 'broadcast_end_date', 'city_name',
-            'place', 'type', 'pts_cfg', 'commentator_monitor',
+            'place', 'type', 'pts_cfg', 'image', 'commentator_monitor',
             'commentator_console', 'commentator_headset'
         ]
 

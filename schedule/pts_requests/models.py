@@ -158,6 +158,11 @@ class PtsRequest(models.Model):
         choices=STATUS,
         default=ON_APPROVAL
     )
+    image = models.ImageField(
+        'Картинка или pdf',
+        upload_to='plans/',
+        blank=True
+    )
     comment = models.TextField(
         'Комментарий к Заявке',
         max_length=2000,
