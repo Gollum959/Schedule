@@ -1,96 +1,117 @@
 {% extends 'base.html' %}
-{% block title %}<title></title>{% endblock %}
+{% block title %}<title>Заявка на {{ ptsrequest.name }} </title>{% endblock %}
 {% block content %}
 
 <div class="card">
   <div class="card-body">
     <div class="card">
-        <h5 class="card-title">{{ ptsrequest.broadcast_start_date|date:'d E Y' }} </h5>
+        <h5 class="card-header">{{ ptsrequest.broadcast_start_date|date:'d E Y' }} </h5>
         <h4 class="card-title">{{ ptsrequest.name }} </h4>
         <h5 class="card-title">Статус заявки - {{ ptsrequest.get_status_display }} </h5>
         <h7 class="card-title">{{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.position}}, {{ptsrequest.author.direction}}</h7>
     </div> 
-  </div>
-  <div class="card-body">
-    <div class="card">
-      <h5 class="card-title">Временные рамки трансляции</h5>
-      <table class="table table-bordered">
-        <thead>
+    <div class="card w-75 mb-3">
+      <h5 class="card-header">{{ ptsrequest.place.name  }}</h5>
+        <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Город</th>
+                <th scope="col">Адрес</th>
+                <th scope="col">ФИО ответственного за объект</th>
+                <th scope="col">Телефон ответственного</th>
+                <th scope="col">Вебсайт</th>
+                <th scope="col">Детали</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              <tr>
+                <td>{{ ptsrequest.place.city_name  }}</td>
+                <td>{{ ptsrequest.place.address  }}</td>
+                <td>{{ ptsrequest.place.contact_name  }}</td>
+                <td>{{ ptsrequest.place.phone  }}</td>
+                <td>Вебсайт</td>
+                <td><a href="{% url 'place:place_detail' ptsrequest.place.pk %}" target="_blank" rel="noopener noreferrer">
+                  Детальная информация по объекту
+                </a> 
+              </td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+    <div class="card-body">
+      <div class="card w-75 mb-3">
+        <h5 class="card-header">Временные рамки трансляции</h5>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Тип передачи</th>
+              <th scope="col">Время начала</th>
+              <th scope="col">Время окончания</th>
+              <th scope="col">Детали</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            <tr>
+              <td>{{ ptsrequest.type  }}</td>
+              <td>{{ ptsrequest.broadcast_start_date|date:'H:i'  }}</td>
+              <td>{{ ptsrequest.broadcast_end_date|date:'H:i'  }}</td>
+              <td>Details</td>
+            </tr>
+            <tr>
+              <td>Тракт</td>
+              <td>{{ ptsrequest.trakt_start_date|date:'H:i'  }}</td>
+              <td>{{ ptsrequest.trakt_end_date|date:'H:i'  }}</td>
+              <td>Details</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card w-75 mb-3">
+        <h5 class="card-header">Время работы ПТС</h5>
+          <table class="table table-bordered">
+            <thead>
+              <tbody class="table-group-divider"></tbody>
+              <tr>
+                <th scope="col">Тип</th>
+                <th scope="col">Выезд</th>
+                <th scope="col">Возвращение</th>
+                <th scope="col">Детали</th>
+              </tr>
+            </thead>
           <tr>
-            <th scope="col">Тип передачи</th>
-            <th scope="col">Время начала</th>
-            <th scope="col">Время окончания</th>
-            <th scope="col">Детали</th>
-          </tr>
-        </thead>
-        <tbody class="table-group-divider">
-          <tr>
-            <td>{{ ptsrequest.type  }}</td>
-            <td>{{ ptsrequest.broadcast_start_date|date:'H:i'  }}</td>
-            <td>{{ ptsrequest.broadcast_end_date|date:'H:i'  }}</td>
+            <td>Выезд на объект</td>
+            <td>{{ ptsrequest.start_date|date:'d E H:i'  }}</td>
+            <td>Время приезда</td>
             <td>Details</td>
           </tr>
           <tr>
-            <td>Тракт</td>
-            <td>{{ ptsrequest.trakt_start_date|date:'H:i'  }}</td>
-            <td>{{ ptsrequest.trakt_end_date|date:'H:i'  }}</td>
-            <td>Details</td>
-          </tr>
-          <tr>
-            <td>Время выезда/сворота</td>
-            <td>{{ ptsrequest.start_date|date:'H:i'  }}</td>
-            <td>{{ ptsrequest.end_date|date:'H:i'  }}</td>
+            <td>Возвращение или перезд</td>
+            <td>{{ ptsrequest.end_date|date:'d E H:i'  }}</td>
+            <td>Время приезда</td>
             <td>Details</td>
           </tr>
         </tbody>
       </table>
+    </div>
 
-      <div class="card">
-       
-          <h5 class="card-title">{{ ptsrequest.place.name  }}</h5>
-            <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th scope="col">Город</th>
-                    <th scope="col">Адрес</th>
-                    <th scope="col">ФИО ответственного за объект</th>
-                    <th scope="col">Телефон ответственного</th>
-                    <th scope="col">Вебсайт</th>
-                    <th scope="col">Детали</th>
-                  </tr>
-                </thead>
-                <tbody class="table-group-divider">
-                  <tr>
-                    <td>{{ ptsrequest.place.city_name  }}</td>
-                    <td>{{ ptsrequest.place.address  }}</td>
-                    <td>{{ ptsrequest.place.contact_name  }}</td>
-                    <td>{{ ptsrequest.place.phone  }}</td>
-                    <td>Вебсайт</td>
-                    <td><a href="{% url 'place:place_detail' ptsrequest.place.pk %}" target="_blank" rel="noopener noreferrer">
-                      Детальная информация по объекту
-                    </a> 
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-        
-      </div>
       
-        <div class="card-body">
-          <div class="collapse" id="ptscollapse">
+      
+    <div class="card-body">
+      <div class="collapse" id="ptscollapse">
             {% comment %} <div class="card w-75 mb-3"> {% endcomment %}
-              <div class="card-header">
+        <div class="card-header">
                 <h3>Название Конфигурации: {{ ptsrequest.pts_cfg.name }}</h3>
                 <h6>Дата создания конфигурации: {{ ptsrequest.pts_cfg.create_date }}</h6>
-              </div>
-              <div class="card-body">
+         </div>
+         <div class="card-body">
               <h6>Камерный план: НОВОЕ ПОЛЕ БАЗЫ</h6>
-              </div>
+         </div>
              
-              <div class="card-header">
+         <div class="card-header">
                 <h6>Камеры для трансляции</h6>
-              </div>
-              <div class="card-body">
+          </div>
+          <div class="card-body">
                 <table class="table">
                   <thead>
                     <tr>
@@ -111,7 +132,7 @@
                     {% endfor %}
                   </tbody>
                 </table>
-              </div>        
+          </div>        
           
               <div class="card-header">
                 <h6>Оптика для камер</h6>
@@ -248,102 +269,101 @@
               </div>
             {% comment %} </div> {% endcomment %}
             
-          </div>
-        </div>
-        <div class="card-body">
+          
+      </div>
+      <div class="card-body">
           <div class="collapse" id="linecollapse">
-            <div class="card">
-              <h5 class="card-title">Заказы видеоканалов</h5>
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th scope="col">Номер канала </th>
-                        <th scope="col">Дата и время начала оказания услуг </th>
-                        <th scope="col">Дата и время завершения оказания услуг </th>
-                        <th scope="col">Направление подачи ТВ канала </th>
-                        <th scope="col">Количество каналов</th>
-            
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for commline in ptsrequest.commlineconstructor_set.all %}
-                        <tr>
-                          <th scope="row">Номер (1-2-3) в зависимости сколько строк в базе</th>
-                          <td>Дата время окончания  с БД</td>
-                          <td>Дата время окончания  с БД</td>
-                          <td>От объекта до ЦА (ЦА тоже в базе как объект в минске) {{ commline.str_directions}} </td>
-                          <td>{{ commline.quantity}}</td>
-                        </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-            </div>
-            <div class="card">
-                  <h5 class="card-title">Услуги Интернет</h5>
-                  <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th scope="col">Дата и время начала оказания услуг </th>
-                        <th scope="col">Дата и время завершения оказания услуг </th>
-                        <th scope="col">Место установки точки доступа в Интернет </th>
-                        <th scope="col">Количество точек</th>
-                        <th scope="col">Скорость доступа</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      
-                        <tr>
-                          <th scope="row">ДАТА И ВРЕМЯ НАЧАЛА С БАЗЫ ДАННЫХ</th>
-                          <td>ДАТА И ВРЕМЯ Окончания С БАЗЫ ДАННЫХ</td>
-                          <td>ПТС</td>
-                          <td>1</td>
-                          <td>ВЫБОР С БД 20/20 - 80/40 - 200/200 Мбит/c</td>
-                        </tr>
-                      
-                    </tbody>
-                  </table>
-            </div>
-            <div class="card">
-                    <h5 class="card-title">Организация служебной связи</h5>
+                  <div class="card">
+                    <h5 class="card-title">Заказы видеоканалов</h5>
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th scope="col">Номер канала </th>
+                              <th scope="col">Дата и время начала оказания услуг </th>
+                              <th scope="col">Дата и время завершения оказания услуг </th>
+                              <th scope="col">Направление подачи ТВ канала </th>
+                              <th scope="col">Количество каналов</th>
+                  
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for commline in ptsrequest.commlineconstructor_set.all %}
+                              <tr>
+                                <th scope="row">Номер (1-2-3) в зависимости сколько строк в базе</th>
+                                <td>Дата время окончания  с БД</td>
+                                <td>Дата время окончания  с БД</td>
+                                <td>От объекта до ЦА (ЦА тоже в базе как объект в минске) {{ commline.str_directions}} </td>
+                                <td>{{ commline.quantity}}</td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                  </div>
+                 <div class="card">
+                    <h5 class="card-title">Услуги Интернет</h5>
                     <table class="table table-hover">
                       <thead>
                         <tr>
-                          <th scope="col">Номер линии </th>
                           <th scope="col">Дата и время начала оказания услуг </th>
-                          <th scope="col">Дата и время окончания оказания услуг </th>
-                          <th scope="col">Тип связи </th>
-                          <th scope="col">Связь с кем</th>
+                          <th scope="col">Дата и время завершения оказания услуг </th>
+                          <th scope="col">Место установки точки доступа в Интернет </th>
+                          <th scope="col">Количество точек</th>
+                          <th scope="col">Скорость доступа</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {% for techcommline in ptsrequest.techcommlineconstructor_set.all %}
+                        
                           <tr>
-                            <th scope="row">#Номер линии из базы данных</th>
-                            <td>Дата и время начала оказания услуг из БД</td>
-                            <td>Дата и время начала оказания услуг из БД</td>
-                            <td>
-                              {% if techcommline.vpn == True %}
-                               VPN 
-                              {% else %}
-                                  {% if techcommline.four_wire_comm == True %}
-                                    Четырехпроводка
-                                  {% else %}
-                                    Нет связи
-                                  {% endif %}
-                              {% endif %}
-                            </td>
-                            <td>ИЗ БАЗЫ - C эфирной аппартной "Беларусь5"</td>
+                            <th scope="row">ДАТА И ВРЕМЯ НАЧАЛА С БАЗЫ ДАННЫХ</th>
+                            <td>ДАТА И ВРЕМЯ Окончания С БАЗЫ ДАННЫХ</td>
+                            <td>ПТС</td>
+                            <td>1</td>
+                            <td>ВЫБОР С БД 20/20 - 80/40 - 200/200 Мбит/c</td>
                           </tr>
-                          {% endfor %}
+                        
                       </tbody>
                     </table>
+                 </div>
+                 <div class="card">
+                          <h5 class="card-title">Организация служебной связи</h5>
+                          <table class="table table-hover">
+                            <thead>
+                              <tr>
+                                <th scope="col">Номер линии </th>
+                                <th scope="col">Дата и время начала оказания услуг </th>
+                                <th scope="col">Дата и время окончания оказания услуг </th>
+                                <th scope="col">Тип связи </th>
+                                <th scope="col">Связь с кем</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for techcommline in ptsrequest.techcommlineconstructor_set.all %}
+                                <tr>
+                                  <th scope="row">#Номер линии из базы данных</th>
+                                  <td>Дата и время начала оказания услуг из БД</td>
+                                  <td>Дата и время начала оказания услуг из БД</td>
+                                  <td>
+                                    {% if techcommline.vpn == True %}
+                                    VPN 
+                                    {% else %}
+                                        {% if techcommline.four_wire_comm == True %}
+                                          Четырехпроводка
+                                        {% else %}
+                                          Нет связи
+                                        {% endif %}
+                                    {% endif %}
+                                  </td>
+                                  <td>ИЗ БАЗЫ - C эфирной аппартной "Беларусь5"</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                          </table>
                   </div>
-                </div>
-              </div>
-            </div>
-           </div> 
+          </div>
+      </div>    
     </div>
-  </div> 
+  </div>
+
 
   <div class="card">
     <div class="card-body">
@@ -369,5 +389,5 @@
       {% endif %}
     </div>
   </div>
-
+</div>
 {% endblock %} 

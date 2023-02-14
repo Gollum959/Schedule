@@ -5,11 +5,11 @@
   <table class="table table-hover">
     <thead>
       <tr>
-        <th scope="col">Дата работы</th>
-        <th scope="col">Время работы</th>
+        <th scope="col">Дата трансляции</th>
+        <th scope="col">Время трансляции</th>
         <th scope="col">Название передачи</th>
         <th scope="col">Статус</th>
-        <th scope="col">ФИО Режиссера</th>
+        <th scope="col">Должность автора {{request.user.position}}</th>
         <th scope="col">Имя ПТС</th>
         <th scope="col">Конфигурация ПТС</th>
         <th scope="col">Место работы</th>
@@ -21,7 +21,7 @@
           <th scope="row">
             {{ request.broadcast_start_date|date:'d E Y' }}
           </th>
-          <td>{{ request.broadcast_start_date|date:'h:m' }} - {{ request.broadcast_end_date|date:'h:m' }}</td>
+          <td>{{ request.broadcast_start_date|date:'H:i' }} - {{ request.broadcast_end_date|date:'H:i' }}</td>
           <td>
             {%if request.is_approval and user.is_admin %}
             <a href="{% url 'pts_requests:request_moderate' request.pk %}">{{ request.name }} {{request.pk}} </a>  
