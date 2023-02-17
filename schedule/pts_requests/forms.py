@@ -71,12 +71,25 @@ class AddRequestFrom(ModelForm):
 
 class ModerateRequestFrom(ModelForm):
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['pts_name'].empty_label = 'Название ПТС'
+        self.fields['status'].empty_label = 'Изменить статус заявки'
+
     class Meta:
         model = PtsRequest
         fields = [
             'start_date', 'end_date', 'trakt_start_date',
             'trakt_end_date', 'pts_name', 'status', 'comment'
         ]
+        widgets = {
+            'start_date': forms.DateTimeInput(
+                attrs={'placeholder': 'Выберите дату и время'}
+            ),
+            'end_date': forms.DateTimeInput(
+                attrs={'placeholder': 'Выберите дату и время'}
+            ),
+        }
 
 
 class AddCommLine(ModelForm):

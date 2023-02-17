@@ -14,15 +14,27 @@ class User(AbstractUser):
         (ADMIN, 'ADMINISTRATOR'),
     ]
 
+    GPC = 'user'
+    ATN = 'moderator'
+    BEL5 = 'admin'
+    DIRECTIONS = [
+        (GPC, 'ГПЦ'),
+        (ATN, 'АТН'),
+        (BEL5, 'Беларусь 5'),
+    ]
+
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=150)
+
     direction = models.CharField(
-        max_length=50,
-        help_text=(
-            'The direction of Belteleradiocompany, for example "Belarus 5"'
-        )
+        verbose_name='User direction',
+        max_length=15,
+        choices=DIRECTIONS,
+        default=BEL5,
+        help_text='The direction of Belteleradiocompany'
     )
+
     position = models.CharField(
         max_length=50,
         help_text='User position in the direction'

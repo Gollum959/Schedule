@@ -4,6 +4,7 @@ from users.models import User
 
 
 class PlaceCity(models.Model):
+    """City model"""
     name = models.CharField('City name', max_length=30)
     author = models.ForeignKey(
         User,
@@ -17,12 +18,40 @@ class PlaceCity(models.Model):
         unique_together = ('name', 'author',)
 
 
+class EventType(models.Model):
+    """Event type model"""
+
+    GPC = 'user'
+    ATN = 'moderator'
+    BEL5 = 'admin'
+    DIRECTIONS = [
+        (GPC, 'ГПЦ'),
+        (ATN, 'АТН'),
+        (BEL5, 'Беларусь 5'),
+    ]
+
+    name = models.CharField('Event type name', max_length=50)
+    direction = models.CharField(
+        verbose_name='User direction',
+        max_length=15,
+        choices=DIRECTIONS,
+        default=BEL5,
+        help_text='The direction of Belteleradiocompany'
+    )
+
+    def __str__(self) -> str:
+        return f'{self.name}'
+
+
 class PlaceConstructor(models.Model):
     """Broadcast address constructor"""
     name = models.CharField('Название Объекта', max_length=70)
     city_name = models.ForeignKey(
         'PlaceCity',
         on_delete=models.CASCADE,
+    )
+    event_type = models.ManyToManyField(
+        'EventType',
     )
     address = models.CharField('Адрес', max_length=300)
     contact_name = models.CharField(
