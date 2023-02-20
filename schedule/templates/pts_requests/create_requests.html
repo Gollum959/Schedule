@@ -29,7 +29,7 @@
             {% endif %}                 
           </div> {% endcomment %}
           <div class="card-body">        
-            <form method="post" enctype="multipart/form-data" id="requestForm" data-places-url="{% url 'pts_requests:ajax_load_places' %}">
+            <form method="post" enctype="multipart/form-data" id="requestForm" data-events-url="{% url 'pts_requests:ajax_load_event_types' %}" data-places-url="{% url 'pts_requests:ajax_load_places' %}">
               {% load user_filters %}
               {% csrf_token %}
               {% if form.errors %}
@@ -98,20 +98,38 @@
     });
     
     $("#id_city_name").change(function () {
-      var url = $("#requestForm").attr("data-places-url");  // get the url of the `load_cities` view
-      var cityId = $(this).val();  // get the selected country ID from the HTML input
+      var url = $("#requestForm").attr("data-places-url");
+      var cityId = $(this).val();
 
-      $.ajax({                       // initialize an AJAX request
-        url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+      $.ajax({
+        url: url,
         data: {
-          'city_name': cityId       // add the country id to the GET parameters
+          'city_name': cityId
         },
-        success: function (data) {   // `data` is the return of the `load_cities` view function
-          $("#id_place").html(data);  // replace the contents of the city input with the data that came from the server
+        success: function (data) {
+          $("#id_place").html(data);
+          $("#id_event_type").html('<option value="">---------</option>');
         }
       });
 
     });
+
+    $("#id_place").change(function () {
+      var url = $("#requestForm").attr("data-events-url");
+      var placeId = $(this).val();
+
+      $.ajax({
+        url: url,
+        data: {
+          'place': placeId
+        },
+        success: function (data) {
+          $("#id_event_type").html(data);
+        }
+      });
+
+    });
+
 
     const addMoreCommLineBtn = document.getElementById('add-more-commline')
     const removeCommLineBtn = document.getElementById('remove-commline')

@@ -5,25 +5,18 @@ from users.models import User
 
 class PlaceCity(models.Model):
     """City model"""
-    name = models.CharField('City name', max_length=30)
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-    )
+    name = models.CharField('City name', unique=True, max_length=30)
 
     def __str__(self) -> str:
         return f'{self.name}'
-
-    class Meta:
-        unique_together = ('name', 'author',)
 
 
 class EventType(models.Model):
     """Event type model"""
 
-    GPC = 'user'
-    ATN = 'moderator'
-    BEL5 = 'admin'
+    GPC = 'gpc'
+    ATN = 'atn'
+    BEL5 = 'bel5'
     DIRECTIONS = [
         (GPC, 'ГПЦ'),
         (ATN, 'АТН'),

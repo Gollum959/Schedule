@@ -37,9 +37,5 @@ class LineConstructor(models.Model):
         on_delete=models.CASCADE,
     )
 
-    @property
-    def str_directions(self):
-        return 'От ПТС к ЦА' if self.direction == 'from_pts' else 'От ЦА к ПТС'
-
     class Meta:
         abstract = True

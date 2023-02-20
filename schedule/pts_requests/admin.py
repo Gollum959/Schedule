@@ -21,26 +21,26 @@ class BroadCastTypeAdmin(admin.ModelAdmin):
 @admin.register(CommLineConstructor)
 class CommLineConstructorAdmin(admin.ModelAdmin):
     """Displaying the CommLineConstructor model in the admin panel."""
-    fields = ('direction', 'custom', 'internet', 'quantity')
+    fields = ('direction', 'custom', 'quantity')
 
 
 class CommLineConstructors(admin.TabularInline):
     """Display communication lines in PTS request."""
     model = CommLineConstructor
-    fields = ('direction', 'custom', 'internet', 'quantity')
+    fields = ('direction', 'custom', 'quantity')
     extra = 1
 
 
 @admin.register(TechCommLineConstructor)
 class TechCommLineConstructorAdmin(admin.ModelAdmin):
     """Displaying the TechCommLineConstructor model in the admin panel."""
-    fields = ('direction', 'custom', 'four_wire_comm', 'vpn')
+    fields = ('type', 'place', 'quantity')
 
 
 class TechCommLineConstructors(admin.TabularInline):
     """Display tech communication lines in PTS request."""
     model = TechCommLineConstructor
-    fields = ('direction', 'custom', 'four_wire_comm', 'vpn')
+    fields = ('type', 'place', 'quantity')
     extra = 1
 
 

@@ -2,10 +2,10 @@ import os
 from django.forms import ModelForm, ModelChoiceField, inlineformset_factory
 from django import forms
 
-from place_broadcast.models import PlaceConstructor, PlaceCity
+from place_broadcast.models import PlaceConstructor, PlaceCity, EventType
 from pts_requests.models import (PtsRequest,
                                  CommLineConstructor,
-                                 TechCommLineConstructor)
+                                 TechCommLineConstructor,)
 from pts_config.models import PtsConstructor
 
 
@@ -13,14 +13,16 @@ class AddRequestFrom(ModelForm):
     city_name = ModelChoiceField(
         queryset=PlaceCity.objects.all(),
     )
+    event_type = ModelChoiceField(queryset=EventType.objects.all())
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.fields['city_name'].queryset = PlaceCity.objects.filter(
-            author=self.user
-        )
+            placeconstructor__isnull=False,
+            placeconstructor__author__direction=self.user.direction).distinct()
         self.fields['place'].queryset = PlaceConstructor.objects.none()
+        self.fields['event_type'].queryset = EventType.objects.none()
 
         if 'city_name' in self.data:
             try:
@@ -57,15 +59,16 @@ class AddRequestFrom(ModelForm):
         except forms.ValidationError:
             name, ext = os.path.splitext(uploaded_file.name)
             if ext not in ['.pdf', '.PDF']:
-                raise forms.ValidationError("Only images and PDF files allowed")
+                raise forms.ValidationError(
+                    "Only images and PDF files allowed")
         return uploaded_file
 
     class Meta:
         model = PtsRequest
         fields = [
-            'name', 'broadcast_start_date', 'broadcast_end_date', 'city_name',
-            'place', 'type', 'pts_cfg', 'image', 'commentator_monitor',
-            'commentator_console', 'commentator_headset'
+            'name', 'city_name', 'place', 'event_type', 'broadcast_start_date',
+            'broadcast_end_date', 'place', 'type', 'pts_cfg', 'image',
+            'commentator_monitor', 'commentator_console', 'commentator_headset'
         ]
 
 
@@ -96,7 +99,7 @@ class AddCommLine(ModelForm):
 
     class Meta:
         model = CommLineConstructor
-        fields = ['direction', 'custom', 'internet', 'quantity']
+        fields = ['direction', 'custom', 'quantity']
 
 
 CommLineFormset = inlineformset_factory(
@@ -111,7 +114,7 @@ class AddTechCommLine(ModelForm):
 
     class Meta:
         model = TechCommLineConstructor
-        fields = ['direction', 'custom', 'four_wire_comm', 'vpn']
+        fields = ['type', 'place', 'quantity']
 
 
 TechCommLineFormset = inlineformset_factory(

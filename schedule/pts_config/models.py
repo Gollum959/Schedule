@@ -3,6 +3,7 @@ from django.urls import reverse
 
 from pts_config.abstract_models import StrName, ConstrQuantity, StrNameQuantity
 from users.models import User
+from place_broadcast.models import EventType, PlaceConstructor
 
 
 class Camera(StrName):
@@ -212,6 +213,14 @@ class PtsConstructor(models.Model):
     name = models.CharField('Название конфигурации ПТС', max_length=50, unique=True)
     author = models.ForeignKey(
         User,
+        on_delete=models.CASCADE,
+    )
+    event_type = models.ForeignKey(
+        EventType,
+        on_delete=models.CASCADE,
+    )
+    place = models.ForeignKey(
+        PlaceConstructor,
         on_delete=models.CASCADE,
     )
     create_date = models.DateTimeField(auto_now_add=True)

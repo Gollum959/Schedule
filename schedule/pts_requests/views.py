@@ -5,7 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.urls import reverse_lazy
 from typing import Any, Dict
 
-from place_broadcast.models import PlaceConstructor
+from place_broadcast.models import PlaceConstructor, EventType
 from pts_requests.models import PtsRequest
 from pts_requests.forms import (AddRequestFrom,
                                 ModerateRequestFrom,
@@ -165,11 +165,28 @@ class PtsRequestModerate(LoginRequiredMixin, UpdateView):
 
 def load_places(request):
     city_id = request.GET.get('city_name')
-    places = PlaceConstructor.objects.filter(city_name=city_id).order_by(
-        'name'
-    )
+    if city_id:
+        places = PlaceConstructor.objects.filter(
+            city_name=city_id,
+            author__direction=request.user.direction).order_by('name')
+    else:
+        places = PlaceConstructor.objects.none()
     return render(
         request,
         'pts_requests/place_dropdown_list_options.html',
         {'places': places}
+    )
+
+
+def load_event_type(request):
+    place_id = request.GET.get('place')
+    if place_id:
+        event_types = EventType.objects.filter(
+            placeconstructor__pk=place_id).order_by('name')
+    else:
+        event_types = EventType.objects.none()
+    return render(
+        request,
+        'pts_requests/event_type_dropdown_list_options.html',
+        {'event_types': event_types}
     )

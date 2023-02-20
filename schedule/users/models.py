@@ -14,9 +14,9 @@ class User(AbstractUser):
         (ADMIN, 'ADMINISTRATOR'),
     ]
 
-    GPC = 'user'
-    ATN = 'moderator'
-    BEL5 = 'admin'
+    GPC = 'gpc'
+    ATN = 'atn'
+    BEL5 = 'bel5'
     DIRECTIONS = [
         (GPC, 'ГПЦ'),
         (ATN, 'АТН'),
