@@ -210,7 +210,11 @@ class GfxPtsConstructor(ConstrQuantity):
 class PtsConstructor(models.Model):
     """PTS configuration model."""
 
-    name = models.CharField('Название конфигурации ПТС', max_length=50, unique=True)
+    name = models.CharField(
+        'Название конфигурации ПТС',
+        max_length=50,
+        unique=True
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -222,6 +226,10 @@ class PtsConstructor(models.Model):
     place = models.ForeignKey(
         PlaceConstructor,
         on_delete=models.CASCADE,
+    )
+    base_conf = models.BooleanField(
+        'Базовая комплектация',
+        default=False
     )
     create_date = models.DateTimeField(auto_now_add=True)
 

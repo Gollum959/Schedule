@@ -21,13 +21,13 @@ class BroadCastTypeAdmin(admin.ModelAdmin):
 @admin.register(CommLineConstructor)
 class CommLineConstructorAdmin(admin.ModelAdmin):
     """Displaying the CommLineConstructor model in the admin panel."""
-    fields = ('direction', 'custom', 'quantity')
+    fields = ('direction', 'custom', 'quantity', 'start', 'end')
 
 
 class CommLineConstructors(admin.TabularInline):
     """Display communication lines in PTS request."""
     model = CommLineConstructor
-    fields = ('direction', 'custom', 'quantity')
+    fields = ('direction', 'custom', 'quantity', 'start', 'end')
     extra = 1
 
 

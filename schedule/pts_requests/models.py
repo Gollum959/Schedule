@@ -39,11 +39,11 @@ class PtsName(NameModel):
 class CommLineConstructor(LineConstructor):
     """Line of communication model."""
 
-    start_date = models.DateTimeField(
+    start = models.DateTimeField(
         verbose_name='Дата и время начала',
         help_text='Дата и время начала трансляции(YYYY-MM-DD hh:mm)',
     )
-    end_date = models.DateTimeField(
+    end = models.DateTimeField(
         verbose_name='Дата и время окончания',
         help_text='Дата и время окончания трансляции(YYYY-MM-DD hh:mm)',
     )
@@ -93,6 +93,8 @@ class TechCommLineConstructor(models.Model):
     place = models.ForeignKey(
         'PlaceInsideBT',
         on_delete=models.CASCADE,
+        blank=True,
+        null=True
     )
     pts_request = models.ForeignKey(
         'PtsRequest',
