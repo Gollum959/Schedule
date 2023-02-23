@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from users.models import User
 from pts_config.models import PtsConstructor
-from place_broadcast.models import PlaceConstructor
+from place_broadcast.models import PlaceConstructor, EventType
 from pts_requests.abstract_models import NameModel, LineConstructor
 
 
@@ -139,6 +139,10 @@ class PtsRequest(models.Model):
         PlaceConstructor,
         on_delete=models.CASCADE,
     )
+    event_type = models.ForeignKey(
+        EventType,
+        on_delete=models.CASCADE,
+    )
     type = models.ForeignKey(
         BroadCastType, on_delete=models.CASCADE,
     )
@@ -196,11 +200,11 @@ class PtsRequest(models.Model):
         choices=STATUS,
         default=ON_APPROVAL
     )
-    image = models.ImageField(
-        'Картинка или pdf',
-        upload_to='plans/',
-        blank=True
-    )
+    # image = models.ImageField(
+    #     'Картинка или pdf',
+    #     upload_to='plans/',
+    #     blank=True
+    # )
     comment = models.TextField(
         'Комментарий к Заявке',
         max_length=2000,

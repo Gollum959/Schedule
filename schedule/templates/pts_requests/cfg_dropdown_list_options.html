@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for cfg in cfgs %}
+  <option value="{{ cfg.pk }}">{{ cfg.get_base_name }}</option>
+{% endfor %}

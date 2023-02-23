@@ -1,4 +1,5 @@
 from datetime import date, timedelta, datetime
+from django.db.models import Q
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
@@ -7,6 +8,7 @@ from typing import Any, Dict
 
 from place_broadcast.models import PlaceConstructor, EventType
 from pts_requests.models import PtsRequest
+from pts_config.models import PtsConstructor
 from pts_requests.forms import (AddRequestFrom,
                                 ModerateRequestFrom,
                                 CommLineFormset,
@@ -167,8 +169,8 @@ def load_places(request):
     city_id = request.GET.get('city_name')
     if city_id:
         places = PlaceConstructor.objects.filter(
-            city_name=city_id,
-            author__direction=request.user.direction).order_by('name')
+            city_name=city_id, ).order_by('name')
+            # author__direction=request.user.direction).order_by('name')
     else:
         places = PlaceConstructor.objects.none()
     return render(
@@ -178,15 +180,30 @@ def load_places(request):
     )
 
 
-def load_event_type(request):
-    place_id = request.GET.get('place')
-    if place_id:
-        event_types = EventType.objects.filter(
-            placeconstructor__pk=place_id).order_by('name')
+def load_pts_cfg(request):
+    event_id = request.GET.get('event_id')
+    place_id = request.GET.get('place_id')
+    if event_id:
+        cfgs = PtsConstructor.objects.filter(
+            place=place_id, event_type=event_id).filter(
+            Q(author=request.user) | Q(base_conf=True)).order_by('name')
     else:
-        event_types = EventType.objects.none()
+        cfgs = PtsConstructor.objects.none()
     return render(
         request,
-        'pts_requests/event_type_dropdown_list_options.html',
-        {'event_types': event_types}
+        'pts_requests/cfg_dropdown_list_options.html',
+        {'cfgs': cfgs}
     )
+
+# def load_event_type(request):
+#     place_id = request.GET.get('place')
+#     if place_id:
+#         event_types = EventType.objects.filter(
+#             placeconstructor__pk=place_id).order_by('name')
+#     else:
+#         event_types = EventType.objects.none()
+#     return render(
+#         request,
+#         'pts_requests/event_type_dropdown_list_options.html',
+#         {'event_types': event_types}
+#     )

@@ -14,25 +14,25 @@ class AddRequestFrom(ModelForm):
         queryset=PlaceCity.objects.all(),
     )
     event_type = ModelChoiceField(queryset=EventType.objects.all())
+    pts_cfg = ModelChoiceField(queryset=PlaceConstructor.objects.all())
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.fields['city_name'].queryset = PlaceCity.objects.filter(
-            placeconstructor__isnull=False,
-            placeconstructor__author__direction=self.user.direction).distinct()
+            placeconstructor__isnull=False, ).distinct()
+            # placeconstructor__author__direction=self.user.direction).distinct() это проверка на наличие мест созданых дирекцией пользователя
         self.fields['place'].queryset = PlaceConstructor.objects.none()
-        self.fields['event_type'].queryset = EventType.objects.none()
-
+        self.fields['pts_cfg'].queryset = PtsConstructor.objects.none()
         if 'city_name' in self.data:
             try:
                 city_id = int(self.data.get('city_name'))
                 self.fields['place'].queryset = (
                     PlaceConstructor.objects.filter(
-                        author=self.user,
                         city_name=city_id
                     )
                 )
+                self.fields['pts_cfg'].queryset = PtsConstructor.objects.all()
             except (ValueError, TypeError):
                 pass
 
@@ -40,35 +40,39 @@ class AddRequestFrom(ModelForm):
             place = PlaceConstructor.objects.get(pk=self.instance.place_id)
             self.fields['city_name'].initial = place.city_name
             self.fields['place'].queryset = PlaceConstructor.objects.filter(
-                author=self.user,
                 city_name=place.city_name.pk
             )
+            self.fields['pts_cfg'].queryset = PtsConstructor.objects.filter(
+                place=self.instance.place,
+                event_type=self.instance.event_type
+            )
 
-        self.fields['pts_cfg'] = ModelChoiceField(
-            queryset=PtsConstructor.objects.filter(author=self.user),
-            empty_label="(Nothing)"
-        )
+        self.fields['event_type'].queryset = EventType.objects.filter(direction=self.user.direction)
 
-    image = forms.FileField()
+        # self.fields['pts_cfg'] = ModelChoiceField(
+        #     queryset=PtsConstructor.objects.filter(author=self.user),
+        #     empty_label="(Nothing)"
+        # )
 
-    def clean_image(self):
-        uploaded_file = self.cleaned_data['image']
-        try:
-            im = forms.ImageField()
-            im.to_python(uploaded_file)
-        except forms.ValidationError:
-            name, ext = os.path.splitext(uploaded_file.name)
-            if ext not in ['.pdf', '.PDF']:
-                raise forms.ValidationError(
-                    "Only images and PDF files allowed")
-        return uploaded_file
+    # image = forms.FileField()
+
+    # def clean_image(self):
+    #     uploaded_file = self.cleaned_data['image']
+    #     try:
+    #         im = forms.ImageField()
+    #         im.to_python(uploaded_file)
+    #     except forms.ValidationError:
+    #         name, ext = os.path.splitext(uploaded_file.name)
+    #         if ext not in ['.pdf', '.PDF']:
+    #             raise forms.ValidationError(
+    #                 "Only images and PDF files allowed")
+    #     return uploaded_file
 
     class Meta:
         model = PtsRequest
         fields = [
             'name', 'city_name', 'place', 'event_type', 'broadcast_start_date',
-            'broadcast_end_date', 'place', 'type', 'pts_cfg', 'image',
-            'commentator_monitor', 'commentator_console', 'commentator_headset'
+            'broadcast_end_date', 'place', 'type', 'pts_cfg',
         ]
 
 
@@ -99,7 +103,7 @@ class AddCommLine(ModelForm):
 
     class Meta:
         model = CommLineConstructor
-        fields = ['direction', 'custom', 'quantity']
+        fields = ['direction', 'custom', 'quantity', 'start', 'end', ]
 
 
 CommLineFormset = inlineformset_factory(

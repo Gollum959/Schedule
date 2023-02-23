@@ -43,9 +43,9 @@ class PlaceConstructor(models.Model):
         'PlaceCity',
         on_delete=models.CASCADE,
     )
-    event_type = models.ManyToManyField(
-        'EventType',
-    )
+    # event_type = models.ManyToManyField(
+    #     'EventType',
+    # )
     address = models.CharField('Адрес', max_length=300)
     contact_name = models.CharField(
         'Name of person in charge at the facility',

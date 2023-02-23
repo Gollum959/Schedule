@@ -29,7 +29,7 @@
             {% endif %}                 
           </div> {% endcomment %}
           <div class="card-body">        
-            <form method="post" enctype="multipart/form-data" id="requestForm" data-events-url="{% url 'pts_requests:ajax_load_event_types' %}" data-places-url="{% url 'pts_requests:ajax_load_places' %}">
+            <form method="post" enctype="multipart/form-data" id="requestForm" cfg-url="{% url 'pts_requests:ajax_load_cfg' %}" data-places-url="{% url 'pts_requests:ajax_load_places' %}">
               {% load user_filters %}
               {% csrf_token %}
               {% if form.errors %}
@@ -108,13 +108,37 @@
         },
         success: function (data) {
           $("#id_place").html(data);
-          $("#id_event_type").html('<option value="">---------</option>');
+          $("#id_event_type").val("");
         }
       });
-
     });
 
     $("#id_place").change(function () {
+      $.ajax({
+        success: function (data) {
+          $("#id_event_type").val("");
+        }
+      });
+    });
+
+    $("#id_event_type").change(function () {
+      var url = $("#requestForm").attr("cfg-url");
+      var eventId = $(this).val();
+      var placeId = $("#id_place").val();
+
+      $.ajax({
+        url: url,
+        data: {
+          'event_id': eventId,
+          'place_id': placeId
+        },
+        success: function (data) {
+          $("#id_pts_cfg").html(data);
+        }
+      });
+    });
+
+    {% comment %} $("#id_place").change(function () {
       var url = $("#requestForm").attr("data-events-url");
       var placeId = $(this).val();
 
@@ -128,7 +152,7 @@
         }
       });
 
-    });
+    }); {% endcomment %}
 
 
     const addMoreCommLineBtn = document.getElementById('add-more-commline')
@@ -140,6 +164,8 @@
       'comm-id', 
       'commline-form',
       'id_commlineconstructor_set-TOTAL_FORMS',
+      'id_commlineconstructor_set',
+      '',
       removeCommLineBtn,
       e))
     removeCommLineBtn.addEventListener('click', e => remove_form(
@@ -160,6 +186,8 @@
       'tech-comm-id', 
       'techcommline-form',
       'id_techcommlineconstructor_set-TOTAL_FORMS',
+      'id_techcommlineconstructor_set',
+      '',
       removeTechLineBtn,
       e))
     removeTechLineBtn.addEventListener('click',  e => remove_form(

@@ -239,6 +239,10 @@ class PtsConstructor(models.Model):
     def get_absolute_url(self):
         return reverse('config:config_detail', kwargs={'pk': self.pk})
 
+    @property
+    def get_base_name(self):
+        return f'{self.name}. Базовая' if self.base_conf else f'{self.name}'
+
     class Meta:
         verbose_name = 'Конфигурация ПТС'
         verbose_name_plural = 'PTS configs'

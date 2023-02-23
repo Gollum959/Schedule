@@ -33,15 +33,15 @@ function add_new_form(
 
       var idOfSelect = $(`#${brendId}`)
       idOfSelect.change(function () {
-        var url = $("#cfgForm").attr(brend_url);  // get the url of the `load_cities` view
-        var camId = $(this).val();  // get the selected country ID from the HTML input
-        $.ajax({                       // initialize an AJAX request
-          url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+        var url = $("#cfgForm").attr(brend_url);
+        var camId = $(this).val();
+        $.ajax({
+          url: url,
           data: {
-            'id': camId       // add the country id to the GET parameters
+            'id': camId
           },
-          success: function (data) {   // `data` is the return of the `load_cities` view function
-            $(`#${modelId}`).html(data);  // replace the contents of the city input with the data that came from the server
+          success: function (data) {
+            $(`#${modelId}`).html(data);
           }
         });
       });
