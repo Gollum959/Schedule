@@ -1,5 +1,6 @@
 from django.urls import path
-from place_broadcast.views import (PlacesBroadcastView,
+from place_broadcast.views import (CitiesBroadcastView,
+                                   PlacesBroadcastView,
                                    PlacesBroadcastDetail,
                                    PlacesBroadcastCreate,
                                    PlacesBroadcastEdit,
@@ -9,7 +10,7 @@ from place_broadcast.views import (PlacesBroadcastView,
 app_name = 'pts_broadcast'
 
 urlpatterns = [
-    path('', PlacesBroadcastView.as_view(), name='places'),
+    path('', CitiesBroadcastView.as_view(), name='places'),
     path(
         '<int:pk>/',
         PlacesBroadcastDetail.as_view(),
@@ -30,4 +31,5 @@ urlpatterns = [
         PlacesBroadcastEdit.as_view(),
         name='place_edit'
     ),
+    path('ajax/load-cfg/', PlacesBroadcastView.as_view(), name='ajax_load_places'),
 ]

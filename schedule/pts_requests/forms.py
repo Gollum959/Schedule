@@ -28,11 +28,13 @@ class AddRequestFrom(ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+
+        self.fields['place'].empty_label = 'Выберите площадку'
+        self.fields['type'].empty_label = 'Выберите вид работ'
+
         self.fields['city_name'].queryset = PlaceCity.objects.filter(
             placeconstructor__isnull=False, ).distinct()
         self.fields['place'].queryset = PlaceConstructor.objects.none()
-        self.fields['place'].empty_label = 'Выберите площадку'
-        self.fields['type'].empty_label = 'Выберите вид работ'
         self.fields['pts_cfg'].queryset = PtsConstructor.objects.none()
         if 'city_name' in self.data:
             try:

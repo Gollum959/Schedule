@@ -1,69 +1,10 @@
-{% extends 'base.html' %}
-{% block content %}
-<div class="container py-5">     
-  <h1>Список объектов</h1>
-  <div class="card">
-    <div class="card-body">
-      <select class="form-select" aria-label="Default select example">
-        <option selected id="id_city">Выбирите город</option>
-        <option value="1">Минск</option>
-        <option value="2">Город2 из базы</option>
-        <option value="3">Город3 из базы</option>
-      </select>
-    </div>  
-    <div class="card-body">
-      ТУТ ВСЕ ОБЪЕКТЫ С МИНСКОМ
-      {% for place in placeconstructor_list %}  
-      
-        {% if place.city_name == "Минск" %}
-        <article>    
-          <ul>
-            <li>
-              Название объекта': {{ place.name }}
-            </li>
-            <li>
-              Город: {{ place.city_name }}
-            </li>
-            <li>
-              Адрес: {{ place.address }}
-            </li>
-            <li>
-              <a href="{% url 'place:place_detail' place.pk %}">
-                Детальная информация по объекту
-              </a> 
-            </li>
-          </ul>
-        </article>
-         
-         {% endif %}
-      {% endfor %} 
-    </div>
+{% for place in placeconstructor_list %}
+  <hr style="border: 1px;">
+  <div class="row ms-1">{{ place.name }}</div>
+{% endfor %}
+<hr style="border: 1px;">
+<div class="row ms-1">
+  <div class="d-flex justify-content-end">
+    <a type="button" class="btn btn-primary" href="{% url 'place:place_create' %}?city_id={{ city_id }}">Добавить новый объект</a>
+  </div>
 </div>
-
-
-   {% for place in placeconstructor_list %}  
-      <article>    
-        <ul>
-          <li>
-            Название объекта': {{ place.name }}
-          </li>
-          <li>
-            Город: {{ place.city_name }}
-          </li>
-          <li>
-            Адрес: {{ place.address }}
-          </li>
-          <li>
-            <a href="{% url 'place:place_detail' place.pk %}">
-              Детальная информация по объекту
-            </a> 
-          </li>
-        </ul>
-      </article>
-      {% if not forloop.last %}<hr>{% endif %}
-    {% endfor %}  
-    <a class="btn btn-primary" href="{% url 'place:place_create' %}">
-      Добавить новый объект
-    </a> 
-  
-{% endblock %} 

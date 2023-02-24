@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="container py-3">     
+    <h1>Список объектов</h1>
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-4">
+            <select class="form-select" id="id_city">
+              <option value=0 selected>Выбирите город</option>
+              {% for city in placecity_list %}
+                <option value="{{ city.id }}">{{ city.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div id="list_places" class="row mt-5" places-url="{% url 'place:ajax_load_places' %}">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    $("#id_city").change(function () {
+      var url = $("#list_places").attr("places-url");
+      var cityId = $(this).val();
+
+      $.ajax({
+        url: url,
+        data: {
+          'city_id': cityId
+        },
+        success: function (data) {
+          $("#list_places").html(data);
+        }
+      });
+    });
+
+  </script>
+{% endblock %} 
+
+    {% comment %} <div class="card-body">
+      ТУТ ВСЕ ОБЪЕКТЫ С МИНСКОМ
+      {% for place in placeconstructor_list %}  
+      
+        {% if place.city_name == "Минск" %}
+        <article>    
+          <ul>
+            <li>
+              Название объекта': {{ place.name }}
+            </li>
+            <li>
+              Город: {{ place.city_name }}
+            </li>
+            <li>
+              Адрес: {{ place.address }}
+            </li>
+            <li>
+              <a href="{% url 'place:place_detail' place.pk %}">
+                Детальная информация по объекту
+              </a> 
+            </li>
+          </ul>
+        </article>
+         
+         {% endif %}
+      {% endfor %} 
+    </div>
+</div>
+
+
+   {% for place in placeconstructor_list %}  
+      <article>    
+        <ul>
+          <li>
+            Название объекта': {{ place.name }}
+          </li>
+          <li>
+            Город: {{ place.city_name }}
+          </li>
+          <li>
+            Адрес: {{ place.address }}
+          </li>
+          <li>
+            <a href="{% url 'place:place_detail' place.pk %}">
+              Детальная информация по объекту
+            </a> 
+          </li>
+        </ul>
+      </article>
+      {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}  
+    <a class="btn btn-primary" href="{% url 'place:place_create' %}">
+      Добавить новый объект
+    </a> 
+   {% endcomment %}

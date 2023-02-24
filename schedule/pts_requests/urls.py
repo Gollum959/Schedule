@@ -23,5 +23,9 @@ urlpatterns = [
     ),
     path('ajax/load-places/', load_places, name='ajax_load_places'),
     path('ajax/load-cfg/', load_pts_cfg, name='ajax_load_cfg'),
-    # path('ajax/load-event-types/', load_event_type, name='ajax_load_event_types'),
+    # path(
+    #     'ajax/load-event-types/',
+    #     load_event_type,
+    #     name='ajax_load_event_types'
+    # ),
 ]

@@ -27,6 +27,16 @@ class CityBroadcastCreate(LoginRequiredMixin, CreateView):
     #     return super().form_valid(form)
 
 
+class CitiesBroadcastView(LoginRequiredMixin, ListView):
+    """User places templates list view"""
+    login_url = reverse_lazy('users:login')
+    model = PlaceCity
+    template_name = 'place_broadcast/list_cities.html'
+
+    # def get_queryset(self):
+    #     return PlaceConstructor.objects.filter(author=self.request.user)
+
+
 class PlacesBroadcastView(LoginRequiredMixin, ListView):
     """User places templates list view"""
     login_url = reverse_lazy('users:login')
@@ -34,7 +44,20 @@ class PlacesBroadcastView(LoginRequiredMixin, ListView):
     template_name = 'place_broadcast/list_places.html'
 
     def get_queryset(self):
-        return PlaceConstructor.objects.filter(author=self.request.user)
+        requests = PlaceConstructor.objects.none()
+        city_id = self.request.GET.get('city_id', None)
+        if city_id:
+            requests = PlaceConstructor.objects.filter(city_name=city_id)
+
+        return requests
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        data = super().get_context_data(**kwargs)
+        data['city_id'] = self.request.GET.get('city_id', None)
+
+        return data
+    # def get_queryset(self):
+    #     return PlaceConstructor.objects.filter(author=self.request.user)
 
 
 class PlacesBroadcastDetail(
@@ -55,7 +78,7 @@ class PlacesBroadcastCreate(LoginRequiredMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(PlacesBroadcastCreate, self).get_form_kwargs()
-        kwargs.update({'cities': self.request.GET.get('cities')})
+        kwargs.update({'city_id': self.request.GET.get('city_id')})
         return kwargs
 
     def form_valid(self, form):

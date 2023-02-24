@@ -6,7 +6,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.urls import reverse_lazy
 from typing import Any, Dict
 
-from place_broadcast.models import PlaceConstructor, EventType
+from place_broadcast.models import PlaceConstructor
 from pts_requests.models import PtsRequest
 from pts_config.models import PtsConstructor
 from pts_requests.forms import (AddRequestFrom,
@@ -180,7 +180,7 @@ def load_places(request):
     if city_id:
         places = PlaceConstructor.objects.filter(
             city_name=city_id, ).order_by('name')
-            # author__direction=request.user.direction).order_by('name')
+        # author__direction=request.user.direction).order_by('name')
     else:
         places = PlaceConstructor.objects.none()
     return render(
