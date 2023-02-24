@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}<title></title>{% endblock %}
 {% block content %}   
+  {% load crispy_forms_tags %}
   <style>
     .button_add {
       margin-bottom: 10px;
@@ -17,72 +18,64 @@
       display: none
     }
   </style>
-  <div class="container py-5">
+  <div class="container p-3">
     <div class="row justify-content-center">
-      <div class="col-md-8 p-5">
-        <div class="card">
-          {% comment %} <div class="card-header">   
-            {% if is_edit %}
-              Редактировать запись
-            {% else %}
-              Новый пост
-            {% endif %}                 
-          </div> {% endcomment %}
-          <div class="card-body">        
-            <form method="post" enctype="multipart/form-data" id="requestForm" cfg-url="{% url 'pts_requests:ajax_load_cfg' %}" data-places-url="{% url 'pts_requests:ajax_load_places' %}">
-              {% load user_filters %}
-              {% csrf_token %}
-              {% if form.errors %}
-                {% for field in form %}
-                  {% for error in field.errors %}            
-                    <div class="alert alert-danger">
-                      {{ error|escape }}
-                    </div>
-                  {% endfor %}
+      <div class="card">
+        <div class="card-body">        
+          <form method="post" enctype="multipart/form-data" id="requestForm" cfg-url="{% url 'pts_requests:ajax_load_cfg' %}" data-places-url="{% url 'pts_requests:ajax_load_places' %}" autocomplete="off">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-4">{{ form.city_name|as_crispy_field }}</div>
+              <div class="col-5">{{ form.place|as_crispy_field }}</div>
+              <div class="col-3">{{ form.event_type|as_crispy_field }}</div>
+            </div>
+            <div class="row">
+              <div class="col-8">{{ form.name|as_crispy_field }}</div>
+              <div class="col-4">{{ form.type|as_crispy_field }}</div>
+            </div>
+            <div class="row">
+              <div class="col-3">{{ form.broadcast_start_date|as_crispy_field }}</div>
+              <div class="col-3">{{ form.broadcast_end_date|as_crispy_field }}</div>
+              <div class="col-6">{{ form.pts_cfg|as_crispy_field }}</div>
+            </div>
+            <hr style="border: 1px;">
+            <div class="form-group row my-3 p-3">
+              <p class="fs-4 " >Блок заказа видеоканала:</p>
+              {{ commline.management_form }}
+              <div id="commline-form-list">
+                {% for form in commline %}
+                  <div class="commline-form">{{ form|crispy }}</div>
                 {% endfor %}
-                {% for error in form.non_field_errors %}
-                  <div class="alert alert-danger">
-                    {{ error|escape }}
-                  </div>
-                {% endfor %}
-              {% endif %}
-              {% for field in form %}
-                <div class="form-group row my-3 p-3">
-                  <label for="{{ field.id_for_label }}">
-                    {{ field.label }}
-                    {% if field.field.required %}
-                      <span class="required text-danger">*</span>
-                    {% endif %}
-                  </label>    
-                  {{ field }}
-                  {% if field.help_text %}
-                    <small id="{{ field.id_for_label }}-help" class="form-text text-muted">
-                      {{ field.help_text|safe }}
-                    </small>
-                  {% endif %}
-                </div>
-              {% endfor %}
-              
-              {% include 'includes/form.html' with form=commline style='commline' descr='Communication lines:' hiddenid='comm-id'%}
-              {% include 'includes/form.html' with form=techcommline style='techcommline' descr='Communication tech lines:' hiddenid='tech-comm-id'%}
-
-              <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">Create
-                  {% comment %} {% if is_edit %}
-                    Сохранить
-                  {% else %}
-                    Добавить
-                  {% endif %}   {% endcomment %}
-                </button>
               </div>
-            </form>
-          </div>
+              <div id="comm-id" class="hidden">{{ commline.empty_form|crispy }}</div>
+              <button id="add-more-commline" type="button" class="button_add">Add more</button>
+              <button id="remove-commline" type="button" class="hidden">Remove</button>
+            </div>
+            <hr style="border: 1px;">
+            <div class="form-group row my-3 p-3">
+              <p class="fs-4 " >Блок заказа служебной связи:</p>
+              {{ techcommline.management_form }}
+              <div id="techcommline-form-list">
+                {% for form in techcommline %}
+                  <div class="techcommline-form">{{ form|crispy }}</div>
+                {% endfor %}
+              </div>
+              <div id="tech-comm-id" class="hidden">{{ techcommline.empty_form|crispy }}</div>
+              <button id="add-more-techcommline" type="button" class="button_add">Add more</button>
+              <button id="remove-techcommline" type="button" class="hidden">Remove</button>
+            </div>
+            <hr style="border: 1px;">
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
 
   <script>
+
     $(document).ready(function() 
     {
        $('#id_broadcast_start_date').datetimepicker
@@ -138,23 +131,6 @@
       });
     });
 
-    {% comment %} $("#id_place").change(function () {
-      var url = $("#requestForm").attr("data-events-url");
-      var placeId = $(this).val();
-
-      $.ajax({
-        url: url,
-        data: {
-          'place': placeId
-        },
-        success: function (data) {
-          $("#id_event_type").html(data);
-        }
-      });
-
-    }); {% endcomment %}
-
-
     const addMoreCommLineBtn = document.getElementById('add-more-commline')
     const removeCommLineBtn = document.getElementById('remove-commline')
     const InitialCommlineFormCount = document.getElementsByClassName('commline-form').length
@@ -199,4 +175,5 @@
       e
     ))
   </script>
+
 {% endblock %} 

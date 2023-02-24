@@ -94,14 +94,24 @@ class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
         context = self.get_context_data()
         commlines = context['commline']
         techcommlines = context['techcommline']
-        self.object = form.save()
 
-        if commlines.is_valid():
+        if commlines.is_valid() and techcommlines.is_valid():
+            self.object = form.save()
             commlines.instance = self.object
             commlines.save()
-        if techcommlines.is_valid():
             techcommlines.instance = self.object
             techcommlines.save()
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
+        # self.object = form.save()
+
+        # if commlines.is_valid():
+        #     commlines.instance = self.object
+        #     commlines.save()
+        # if techcommlines.is_valid():
+        #     techcommlines.instance = self.object
+        #     techcommlines.save()
 
         return super().form_valid(form)
 

@@ -124,7 +124,6 @@ class PtsRequest(models.Model):
     name = models.CharField(
         'Название Трансляции',
         max_length=200,
-        default='None'
     )
 
     broadcast_start_date = models.DateTimeField(
@@ -138,13 +137,17 @@ class PtsRequest(models.Model):
     place = models.ForeignKey(
         PlaceConstructor,
         on_delete=models.CASCADE,
+        verbose_name='Площадка',
     )
     event_type = models.ForeignKey(
         EventType,
         on_delete=models.CASCADE,
+        verbose_name='Вид события'
     )
     type = models.ForeignKey(
-        BroadCastType, on_delete=models.CASCADE,
+        BroadCastType,
+        on_delete=models.CASCADE,
+        verbose_name='Тип работы'
     )
     start_date = models.DateTimeField(
         verbose_name='Дата и время выезда ПТС',

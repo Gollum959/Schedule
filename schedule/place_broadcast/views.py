@@ -18,13 +18,13 @@ class CityBroadcastCreate(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         data = super().get_context_data(**kwargs)
-        data['cities'] = PlaceCity.objects.filter(author=self.request.user)
+        data['cities'] = PlaceCity.objects.all()
         return data
 
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        self.object = form.save()
-        return super().form_valid(form)
+    # def form_valid(self, form):
+    #     form.instance.author = self.request.user
+    #     self.object = form.save()
+    #     return super().form_valid(form)
 
 
 class PlacesBroadcastView(LoginRequiredMixin, ListView):
@@ -56,7 +56,6 @@ class PlacesBroadcastCreate(LoginRequiredMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super(PlacesBroadcastCreate, self).get_form_kwargs()
         kwargs.update({'cities': self.request.GET.get('cities')})
-        kwargs.update({'user': self.request.user})
         return kwargs
 
     def form_valid(self, form):

@@ -1,4 +1,3 @@
-import os
 from django.forms import ModelForm, ModelChoiceField, inlineformset_factory
 from django import forms
 
@@ -12,17 +11,28 @@ from pts_config.models import PtsConstructor
 class AddRequestFrom(ModelForm):
     city_name = ModelChoiceField(
         queryset=PlaceCity.objects.all(),
+        label='Город',
+        empty_label='Выберите город'
     )
-    event_type = ModelChoiceField(queryset=EventType.objects.all())
-    pts_cfg = ModelChoiceField(queryset=PlaceConstructor.objects.all())
+    event_type = ModelChoiceField(
+        queryset=EventType.objects.all(),
+        label='Вид события',
+        empty_label='Вид события'
+    )
+    pts_cfg = ModelChoiceField(
+        queryset=PlaceConstructor.objects.all(),
+        label='Конфигурация ПТС',
+        empty_label='Выберите конфигурацию ПТС'
+    )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.fields['city_name'].queryset = PlaceCity.objects.filter(
             placeconstructor__isnull=False, ).distinct()
-            # placeconstructor__author__direction=self.user.direction).distinct() это проверка на наличие мест созданых дирекцией пользователя
         self.fields['place'].queryset = PlaceConstructor.objects.none()
+        self.fields['place'].empty_label = 'Выберите площадку'
+        self.fields['type'].empty_label = 'Выберите вид работ'
         self.fields['pts_cfg'].queryset = PtsConstructor.objects.none()
         if 'city_name' in self.data:
             try:
@@ -47,12 +57,9 @@ class AddRequestFrom(ModelForm):
                 event_type=self.instance.event_type
             )
 
-        self.fields['event_type'].queryset = EventType.objects.filter(direction=self.user.direction)
-
-        # self.fields['pts_cfg'] = ModelChoiceField(
-        #     queryset=PtsConstructor.objects.filter(author=self.user),
-        #     empty_label="(Nothing)"
-        # )
+        self.fields['event_type'].queryset = EventType.objects.filter(
+            direction=self.user.direction
+        )
 
     # image = forms.FileField()
 
