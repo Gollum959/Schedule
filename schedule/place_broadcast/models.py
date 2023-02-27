@@ -35,6 +35,9 @@ class EventType(models.Model):
     def __str__(self) -> str:
         return f'{self.name}'
 
+    class Meta:
+        ordering = ('name', )
+
 
 class PlaceConstructor(models.Model):
     """Broadcast address constructor"""
@@ -43,9 +46,9 @@ class PlaceConstructor(models.Model):
         'PlaceCity',
         on_delete=models.CASCADE,
     )
-    # event_type = models.ManyToManyField(
-    #     'EventType',
-    # )
+    event_type = models.ManyToManyField(
+         'EventType',
+    )
     address = models.CharField('Адрес', max_length=300)
     contact_name = models.CharField(
         'Name of person in charge at the facility',
@@ -69,4 +72,4 @@ class PlaceConstructor(models.Model):
     class Meta:
         verbose_name = 'Location of the broadcast'
         verbose_name_plural = 'Broadcast locations'
-        ordering = ('create_date', )
+        ordering = ('name', )

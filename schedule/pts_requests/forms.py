@@ -31,20 +31,32 @@ class AddRequestFrom(ModelForm):
 
         self.fields['place'].empty_label = 'Выберите площадку'
         self.fields['type'].empty_label = 'Выберите вид работ'
+        self.fields['event_type'].empty_label = 'Выберите вид события'
 
         self.fields['city_name'].queryset = PlaceCity.objects.filter(
             placeconstructor__isnull=False, ).distinct()
         self.fields['place'].queryset = PlaceConstructor.objects.none()
         self.fields['pts_cfg'].queryset = PtsConstructor.objects.none()
+        self.fields['event_type'].queryset = EventType.objects.none()
+
         if 'city_name' in self.data:
             try:
                 city_id = int(self.data.get('city_name'))
+                place_id = int(self.data.get('place'))
+                event_id = int(self.data.get('event_type'))
                 self.fields['place'].queryset = (
                     PlaceConstructor.objects.filter(
                         city_name=city_id
                     )
                 )
-                self.fields['pts_cfg'].queryset = PtsConstructor.objects.all()
+                self.fields['event_type'].queryset = EventType.objects.filter(
+                    placeconstructor__pk=place_id,
+                    direction=self.user.direction
+                )
+                self.fields['pts_cfg'].queryset = PtsConstructor.objects.filter(
+                    place=place_id,
+                    event_type=event_id
+                )
             except (ValueError, TypeError):
                 pass
 
@@ -54,14 +66,18 @@ class AddRequestFrom(ModelForm):
             self.fields['place'].queryset = PlaceConstructor.objects.filter(
                 city_name=place.city_name.pk
             )
+            self.fields['event_type'].queryset = EventType.objects.filter(
+                placeconstructor__pk=place.pk,
+                direction=self.user.direction
+            )
             self.fields['pts_cfg'].queryset = PtsConstructor.objects.filter(
                 place=self.instance.place,
                 event_type=self.instance.event_type
             )
 
-        self.fields['event_type'].queryset = EventType.objects.filter(
-            direction=self.user.direction
-        )
+        # self.fields['event_type'].queryset = EventType.objects.filter(
+        #     direction=self.user.direction
+        # )
 
     # image = forms.FileField()
 

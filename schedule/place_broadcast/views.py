@@ -1,4 +1,5 @@
 from typing import Any, Dict
+from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
@@ -14,17 +15,19 @@ class CityBroadcastCreate(LoginRequiredMixin, CreateView):
     model = PlaceCity
     fields = ('name', )
     template_name = 'place_broadcast/create_city.html'
-    success_url = reverse_lazy('place:city_create')
+    # success_url = reverse_lazy('place:city_create')
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        data = super().get_context_data(**kwargs)
-        data['cities'] = PlaceCity.objects.all()
-        return data
+    # def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    #     data = super().get_context_data(**kwargs)
+    #     data['cities'] = PlaceCity.objects.all()
+    #     return data
 
-    # def form_valid(self, form):
-    #     form.instance.author = self.request.user
-    #     self.object = form.save()
-    #     return super().form_valid(form)
+    def form_valid(self, form):
+        instance = form.save()
+        return HttpResponse(
+            f'<script>opener.closePopup(window, {instance.pk}, {instance},'
+            f' "#id_city");</script>'
+        )
 
 
 class CitiesBroadcastView(LoginRequiredMixin, ListView):

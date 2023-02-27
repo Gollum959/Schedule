@@ -6,7 +6,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.urls import reverse_lazy
 from typing import Any, Dict
 
-from place_broadcast.models import PlaceConstructor
+from place_broadcast.models import PlaceConstructor, EventType
 from pts_requests.models import PtsRequest
 from pts_config.models import PtsConstructor
 from pts_requests.forms import (AddRequestFrom,
@@ -94,7 +94,7 @@ class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
         context = self.get_context_data()
         commlines = context['commline']
         techcommlines = context['techcommline']
-
+        print(commlines)
         if commlines.is_valid() and techcommlines.is_valid():
             self.object = form.save()
             commlines.instance = self.object
@@ -205,15 +205,18 @@ def load_pts_cfg(request):
         {'cfgs': cfgs}
     )
 
-# def load_event_type(request):
-#     place_id = request.GET.get('place')
-#     if place_id:
-#         event_types = EventType.objects.filter(
-#             placeconstructor__pk=place_id).order_by('name')
-#     else:
-#         event_types = EventType.objects.none()
-#     return render(
-#         request,
-#         'pts_requests/event_type_dropdown_list_options.html',
-#         {'event_types': event_types}
-#     )
+
+def load_event_type(request):
+    place_id = request.GET.get('place_id')
+    if place_id:
+        event_types = EventType.objects.filter(
+            placeconstructor__pk=place_id,
+            direction=request.user.direction
+        ).order_by('name')
+    else:
+        event_types = EventType.objects.none()
+    return render(
+        request,
+        'pts_requests/event_type_dropdown_list_options.html',
+        {'event_types': event_types}
+    )

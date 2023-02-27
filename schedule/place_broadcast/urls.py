@@ -31,5 +31,9 @@ urlpatterns = [
         PlacesBroadcastEdit.as_view(),
         name='place_edit'
     ),
-    path('ajax/load-cfg/', PlacesBroadcastView.as_view(), name='ajax_load_places'),
+    path(
+        'ajax/load-places/',
+        PlacesBroadcastView.as_view(),
+        name='ajax_load_places'
+    ),
 ]

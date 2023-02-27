@@ -26,9 +26,9 @@
           <form method="post" enctype="multipart/form-data" id="requestForm" cfg-url="{% url 'pts_requests:ajax_load_cfg' %}" data-places-url="{% url 'pts_requests:ajax_load_places' %}" autocomplete="off">
             {% csrf_token %}
             <div class="row">
-              <div class="col-4">{{ form.city_name|as_crispy_field }}</div>
+              <div class="col-3">{{ form.city_name|as_crispy_field }}</div>
               <div class="col-5">{{ form.place|as_crispy_field }}</div>
-              <div class="col-3">{{ form.event_type|as_crispy_field }}</div>
+              <div id="eventField" event-type-url="{% url 'pts_requests:ajax_load_event_types' %}" class="col-4">{{ form.event_type|as_crispy_field }}</div>
             </div>
             <div class="row">
               <div class="col-8">{{ form.name|as_crispy_field }}</div>
@@ -103,14 +103,23 @@
         success: function (data) {
           $("#id_place").html(data);
           $("#id_event_type").val("");
+          $("#id_pts_cfg").val("");
         }
       });
     });
 
     $("#id_place").change(function () {
+      var url = $("#eventField").attr("event-type-url");
+      var placeId = $(this).val();
+  
       $.ajax({
+        url: url,
+        data: {
+          'place_id': placeId
+        },
         success: function (data) {
-          $("#id_event_type").val("");
+          $("#id_event_type").html(data);
+          $("#id_pts_cfg").val("");
         }
       });
     });
