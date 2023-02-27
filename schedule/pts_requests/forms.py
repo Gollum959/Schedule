@@ -4,7 +4,8 @@ from django import forms
 from place_broadcast.models import PlaceConstructor, PlaceCity, EventType
 from pts_requests.models import (PtsRequest,
                                  CommLineConstructor,
-                                 TechCommLineConstructor,)
+                                 TechCommLineConstructor,
+                                 InternetLineConstructor)
 from pts_config.models import PtsConstructor
 
 
@@ -143,12 +144,27 @@ class AddTechCommLine(ModelForm):
 
     class Meta:
         model = TechCommLineConstructor
-        fields = ['type', 'place', 'quantity']
+        fields = ['type', 'place', 'quantity', 'start', 'end', ]
 
 
 TechCommLineFormset = inlineformset_factory(
     PtsRequest, TechCommLineConstructor,
     form=AddTechCommLine,
+    extra=0,
+    can_delete=True
+)
+
+
+class AddInternetLine(ModelForm):
+
+    class Meta:
+        model = InternetLineConstructor
+        fields = ['speed', 'quantity', 'start', 'end', ]
+
+
+InternetLineFormset = inlineformset_factory(
+    PtsRequest, InternetLineConstructor,
+    form=AddInternetLine,
     extra=0,
     can_delete=True
 )

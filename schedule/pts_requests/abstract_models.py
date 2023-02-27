@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class NameModel(models.Model):
@@ -13,25 +14,26 @@ class NameModel(models.Model):
 
 
 class LineConstructor(models.Model):
-    """Abstract model for direction."""
-    DIRECTION_TO = 'to_pts'
-    DIRECTION_FROM = 'from_pts'
-    DIRECTION_CUSTOM = 'custom'
-    DIRECTION = [
-        (DIRECTION_TO, 'От ЦА к ПТС'),
-        (DIRECTION_FROM, 'От ПТС к ЦА'),
-        (DIRECTION_CUSTOM, 'Другое'),
-    ]
-    custom = models.CharField(
-        'Custom direction',
-        max_length=200,
-        blank=True
+    """Abstract model for commline."""
+
+    start = models.DateTimeField(
+        verbose_name='Дата и время начала',
+        help_text='Дата и время начала трансляции(YYYY-MM-DD hh:mm)',
     )
-    direction = models.CharField(
-        verbose_name='Direction',
-        max_length=20,
-        choices=DIRECTION,
+    end = models.DateTimeField(
+        verbose_name='Дата и время окончания',
+        help_text='Дата и время окончания трансляции(YYYY-MM-DD hh:mm)',
     )
+
+    quantity = models.PositiveSmallIntegerField(
+        'Количество',
+        validators=(
+            MinValueValidator(1),
+            MaxValueValidator(25),
+        ),
+        default=0,
+    )
+
     pts_request = models.ForeignKey(
         'PtsRequest',
         on_delete=models.CASCADE,

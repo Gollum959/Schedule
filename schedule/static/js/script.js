@@ -14,7 +14,7 @@ function add_new_form(
     const currentCommlineForms = document.getElementsByClassName(clonedElementClassName)
 
     if (currentCommlineForms.length>=0) {
-      removeLineBtn.setAttribute('class', '')
+      removeLineBtn.setAttribute('class', 'button_add')
     }
     var addedFormCount = currentCommlineForms.length
 

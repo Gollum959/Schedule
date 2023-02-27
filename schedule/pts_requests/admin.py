@@ -2,7 +2,8 @@ from django.contrib import admin
 
 from pts_requests.models import (PtsName, BroadCastType,
                                  PtsRequest, CommLineConstructor,
-                                 TechCommLineConstructor)
+                                 TechCommLineConstructor, PlaceInsideBT,
+                                 InternetLineConstructor)
 
 
 @admin.register(PtsName)
@@ -15,6 +16,12 @@ class PtsNameAdmin(admin.ModelAdmin):
 @admin.register(BroadCastType)
 class BroadCastTypeAdmin(admin.ModelAdmin):
     """Displaying the BroadCastType model in the admin panel."""
+    list_display = ('name', )
+
+
+@admin.register(PlaceInsideBT)
+class PlaceInsideBTAdmin(admin.ModelAdmin):
+    """Displaying the PlaceInsideBT model in the admin panel."""
     list_display = ('name', )
 
 
@@ -34,13 +41,26 @@ class CommLineConstructors(admin.TabularInline):
 @admin.register(TechCommLineConstructor)
 class TechCommLineConstructorAdmin(admin.ModelAdmin):
     """Displaying the TechCommLineConstructor model in the admin panel."""
-    fields = ('type', 'place', 'quantity')
+    fields = ('type', 'place', 'quantity', 'start', 'end')
 
 
 class TechCommLineConstructors(admin.TabularInline):
     """Display tech communication lines in PTS request."""
     model = TechCommLineConstructor
-    fields = ('type', 'place', 'quantity')
+    fields = ('type', 'place', 'quantity', 'start', 'end')
+    extra = 1
+
+
+@admin.register(InternetLineConstructor)
+class InternetLineConstructorAdmin(admin.ModelAdmin):
+    """Displaying the InternetLineConstructor model in the admin panel."""
+    fields = ('speed', 'quantity', 'start', 'end')
+
+
+class InternetLineConstructor(admin.TabularInline):
+    """Display InternetLineConstructor lines in PTS request."""
+    model = InternetLineConstructor
+    fields = ('speed', 'quantity', 'start', 'end')
     extra = 1
 
 
@@ -52,4 +72,8 @@ class PtsRequestAdmin(admin.ModelAdmin):
                     'start_date', 'end_date', 'get_pts', 'pts_cfg', 'author')
     list_filter = ('author', 'broadcast_start_date', )
     search_fields = ('author', )
-    inlines = (CommLineConstructors, TechCommLineConstructors)
+    inlines = (
+        CommLineConstructors,
+        TechCommLineConstructors,
+        InternetLineConstructor
+    )

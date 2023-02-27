@@ -4,13 +4,18 @@
   {% load crispy_forms_tags %}
   <style>
     .button_add {
-      margin-bottom: 10px;
+      margin: 10px;
+      width: 120px;
     }
     .commline-form {
       border-bottom: 1px solid black;
       margin-bottom: 10px;
     }
     .techcommline-form {
+      border-bottom: 1px solid black;
+      margin-bottom: 10px;
+    }
+    .internetline-form {
       border-bottom: 1px solid black;
       margin-bottom: 10px;
     }
@@ -49,8 +54,21 @@
                 {% endfor %}
               </div>
               <div id="comm-id" class="hidden">{{ commline.empty_form|crispy }}</div>
-              <button id="add-more-commline" type="button" class="button_add">Add more</button>
-              <button id="remove-commline" type="button" class="hidden">Remove</button>
+              <button id="add-more-commline" type="button" class="button_add">Добавить</button>
+              <button id="remove-commline" type="button" class="hidden">Удалить</button>
+            </div>
+            <hr style="border: 1px;">
+            <div class="form-group row my-3 p-3">
+              <p class="fs-4 " >Блок заказа интернет канала:</p>
+              {{ internetline.management_form }}
+              <div id="internetline-form-list">
+                {% for form in internetline %}
+                  <div class="internetline-form">{{ form|crispy }}</div>
+                {% endfor %}
+              </div>
+              <div id="internet-id" class="hidden">{{ internetline.empty_form|crispy }}</div>
+              <button id="add-more-internetline" type="button" class="button_add">Добавить</button>
+              <button id="remove-internetline" type="button" class="hidden">Удалить</button>
             </div>
             <hr style="border: 1px;">
             <div class="form-group row my-3 p-3">
@@ -62,12 +80,12 @@
                 {% endfor %}
               </div>
               <div id="tech-comm-id" class="hidden">{{ techcommline.empty_form|crispy }}</div>
-              <button id="add-more-techcommline" type="button" class="button_add">Add more</button>
-              <button id="remove-techcommline" type="button" class="hidden">Remove</button>
+              <button id="add-more-techcommline" type="button" class="button_add">Добавить</button>
+              <button id="remove-techcommline" type="button" class="hidden">Удалить</button>
             </div>
             <hr style="border: 1px;">
             <div class="d-flex justify-content-end">
-              <button type="submit" class="btn btn-primary">Create</button>
+              <button type="submit" class="btn btn-primary">Создать заявку</button>
             </div>
           </form>
         </div>
@@ -182,6 +200,28 @@
       'id_techcommlineconstructor_set-TOTAL_FORMS',
       InitialTechFormCount,
       removeTechLineBtn,
+      e
+    ))
+
+    const addMoreInternetLineBtn = document.getElementById('add-more-internetline')
+    const removeInternetLineBtn = document.getElementById('remove-internetline')
+    const InitialInternetFormCount = document.getElementsByClassName('internetline-form').length
+
+    addMoreInternetLineBtn.addEventListener('click', e => add_new_form(
+      'internetline-form-list',
+      'internet-id', 
+      'internetline-form',
+      'id_internetlineconstructor_set-TOTAL_FORMS',
+      'id_internetlineconstructor_set',
+      '',
+      removeInternetLineBtn,
+      e))
+    removeInternetLineBtn.addEventListener('click',  e => remove_form(
+      'internetline-form-list',
+      'internetline-form',
+      'id_internetlineconstructor_set-TOTAL_FORMS',
+      InitialInternetFormCount,
+      removeInternetLineBtn,
       e
     ))
   </script>

@@ -12,7 +12,8 @@ from pts_config.models import PtsConstructor
 from pts_requests.forms import (AddRequestFrom,
                                 ModerateRequestFrom,
                                 CommLineFormset,
-                                TechCommLineFormset)
+                                TechCommLineFormset,
+                                InternetLineFormset)
 from core.custom_view import (DetalInformationMixin,
                               UserToFormMixin,
                               EditOnlyAuthorMixin)
@@ -83,9 +84,11 @@ class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
         if self.request.POST:
             data['commline'] = CommLineFormset(self.request.POST)
             data['techcommline'] = TechCommLineFormset(self.request.POST)
+            data['internetline'] = InternetLineFormset(self.request.POST)
         else:
             data['commline'] = CommLineFormset()
             data['techcommline'] = TechCommLineFormset()
+            data['internetline'] = InternetLineFormset()
 
         return data
 
@@ -94,13 +97,19 @@ class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
         context = self.get_context_data()
         commlines = context['commline']
         techcommlines = context['techcommline']
-        print(commlines)
-        if commlines.is_valid() and techcommlines.is_valid():
+        internetlines = context['internetline']
+        if (
+            commlines.is_valid() and
+            techcommlines.is_valid() and
+            internetlines.is_valid()
+        ):
             self.object = form.save()
             commlines.instance = self.object
             commlines.save()
             techcommlines.instance = self.object
             techcommlines.save()
+            internetlines.instance = self.object
+            internetlines.save()
         else:
             return self.render_to_response(self.get_context_data(form=form))
 

@@ -1,4 +1,3 @@
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
 
@@ -37,24 +36,25 @@ class PtsName(NameModel):
 
 
 class CommLineConstructor(LineConstructor):
-    """Line of communication model."""
+    """Communication line model."""
 
-    start = models.DateTimeField(
-        verbose_name='Дата и время начала',
-        help_text='Дата и время начала трансляции(YYYY-MM-DD hh:mm)',
+    DIRECTION_TO = 'to_pts'
+    DIRECTION_FROM = 'from_pts'
+    DIRECTION_CUSTOM = 'custom'
+    DIRECTION = [
+        (DIRECTION_TO, 'От ЦА к ПТС'),
+        (DIRECTION_FROM, 'От ПТС к ЦА'),
+        (DIRECTION_CUSTOM, 'Другое'),
+    ]
+    custom = models.CharField(
+        'Custom direction',
+        max_length=200,
+        blank=True
     )
-    end = models.DateTimeField(
-        verbose_name='Дата и время окончания',
-        help_text='Дата и время окончания трансляции(YYYY-MM-DD hh:mm)',
-    )
-
-    quantity = models.PositiveSmallIntegerField(
-        'Количество',
-        validators=(
-            MinValueValidator(0),
-            MaxValueValidator(25),
-        ),
-        default=0,
+    direction = models.CharField(
+        verbose_name='Direction',
+        max_length=20,
+        choices=DIRECTION,
     )
 
 
@@ -66,9 +66,12 @@ class PlaceInsideBT(models.Model):
         max_length=50,
     )
 
+    def __str__(self) -> str:
+        return f'{self.name}'
 
-class TechCommLineConstructor(models.Model):
-    """Line of technical communication model."""
+
+class TechCommLineConstructor(LineConstructor):
+    """Technical line communication model."""
 
     FOUR_WIRE_COMM = 'four'
     VPN = 'vpn'
@@ -82,23 +85,30 @@ class TechCommLineConstructor(models.Model):
         max_length=30,
         choices=COMM_TYPE,
     )
-    quantity = models.PositiveSmallIntegerField(
-        'Количество',
-        validators=(
-            MinValueValidator(0),
-            MaxValueValidator(25),
-        ),
-        default=0,
-    )
     place = models.ForeignKey(
         'PlaceInsideBT',
         on_delete=models.CASCADE,
         blank=True,
         null=True
     )
-    pts_request = models.ForeignKey(
-        'PtsRequest',
-        on_delete=models.CASCADE,
+
+
+class InternetLineConstructor(LineConstructor):
+    """Internet line communication model."""
+
+    SPEED1 = '1'
+    SPEED2 = '2'
+    SPEED3 = '3'
+    COMM_TYPE = [
+        (SPEED1, '20/20 Мбит/c'),
+        (SPEED1, '80/40 Мбит/c'),
+        (SPEED1, '200/200 Мбит/c'),
+    ]
+
+    speed = models.CharField(
+        verbose_name='Скорость соединения',
+        max_length=30,
+        choices=COMM_TYPE,
     )
 
 
@@ -110,11 +120,13 @@ class PtsRequest(models.Model):
         (ONE_HEADSEAT, 'Одна ганитура'),
         (TWO_HEADSEAT, 'Две гарнитуры'),
     ]
+    DRAFT = 'draft'
     APPROVED = 'approved'
     REJECTED = 'rejected'
     ON_APPROVAL = 'approval'
     UNDER_REVISION = 'revision'
     STATUS = [
+        (DRAFT, 'Черновик'),
         (APPROVED, 'Утверждено'),
         (REJECTED, 'Отклонено'),
         (ON_APPROVAL, 'На утверждении'),
@@ -201,7 +213,7 @@ class PtsRequest(models.Model):
         verbose_name='Статус Заявки',
         max_length=30,
         choices=STATUS,
-        default=ON_APPROVAL
+        default=DRAFT
     )
     # image = models.ImageField(
     #     'Картинка или pdf',

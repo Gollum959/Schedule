@@ -6,12 +6,14 @@ class User(AbstractUser):
     """User model."""
 
     USER = 'user'
+    MAIN_DIRECTOR = 'main_director'
     MODERATOR = 'moderator'
     ADMIN = 'admin'
     ROLES = [
-        (USER, 'USER'),
-        (MODERATOR, 'MODERATOR'),
-        (ADMIN, 'ADMINISTRATOR'),
+        (USER, 'Режиссёр'),
+        (MAIN_DIRECTOR, 'Главный режисёр'),
+        (MODERATOR, 'Модератор'),
+        (ADMIN, 'Администратор'),
     ]
 
     GPC = 'gpc'
