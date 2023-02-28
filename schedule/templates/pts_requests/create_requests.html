@@ -120,8 +120,8 @@
         },
         success: function (data) {
           $("#id_place").html(data);
-          $("#id_event_type").val("");
-          $("#id_pts_cfg").val("");
+          $("#id_event_type").empty().append("<option selected value=''>Выберите вид события</option>");
+          $("#id_pts_cfg").empty().append("<option selected value=''>Выберите конфигурацию ПТС</option>");
         }
       });
     });
@@ -137,7 +137,7 @@
         },
         success: function (data) {
           $("#id_event_type").html(data);
-          $("#id_pts_cfg").val("");
+          $("#id_pts_cfg").empty().append("<option selected value=''>Выберите конфигурацию ПТС</option>");
         }
       });
     });

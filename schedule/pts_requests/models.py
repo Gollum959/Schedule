@@ -191,7 +191,7 @@ class PtsRequest(models.Model):
     )
     pts_cfg = models.ForeignKey(
         PtsConstructor,
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,
         verbose_name='Конфигурация ПТС',
     )
     commentator_monitor = models.BooleanField(
@@ -229,6 +229,28 @@ class PtsRequest(models.Model):
         User,
         on_delete=models.CASCADE,
     )
+
+    @staticmethod
+    def crete_clone(obj):
+        obj.pk = None
+        obj.clone_conf = True
+        obj.save()
+        return obj
+
+    @staticmethod
+    def delete_clone(id_request):
+        old_request = PtsRequest.objects.get(pk=id_request)
+        if old_request.pts_cfg.clone_conf:
+            old_request.pts_cfg.delete()
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.pts_cfg = self.crete_clone(self.pts_cfg)
+        else:
+            self.delete_clone(self.pk)
+            self.pts_cfg = self.crete_clone(self.pts_cfg)
+
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse('pts_requests:request_detail', kwargs={"pk": self.pk})

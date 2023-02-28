@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.db.models import Q
 
 from pts_config.abstract_models import StrName, ConstrQuantity, StrNameQuantity
 from users.models import User
@@ -213,7 +214,6 @@ class PtsConstructor(models.Model):
     name = models.CharField(
         'Название конфигурации ПТС',
         max_length=50,
-        unique=True
     )
     author = models.ForeignKey(
         User,
@@ -229,6 +229,10 @@ class PtsConstructor(models.Model):
     )
     base_conf = models.BooleanField(
         'Базовая комплектация',
+        default=False
+    )
+    clone_conf = models.BooleanField(
+        'Комплектация привязаная к заявке',
         default=False
     )
     create_date = models.DateTimeField(auto_now_add=True)
@@ -247,3 +251,10 @@ class PtsConstructor(models.Model):
         verbose_name = 'Конфигурация ПТС'
         verbose_name_plural = 'PTS configs'
         ordering = ('create_date', )
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name'],
+                condition=Q(clone_conf=False),
+                name='unique_name_not_clone'
+            )
+        ]

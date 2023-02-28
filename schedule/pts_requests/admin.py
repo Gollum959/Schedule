@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.db.models import Q
 
+from pts_config.models import PtsConstructor
 from pts_requests.models import (PtsName, BroadCastType,
                                  PtsRequest, CommLineConstructor,
                                  TechCommLineConstructor, PlaceInsideBT,
@@ -77,3 +79,11 @@ class PtsRequestAdmin(admin.ModelAdmin):
         TechCommLineConstructors,
         InternetLineConstructor
     )
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "pts_cfg":
+            kwargs["queryset"] = PtsConstructor.objects.filter(
+                Q(clone_conf=False) |
+                Q(ptsrequest=request.resolver_match.kwargs.get('object_id'))
+            )
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
