@@ -2,74 +2,106 @@
 {% block title %}<title></title>{% endblock %}
 {% block content %}
   {% load static %}
-  <div class="container py-5">
+  {% load crispy_forms_tags %}
+  <div class="container p-3">
     <div class="row justify-content-center">
-      <div class="col-md-8 p-5">
-        <div class="card">
-          <div class="card-body">        
-            <form method="post" enctype="multipart/form-data">
-              {% load user_filters %}
-              {% csrf_token %}
-              {% if form.errors %}
-                {% for field in form %}
-                  {% for error in field.errors %}            
-                    <div class="alert alert-danger">
-                      {{ error|escape }}
-                    </div>
-                  {% endfor %}
-                {% endfor %}
-                {% for error in form.non_field_errors %}
-                  <div class="alert alert-danger">
-                    {{ error|escape }}
-                  </div>
-                {% endfor %}
-              {% endif %}
-              {% for field in form %}
-                <div class="form-group row my-3 p-3">
-                  <label for="{{ field.id_for_label }}">
-                    {{ field.label }}
-                    {% if field.field.required %}
-                      <span class="required text-danger">*</span>
-                    {% endif %}
-                  </label>    
-                  {{ field }}
-                  {% if field.help_text %}
-                    <small id="{{ field.id_for_label }}-help" class="form-text text-muted">
-                      {{ field.help_text|safe }}
-                    </small>
-                  {% endif %}
-                </div>
-              {% endfor %}
-              <a href="{% url 'place:city_create' %}" id="add_city" onclick="return showAddPopup(this);"><img src="{% static 'img/icon-addlink.svg' %}"></a>
-              <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">Create
-                  {% comment %} {% if is_edit %}
-                    Сохранить
-                  {% else %}
-                    Добавить
-                  {% endif %}   {% endcomment %}
-                </button>
+      <h1>Создать площадку</h1>
+      <div class="card">
+        <div class="card-body">        
+          <form method="post" enctype="multipart/form-data" id="requestForm" autocomplete="off">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-3">{{ form.city_name|as_crispy_field }}</div>
+              <div class="col-md-auto" style="">
+                <a href="{% url 'place:city_create' %}" style="position:relative;top: 38px;right: 10px" id="add_city" onclick="return showAddPopup(this);">
+                  <img src="{% static 'img/icon-addlink.svg' %}" title="Добавить город">
+                </a>
               </div>
-            </form>
-          </div>
+              <div class="col-4">{{ form.name|as_crispy_field }}</div>
+              <div class="col">{{ form.address|as_crispy_field }}</div>
+            </div>
+            <hr style="border: 1px;">
+            <div class="row">
+              <div class="col-8">{{ form.contact_name|as_crispy_field }}</div>
+              <div class="col-4">{{ form.phone|as_crispy_field }}</div>
+            </div>
+            <div class="row">
+              <div class="col-6">{{ form.web|as_crispy_field }}</div>
+              <div class="col-6">{{ form.email_address|as_crispy_field }}</div>
+            </div>
+            <hr style="border: 1px;">
+            <div class="row">
+              <div class="col-12">{{ form.event_type|as_crispy_field }}</div>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary">Создать площадку</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
-
-  <script type="text/javascript">
-    function showAddPopup(triggeringLink) {
-        var name = triggeringLink.id.replace(/^add_/, '');
-        href = triggeringLink.href;
-        var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
-        win.focus();
-        return false;
-    }
-    function closePopup(win, newID, newRepr, id) {
-        $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
-        win.close();
-    }
+  <script>
+    $('input[name="phone"]').mask('(00) 000-00-00');
   </script>
-
-
 {% endblock %} 
+
+{% comment %} 
+{% comment %} <div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 p-5">
+      <div class="card">
+        <div class="card-body">        
+          <form method="post" enctype="multipart/form-data">
+            {% load user_filters %}
+            {% csrf_token %}
+            {% if form.errors %}
+              {% for field in form %}
+                {% for error in field.errors %}            
+                  <div class="alert alert-danger">
+                    {{ error|escape }}
+                  </div>
+                {% endfor %}
+              {% endfor %}
+              {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                  {{ error|escape }}
+                </div>
+              {% endfor %}
+            {% endif %}
+            {% for field in form %}
+              <div class="form-group row my-3 p-3">
+                <label for="{{ field.id_for_label }}">
+                  {{ field.label }}
+                  {% if field.field.required %}
+                    <span class="required text-danger">*</span>
+                  {% endif %}
+                </label>    
+                {{ field }}
+                {% if field.help_text %}
+                  <small id="{{ field.id_for_label }}-help" class="form-text text-muted">
+                    {{ field.help_text|safe }}
+                  </small>
+                {% endif %}
+              </div>
+            {% endfor %}
+            <a href="{% url 'place:city_create' %}" id="add_city" onclick="return showAddPopup(this);"><img src="{% static 'img/icon-addlink.svg' %}"></a>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary">Create
+                {% comment %} {% if is_edit %}
+                  Сохранить
+                {% else %}
+                  Добавить
+                {% endif %}   
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+</script>
+ {% endcomment %}

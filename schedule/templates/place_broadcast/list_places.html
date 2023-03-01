@@ -3,8 +3,10 @@
   <div class="row ms-1">{{ place.name }}</div>
 {% endfor %}
 <hr style="border: 1px;">
-<div class="row ms-1">
-  <div class="d-flex justify-content-end">
-    <a type="button" class="btn btn-primary" href="{% url 'place:place_create' %}?city_id={{ city_id }}">Добавить новый объект</a>
+{% if city_id != "0" %}
+  <div class="row ms-1">
+    <div class="d-flex justify-content-end">
+      <a type="button" class="btn btn-primary" href="{% url 'place:place_create' %}?city_id={{ city_id }}">Добавить новый объект</a>
+    </div>
   </div>
-</div>
+{% endif %}

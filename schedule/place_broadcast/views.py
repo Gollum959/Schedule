@@ -25,8 +25,8 @@ class CityBroadcastCreate(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         instance = form.save()
         return HttpResponse(
-            f'<script>opener.closePopup(window, {instance.pk}, {instance},'
-            f' "#id_city");</script>'
+            f'<script>opener.closePopup(window, '
+            f'"{instance.pk}", "{instance}", "#id_city_name");</script>'
         )
 
 
@@ -82,6 +82,7 @@ class PlacesBroadcastCreate(LoginRequiredMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super(PlacesBroadcastCreate, self).get_form_kwargs()
         kwargs.update({'city_id': self.request.GET.get('city_id')})
+        kwargs.update({'user': self.request.user})
         return kwargs
 
     def form_valid(self, form):

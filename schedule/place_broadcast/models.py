@@ -47,16 +47,17 @@ class PlaceConstructor(models.Model):
         on_delete=models.CASCADE,
     )
     event_type = models.ManyToManyField(
-         'EventType',
+        'EventType',
+        verbose_name='Виды событий',
     )
     address = models.CharField('Адрес', max_length=300)
     contact_name = models.CharField(
-        'Name of person in charge at the facility',
+        'ФИО ответственного лица на объекте',
         max_length=120,
     )
-    phone = models.CharField('Contact phone', max_length=25, blank=True)
+    phone = models.CharField('Контактный телефон', max_length=25, blank=True)
     web = models.URLField('Website Address', blank=True)
-    email_address = models.EmailField('Email Address', blank=True)
+    email_address = models.EmailField('E-mail', blank=True)
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -73,3 +74,9 @@ class PlaceConstructor(models.Model):
         verbose_name = 'Location of the broadcast'
         verbose_name_plural = 'Broadcast locations'
         ordering = ('name', )
+        constraints = [
+            models.UniqueConstraint(
+                fields=('name', 'city_name', 'author', ),
+                name='one_place_in_city_author'
+            )
+        ]
