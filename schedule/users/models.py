@@ -61,3 +61,12 @@ class User(AbstractUser):
     def is_moderator(self):
         """Return True if user is Moderator."""
         return self.role == self.MODERATOR
+
+    @property
+    def is_main_director_or_admin(self):
+        """Return True if user is Admin."""
+        return (
+            self.role == self.ADMIN or
+            self.is_superuser or
+            self.role == self.MAIN_DIRECTOR
+        )

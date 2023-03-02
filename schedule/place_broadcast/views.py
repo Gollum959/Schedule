@@ -15,12 +15,6 @@ class CityBroadcastCreate(LoginRequiredMixin, CreateView):
     model = PlaceCity
     fields = ('name', )
     template_name = 'place_broadcast/create_city.html'
-    # success_url = reverse_lazy('place:city_create')
-
-    # def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-    #     data = super().get_context_data(**kwargs)
-    #     data['cities'] = PlaceCity.objects.all()
-    #     return data
 
     def form_valid(self, form):
         instance = form.save()

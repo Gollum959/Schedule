@@ -1,9 +1,16 @@
 from typing import Any, Dict
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import (ListView,
+                                  DetailView,
+                                  CreateView,
+                                  UpdateView,
+                                  TemplateView)
 from django.urls import reverse_lazy
+from django.db.models import Q
 
+
+from place_broadcast.models import PlaceCity
 from pts_config.models import (PtsConstructor,
                                CameraModelBrend,
                                OpticModelBrend,
@@ -25,7 +32,30 @@ class PtsConfigView(LoginRequiredMixin, ListView):
     template_name = 'pts_config/list_config.html'
 
     def get_queryset(self):
-        return PtsConstructor.objects.filter(author=self.request.user)
+        requests = PtsConstructor.objects.none()
+        place_id = self.request.GET.get('place_id', None)
+        event_type_id = self.request.GET.get('event_type_id', None)
+        if place_id and event_type_id:
+            requests = PtsConstructor.objects.filter(
+                place=place_id,
+                event_type=event_type_id,
+                clone_conf=False
+            ).filter(
+                Q(author=self.request.user) | Q(base_conf=True)
+            ).order_by('-base_conf', 'name')
+
+        return requests
+
+
+class PtsConfigMainPage(LoginRequiredMixin, TemplateView):
+
+    login_url = reverse_lazy('users:login')
+    template_name = "pts_config/config_main.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cities'] = PlaceCity.objects.all()
+        return context
 
 
 class PtsConfigDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):

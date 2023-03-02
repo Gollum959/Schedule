@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <div class="container py-3">     
+    <h1>Конфигурации ПТС</h1>
+    <div class="card">
+      <div class="card-body">
+        <div class="row mt-5">
+          <div class="col-4">
+            <select class="form-select" id="id_city" data-places-url="{% url 'pts_requests:ajax_load_places' %}">
+              <option value=0 selected>Выбирите город</option>
+              {% for city in cities %}
+                <option value="{{ city.id }}">{{ city.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-4">
+            <select class="form-select" id="id_place" event-type-url="{% url 'pts_requests:ajax_load_event_types' %}">
+              <option value=0 selected>Выберите площадку</option>
+            </select>
+          </div>
+          <div class="col-4">
+            <select class="form-select" id="id_event" config-list-url="{% url 'config:ajax_load_cfg' %}">
+              <option value=0 selected>Выберите вид события</option>
+            </select>
+          </div>
+        </div>
+        <div id="list_cfg" class="row mt-5">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    $("#id_city").change(function () {
+      var url = $("#id_city").attr("data-places-url");
+      var cityId = $(this).val();
+
+      $.ajax({
+        url: url,
+        data: {
+          'city_name': cityId
+        },
+        success: function (data) {
+          $("#id_place").html(data);
+          $("#id_event").empty().append("<option selected value=''>Выберите вид события</option>");
+          $("#list_cfg").empty();
+        }
+      });
+    });
+
+    $("#id_place").change(function () {
+      var url = $("#id_place").attr("event-type-url");
+      var placeId = $(this).val();
+
+      $.ajax({
+        url: url,
+        data: {
+          'place_id': placeId
+        },
+        success: function (data) {
+          $("#id_event").html(data);
+          $("#list_cfg").empty();
+        }
+      });
+    });
+
+    $("#id_event").change(function () {
+      var url = $("#id_event").attr("config-list-url");
+      var eventId = $(this).val();
+      var placeId = $("#id_place").val();
+      $.ajax({
+        url: url,
+        data: {
+          'place_id': placeId,
+          'event_type_id': eventId
+        },
+        success: function (data) {
+          $("#list_cfg").html(data);
+        }
+      });
+    });
+
+  </script>
+
+{% endblock %} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %}   
+<div class="container py-5">     
+  <h1>Список Конфигураций</h1>
+  <div class="card">
+    <div class="card-body">
+      <select class="form-select" aria-label="Default select example">
+        <option selected id="id_city">Выбирите Вид спорта</option>
+        <option value="1">ВИДСПОРТА1 из базы</option>
+        <option value="2">ВИДСПОРТА2 из базы</option>
+        <option value="3">ВИДСПОРТА3 из базы</option>
+      </select>
+    </div>  
+    <div class="card-body">
+      ТУТ ВСЕ конфигурации для этого вида спорта
+
+
+
+
+
+
+<h1>Config template</h1>
+  {% for config in ptsconstructor_list %}  
+    <article>    
+      <ul>
+        <li>
+          Configurations name: {{ config.name }}
+        </li>
+        <li>
+          Date of creation: {{ config.create_date }}
+        </li>
+        <li>
+          <a href="{% url 'config:config_detail' config.pk %}">
+            detailed information
+          </a> 
+        </li>
+      </ul>
+    </article>
+    {% if not forloop.last %}<hr>{% endif %}
+  {% endfor %}
+  <a class="btn btn-primary" href="{% url 'config:config_create' %}">
+    add config
+  </a> 
+</div> {% endcomment %}

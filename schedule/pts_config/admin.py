@@ -69,9 +69,10 @@ class GfxPtsConstructor(admin.TabularInline):
 class PtsConstructorAdmin(admin.ModelAdmin):
     """Displaying the PtsConstructor model in the admin panel."""
 
-    fields = ('name', 'author', 'place', 'event_type', 'base_conf', 'clone_conf')
+    fields = ('name', 'author', 'place',
+              'event_type', 'base_conf', 'clone_conf')
     list_display = ('name', 'author')
-    list_filter = ('author', )
+    list_filter = ('author', 'clone_conf',)
     search_fields = ('name', )
     inlines = (
         CameraPtsConstructorInline,

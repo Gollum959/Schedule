@@ -1,47 +1,103 @@
-{% extends 'base.html' %}
-{% block content %}
+{% for conf in ptsconstructor_list %}
+  {% if conf.base_conf %}
+    <h3>Базовая конфигурации ПТС</h3>
+    <hr style="border: 1px;">
+    <div class="row ms-1 align-items-center">
+      <div class="col">
+        {{ conf.name }}
+      </div>
+      {% if user.is_main_director_or_admin %}
+        <div class="col d-flex justify-content-end">
+          <a type="button" id="new-city" class="btn btn-primary" href="{% url 'place:place_create' %}">Изменить базовую кофигурацию</a>
+        </div>
+      {% endif %}
+      <div class="col-md-auto d-flex justify-content-end">
+        <a type="button" id="new-city" class="btn btn-primary" href="{% url 'place:place_create' %}">Создать конфигурацию на основе базовой</a>
+      </div>
+    </div>
+    <hr style="border: 1px; margin-top: 15px">
+
+    {% if not forloop.last %}
+      <h3>Мои конфигурации ПТС</h3>
+    {% endif %}
+  {% else %}
+    <hr style="border: 1px; margin-top: 15px">
+    <div class="row ms-1 align-items-center">
+      <div class="col">{{ conf.name }}</div>
+      <div class="col d-flex justify-content-end">
+        <a type="button" id="new-city" class="btn btn-primary" href="{% url 'place:place_create' %}">Изменить кофигурацию</a>
+      </div>
+    </div>
+  {% endif %}
+{% endfor %}
+{% if not ptsconstructor_list and user.is_main_director_or_admin %}
+    <div class="col d-flex justify-content-end">
+      <a type="button" id="new-city" class="btn btn-primary" href="{% url 'place:place_create' %}">Добавить базовую кофигурацию</a>
+    </div>
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %}   
 <div class="container py-5">     
-  
-  <div class="container py-5">     
-    <h1>Список Конфигураций</h1>
-    <div class="card">
-      <div class="card-body">
-        <select class="form-select" aria-label="Default select example">
-          <option selected id="id_city">Выбирите Вид спорта</option>
-          <option value="1">ВИДСПОРТА1 из базы</option>
-          <option value="2">ВИДСПОРТА2 из базы</option>
-          <option value="3">ВИДСПОРТА3 из базы</option>
-        </select>
-      </div>  
-      <div class="card-body">
-        ТУТ ВСЕ конфигурации для этого вида спорта
-  
-  
-  
-  
-  
-  
-  <h1>Config template</h1>
-    {% for config in ptsconstructor_list %}  
-      <article>    
-        <ul>
-          <li>
-            Configurations name: {{ config.name }}
-          </li>
-          <li>
-            Date of creation: {{ config.create_date }}
-          </li>
-          <li>
-            <a href="{% url 'config:config_detail' config.pk %}">
-              detailed information
-            </a> 
-          </li>
-        </ul>
-      </article>
-      {% if not forloop.last %}<hr>{% endif %}
-    {% endfor %}
-    <a class="btn btn-primary" href="{% url 'config:config_create' %}">
-      add config
-    </a> 
-  </div>
-{% endblock %} 
+  <h1>Список Конфигураций</h1>
+  <div class="card">
+    <div class="card-body">
+      <select class="form-select" aria-label="Default select example">
+        <option selected id="id_city">Выбирите Вид спорта</option>
+        <option value="1">ВИДСПОРТА1 из базы</option>
+        <option value="2">ВИДСПОРТА2 из базы</option>
+        <option value="3">ВИДСПОРТА3 из базы</option>
+      </select>
+    </div>  
+    <div class="card-body">
+      ТУТ ВСЕ конфигурации для этого вида спорта
+
+
+
+
+
+
+<h1>Config template</h1>
+  {% for config in ptsconstructor_list %}  
+    <article>    
+      <ul>
+        <li>
+          Configurations name: {{ config.name }}
+        </li>
+        <li>
+          Date of creation: {{ config.create_date }}
+        </li>
+        <li>
+          <a href="{% url 'config:config_detail' config.pk %}">
+            detailed information
+          </a> 
+        </li>
+      </ul>
+    </article>
+    {% if not forloop.last %}<hr>{% endif %}
+  {% endfor %}
+  <a class="btn btn-primary" href="{% url 'config:config_create' %}">
+    add config
+  </a> 
+</div> {% endcomment %}

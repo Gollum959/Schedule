@@ -1,8 +1,10 @@
 from django.urls import path
-from pts_config.views import (PtsConfigView,
+from pts_config.views import (
+                              PtsConfigView,
                               PtsConfigDetail,
                               PtsConfigCreate,
                               PtsConfigEdit,
+                              PtsConfigMainPage,
                               load_camera_brend,
                               load_optic_brend,
                               load_server_brend,
@@ -11,7 +13,7 @@ from pts_config.views import (PtsConfigView,
 app_name = 'pts_config'
 
 urlpatterns = [
-    path('', PtsConfigView.as_view(), name='pts_configs'),
+    path('', PtsConfigMainPage.as_view(), name='pts_configs'),
     path(
         '<int:pk>/',
         PtsConfigDetail.as_view(),
@@ -42,5 +44,10 @@ urlpatterns = [
         'ajax/load-micro-model/',
         load_micro_brend,
         name='ajax_load_micro_model'
+    ),
+    path(
+        'ajax/load-place_cfg/',
+        PtsConfigView.as_view(),
+        name='ajax_load_cfg'
     ),
 ]

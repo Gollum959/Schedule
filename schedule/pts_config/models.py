@@ -235,6 +235,11 @@ class PtsConstructor(models.Model):
         'Комплектация привязаная к заявке',
         default=False
     )
+    image = models.ImageField(
+        'Картинка или pdf',
+        upload_to='plans/',
+        blank=True
+    )
     create_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:

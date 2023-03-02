@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.urls import reverse_lazy
 from typing import Any, Dict
+from django.http import HttpResponseRedirect
 
 from place_broadcast.models import PlaceConstructor, EventType
 from pts_requests.models import PtsRequest
@@ -122,7 +123,7 @@ class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
         #     techcommlines.instance = self.object
         #     techcommlines.save()
 
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
@@ -204,7 +205,7 @@ def load_pts_cfg(request):
     place_id = request.GET.get('place_id')
     if event_id:
         cfgs = PtsConstructor.objects.filter(
-            place=place_id, event_type=event_id).filter(
+            place=place_id, event_type=event_id, clone_conf=False).filter(
             Q(author=request.user) | Q(base_conf=True)).order_by('name')
     else:
         cfgs = PtsConstructor.objects.none()
