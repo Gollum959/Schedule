@@ -1,4 +1,6 @@
 from django.http import Http404
+from django.contrib.auth.mixins import AccessMixin
+from django.core.exceptions import PermissionDenied
 
 
 class DetalInformationMixin:
@@ -34,3 +36,30 @@ class EditOnlyAuthorMixin:
         if obj.author != self.request.user:
             raise Http404()
         return obj
+
+
+# class CreateOnlyMainDirectorMixin:
+#     """Permision only for for main director or admin"""
+
+#     def get_object(self, queryset=None):
+#         """Check that only author can see detail information"""
+#         obj = super(CreateOnlyMainDirectorMixin, self).get_object(
+#             queryset=queryset
+#         )
+#         if self.request.user.is_main_director_or_admin:
+#             raise Http404()
+#         return obj
+
+
+class CreateOnlyMainDirectorMixin(AccessMixin):
+    """Permision only for for main director or admin"""
+
+    def dispatch(self, request, *args, **kwargs):
+
+        if (
+            request.user.is_authenticated and
+            self.request.user.is_main_director_or_admin
+        ):
+            return super().dispatch(request, *args, **kwargs)
+
+        raise PermissionDenied('Permission denied')

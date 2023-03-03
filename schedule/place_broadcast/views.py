@@ -1,4 +1,5 @@
 from typing import Any, Dict
+from django.db import IntegrityError
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
@@ -81,7 +82,6 @@ class PlacesBroadcastCreate(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        self.object = form.save()
         return super().form_valid(form)
 
 
@@ -93,5 +93,4 @@ class PlacesBroadcastEdit(EditOnlyAuthorMixin, LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        self.object = form.save()
         return super().form_valid(form)

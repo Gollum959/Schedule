@@ -32,7 +32,7 @@
 {% endfor %}
 {% if not ptsconstructor_list and user.is_main_director_or_admin %}
     <div class="col d-flex justify-content-end">
-      <a type="button" id="new-city" class="btn btn-primary" href="{% url 'place:place_create' %}">Добавить базовую кофигурацию</a>
+      <a type="button" id="new-city" class="btn btn-primary" href="{% url 'config:config_create' %}?place={{place_id}}&event={{event_type_id}}">Добавить базовую кофигурацию</a>
     </div>
 {% endif %}
 

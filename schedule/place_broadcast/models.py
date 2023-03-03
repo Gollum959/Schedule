@@ -58,6 +58,10 @@ class PlaceConstructor(models.Model):
     phone = models.CharField('Контактный телефон', max_length=25, blank=True)
     web = models.URLField('Website Address', blank=True)
     email_address = models.EmailField('E-mail', blank=True)
+    judge_system = models.CharField(
+        'Судейская система',
+        max_length=150,
+        blank=True)
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

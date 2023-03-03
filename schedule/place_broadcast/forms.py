@@ -1,18 +1,24 @@
 from django import forms
 from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 
-from place_broadcast.models import PlaceConstructor
-from place_broadcast.models import EventType
+from place_broadcast.models import PlaceConstructor, PlaceCity, EventType
 
 
 class AddBroadcastPlace(forms.ModelForm):
+
+    city_name = forms.ModelChoiceField(
+        queryset=PlaceCity.objects.all(),
+        label='Город',
+        empty_label='Выберите город'
+    )
     name = forms.CharField(
         label='Название Объекта',
         validators=[RegexValidator(
             '^[0-9a-zA-ZА-я\s]*$',
             message='Только буквы и цифры'
         )],
-        widget=forms.TextInput(attrs={'placeholder': 'Введите название объекта'})
+        widget=forms.TextInput(attrs={'placeholder': 'Введите название объекта'}),
     )
     address = forms.CharField(
         label='Адрес',
@@ -46,6 +52,15 @@ class AddBroadcastPlace(forms.ModelForm):
             'data-mask': '(00) 000-00-00'
         }),
     )
+    judge = forms.CharField(required=False,)
+    judge_system = forms.CharField(
+        label=False,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Введите информацию о судейской системе',
+            'class': 'textinput form-control'
+        }),
+    )
 
     def __init__(self, *args, **kwargs):
         self.selected_city = kwargs.pop('city_id', None)
@@ -56,6 +71,19 @@ class AddBroadcastPlace(forms.ModelForm):
         )
         if self.selected_city:
             self.fields['city_name'].initial = self.selected_city
+
+    def clean(self):
+        city_name = self.cleaned_data.get('city_name')
+        name = self.cleaned_data.get('name')
+        dublicate = PlaceConstructor.objects.filter(city_name=city_name, name=name, author=self.user).count()
+        if dublicate > 0:
+            raise ValidationError(
+                f'Площадка с таким название уже существует в городе '
+                f'{city_name}'
+            )
+        if not self.cleaned_data.get('judge'):
+            self.cleaned_data['judge_system'] = ''
+        return self.cleaned_data
 
     class Meta:
         model = PlaceConstructor

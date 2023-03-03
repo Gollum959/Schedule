@@ -14,9 +14,21 @@ from pts_config.models import (PtsConstructor,
 
 class AddPtsConfigFrom(ModelForm):
 
+    def __init__(self, *args, **kwargs):
+        self.place_id = kwargs.pop('place', None)
+        self.event_id = kwargs.pop('event', None)
+        super().__init__(*args, **kwargs)
+        self.__init_and_disable(self.place_id, 'place')
+        self.__init_and_disable(self.event_id, 'event_type')
+
+    def __init_and_disable(self, field_id, field_name):
+        if field_id:
+            self.fields[field_name].initial = field_id
+            self.fields[field_name].disabled = True
+
     class Meta:
         model = PtsConstructor
-        fields = ('name', )
+        fields = ('place', 'event_type', 'name')
 
 
 class AddCamera(ModelForm):

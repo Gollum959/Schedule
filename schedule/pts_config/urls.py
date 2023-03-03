@@ -2,7 +2,7 @@ from django.urls import path
 from pts_config.views import (
                               PtsConfigView,
                               PtsConfigDetail,
-                              PtsConfigCreate,
+                              PtsBaseConfigCreate,
                               PtsConfigEdit,
                               PtsConfigMainPage,
                               load_camera_brend,
@@ -21,7 +21,7 @@ urlpatterns = [
     ),
     path(
         'create/',
-        PtsConfigCreate.as_view(),
+        PtsBaseConfigCreate.as_view(),
         name='config_create'
     ),
     path('create/<int:pk>/', PtsConfigEdit.as_view(), name='config_edit'),
