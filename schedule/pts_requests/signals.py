@@ -8,4 +8,3 @@ from pts_requests.models import PtsRequest
 def post_delete_cfg(sender, instance, *args, **kwargs):
     if instance.pts_cfg:
         instance.pts_cfg.delete()
-    print('jopa')

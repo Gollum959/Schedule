@@ -30,24 +30,16 @@ class AddPtsConfigFrom(forms.ModelForm):
         self.place_id = kwargs.pop('place', None)
         self.event_id = kwargs.pop('event', None)
         super().__init__(*args, **kwargs)
-        self.place_id = self.initial.get('place') if not self.place_id else self.place_id
-        self.event_id = self.initial.get('event_type') if not self.event_id else self.event_id
         
-        self.__init_and_disable(self.place_id, 'place')
-        self.__init_and_disable(self.event_id, 'event_type')
         self.fields['place'].label = 'Название объекта'
+        self.fields['place'].disabled = True
+        if self.place_id:
+            self.fields['place'].initial = self.place_id
+
         self.fields['event_type'].label = 'Вид события'
-
-    def __init_and_disable(self, field_id, field_name):
-        if field_id or self.initial.get(field_name):
-            print(field_id)
-            self.fields[field_name].initial = field_id
-            #self.fields[field_name].disabled = True
-
-    def clean(self):
-        cleaned_data = super().clean()
-        print(cleaned_data)
-        return cleaned_data
+        self.fields['event_type'].disabled = True
+        if self.event_id:
+            self.fields['event_type'].initial = self.event_id
 
     def clean_image(self):
         uploaded_file = self.cleaned_data['image']
@@ -64,6 +56,35 @@ class AddPtsConfigFrom(forms.ModelForm):
     class Meta:
         model = PtsConstructor
         fields = ('place', 'event_type', 'name', 'microphone_quantity', 'image')
+
+
+class AddPtsConfigOnBaseFrom(forms.ModelForm):
+
+    image = forms.FileField(required=False)
+    name = forms.CharField(
+        label='Название конфигурации ПТС',
+        validators=[RegexValidator(
+            '^[0-9a-zA-ZА-я\s]*$',
+            message='Только буквы и цифры'
+        )],
+        widget=forms.TextInput(attrs={'placeholder': 'Введите имя конфигурации'}),
+    )
+
+    def clean_image(self):
+        uploaded_file = self.cleaned_data['image']
+        try:
+            im = forms.ImageField()
+            im.to_python(uploaded_file)
+        except forms.ValidationError:
+            name, ext = os.path.splitext(uploaded_file.name)
+            if ext not in ['.pdf', '.PDF']:
+                raise forms.ValidationError(
+                    "Only images and PDF files allowed")
+        return uploaded_file
+
+    class Meta:
+        model = PtsConstructor
+        fields = ('name', 'microphone_quantity', 'image')
 
 
 class AddCamera(forms.ModelForm):

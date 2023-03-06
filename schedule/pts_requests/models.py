@@ -239,7 +239,6 @@ class PtsRequest(models.Model):
             old_request.pts_cfg.delete()
 
     def save(self, *args, **kwargs):
-        print(self.pk)
         if not self.pk:
             self.pts_cfg = self.crete_clone(self.pts_cfg)
         else:

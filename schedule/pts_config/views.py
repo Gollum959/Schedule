@@ -1,4 +1,5 @@
 from typing import Any, Dict
+from django import forms
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
@@ -10,15 +11,26 @@ from django.views.generic import (ListView,
                                   TemplateView)
 from django.urls import reverse_lazy
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from django.forms.models import model_to_dict
 
 
 from place_broadcast.models import PlaceCity
 from pts_config.models import (PtsConstructor,
                                CameraModelBrend,
+                               CameraPtsConstructor,
                                OpticModelBrend,
+                               OpticPtsConstructor,
                                ServerRecordingRepeatModelBrend,
+                               ServerRecordingRepeatConstructor,
+                               GfxPtsConstructor,
                                MicrophoneModelBrend)
 from pts_config.forms import (AddPtsConfigFrom,
+                              AddPtsConfigOnBaseFrom,
+                              AddCamera,
+                              AddOptic,
+                              AddServer,
+                              AddGfx,
                               CameraFormset,
                               OpticFormset,
                               ServerFormset,
@@ -86,7 +98,7 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
     template_name = 'pts_config/create_config.html'
     
     def get_form_kwargs(self):
-        kwargs = super(PtsBaseConfigCreate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs.update({'place': self.request.GET.get('place')})
         kwargs.update({'event': self.request.GET.get('event')})
         return kwargs
@@ -117,7 +129,6 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
         context = self.get_context_data()
         pts_cfg_forms = [context['camera'], context['optic'],
                          context['server'], context['gfx'],]
-        print(context['camera'].is_valid())
         if all([inline_form.is_valid() for inline_form in pts_cfg_forms]):
             self.object = form.save()
             for cfg_form in pts_cfg_forms:
@@ -129,10 +140,15 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
     
 
-class PtsConfigCreateOnBase(PtsBaseConfigCreate):
-    
+class PtsConfigCreateOnBase(CreateOnlyMainDirectorMixin, CreateView):
+
     BASE_CFG = False
-    
+    form_class = AddPtsConfigOnBaseFrom
+    model = PtsConstructor
+    template_name = 'pts_config/create_config_onbase.html'
+
+    # def __fill_formset(self, formset_model, formset_form, )
+
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         data = super().get_context_data(**kwargs)
         pts_cfg = {
@@ -141,19 +157,107 @@ class PtsConfigCreateOnBase(PtsBaseConfigCreate):
             'server': ServerFormset,
             'gfx': GfxFormset,
         }
+        pts_form_fill_cfg = {
+            'camera': {
+                'formset_model': CameraPtsConstructor,
+                'formset_form': AddCamera
+            },
+            'optic': {
+                'formset_model': OpticPtsConstructor,
+                'formset_form': AddOptic
+            },
+            'server': {
+                'formset_model': ServerRecordingRepeatConstructor,
+                'formset_form': AddServer
+            },
+            'gfx': {
+                'formset_model': GfxPtsConstructor,
+                'formset_form': AddGfx
+            },
+        }
+        base_object = get_object_or_404(PtsConstructor, pk=self.kwargs['pk'])
         if self.request.POST:
             for context_key, form in pts_cfg.items():
                 data[context_key] = form(self.request.POST)
         else:
-            self.object = PtsConstructor.objects.get(pk=self.kwargs['pk'])
+            self.object = base_object
+            self.object.pk = None
+
+            for context_key, form in pts_form_fill_cfg.items():
+                cfg_objects = form['formset_model'].objects.filter(constructor=self.kwargs['pk'])
+                cfg_objects_listofdict = []
+                for cfg_object in cfg_objects:
+                    cfg_object_dict = model_to_dict(cfg_object)
+                    del cfg_object_dict['id']
+                    del cfg_object_dict['constructor']
+                    cfg_objects_listofdict.append(cfg_object_dict)
+                CfgObjectBaseFormset = forms.inlineformset_factory(
+                    PtsConstructor, form['formset_model'],
+                    form=form['formset_form'],
+                    extra=len(cfg_objects_listofdict),
+                    can_delete=True
+                )
+                data[context_key] = CfgObjectBaseFormset(instance=self.object, initial=cfg_objects_listofdict)
+
+                # cameras = CameraPtsConstructor.objects.filter(constructor=self.kwargs['pk'])
+                # cameras_listofdict = []
+                # for camera in cameras:
+                #     camera_dict = model_to_dict(camera)
+                #     del camera_dict['id']
+                #     del camera_dict['constructor']
+                #     cameras_listofdict.append(camera_dict)
+                # CameraBaseFormset = forms.inlineformset_factory(
+                #     PtsConstructor, CameraPtsConstructor,
+                #     form=AddCamera,
+                #     extra=len(cameras_listofdict),
+                #     can_delete=True
+                # )
+                # pubspr_formset = CameraBaseFormset(instance=self.object, initial=cameras_listofdict)
+                # data['camera'] = pubspr_formset
+
+
+            # optics = OpticPtsConstructor.objects.filter(constructor=self.kwargs['pk'])
+            # optics_listofdict = []
+            # for optic in optics:
+            #     optic_dict = model_to_dict(optic)
+            #     del optic_dict['id']
+            #     del optic_dict['constructor']
+            #     optics_listofdict.append(optic_dict)
+            # OpticBaseFormset = forms.inlineformset_factory(
+            #     PtsConstructor, OpticPtsConstructor,
+            #     form=AddOptic,
+            #     extra=len(optics_listofdict),
+            #     can_delete=True
+            # )
+            # optic_formset = OpticBaseFormset(instance=self.object, initial=optics_listofdict)
+            # data['optic'] = optic_formset
+
+
             data['form'] = AddPtsConfigFrom(instance=self.object)
-            for context_key, form in pts_cfg.items():
-                data[context_key] = form(instance=self.object)
-        data['city_name'] = PlaceCity.objects.get(
-            placeconstructor__pk=self.request.GET.get('place')
-        )
+        data['cfg_info'] = base_object
 
         return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        if not form.cleaned_data.get('image'):
+            form.instance.image = context.get('cfg_info').image
+
+        form.instance.event_type = context.get('cfg_info').event_type
+        form.instance.place = context.get('cfg_info').place
+        form.instance.author = self.request.user
+        form.instance.base_conf = self.BASE_CFG
+        pts_cfg_forms = [context['camera'], context['optic'],
+                         context['server'], context['gfx'],]
+        if all([inline_form.is_valid() for inline_form in pts_cfg_forms]):
+            self.object = form.save()
+            for cfg_form in pts_cfg_forms:
+                cfg_form.instance = self.object
+                cfg_form.save()
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 
@@ -331,46 +435,3 @@ def load_micro_brend(request):
         'pts_config/micro_model_dropdown_list_options.html',
         {'micro_models': micro_models}
     )
-
-
-
-
-
-
-
-# {'csrfmiddlewaretoken': ['ZR5fYWFdwgiqZEYItDVSntAz9wubdTaPI1dtA0NNA0s17R0M0mphjSrKEsScGuTr'],
-#  'name': ['99999 77777789999067857xvbcvxbxv f gb fg b09'],
-#  'image': [''],
-#  'cameraptsconstructor_set-TOTAL_FORMS': ['1'],
-#  'cameraptsconstructor_set-INITIAL_FORMS': ['1'],
-#  'cameraptsconstructor_set-MIN_NUM_FORMS': ['0'],
-#  'cameraptsconstructor_set-MAX_NUM_FORMS': ['1000'],
-#  'cameraptsconstructor_set-0-cameras': ['1'],
-#  'cameraptsconstructor_set-0-quantity': ['2'],
-#  'cameraptsconstructor_set-0-id': ['14'],
-#  'cameraptsconstructor_set-0-constructor': ['56'],
-#  'cameraptsconstructor_set-__prefix__-cameras': [''],
-#  'cameraptsconstructor_set-__prefix__-quantity': ['0'],
-#  'cameraptsconstructor_set-__prefix__-id': [''],
-#  'cameraptsconstructor_set-__prefix__-constructor': ['56'],
-  
-#  'opticptsconstructor_set-TOTAL_FORMS': ['2'], 'opticptsconstructor_set-INITIAL_FORMS': ['2'], 'opticptsconstructor_set-MIN_NUM_FORMS': ['0'], 'opticptsconstructor_set-MAX_NUM_FORMS': ['1000'], 'opticptsconstructor_set-0-optics': ['2'], 'opticptsconstructor_set-0-quantity': ['2'], 'opticptsconstructor_set-0-id': ['17'], 'opticptsconstructor_set-0-constructor': ['56'], 'opticptsconstructor_set-1-optics': ['6'], 'opticptsconstructor_set-1-quantity': ['2'], 'opticptsconstructor_set-1-id': ['24'], 'opticptsconstructor_set-1-constructor': ['56'], 'opticptsconstructor_set-__prefix__-optics': [''], 'opticptsconstructor_set-__prefix__-quantity': ['0'], 'opticptsconstructor_set-__prefix__-id': [''], 'opticptsconstructor_set-__prefix__-constructor': ['56'], 
-# 'serverrecordingrepeatconstructor_set-TOTAL_FORMS': ['1'], 'serverrecordingrepeatconstructor_set-INITIAL_FORMS': ['1'], 'serverrecordingrepeatconstructor_set-MIN_NUM_FORMS': ['0'], 'serverrecordingrepeatconstructor_set-MAX_NUM_FORMS': ['1000'], 'serverrecordingrepeatconstructor_set-0-type': ['1'], 'serverrecordingrepeatconstructor_set-0-type_player': ['1'], 'serverrecordingrepeatconstructor_set-0-quantity': ['1'], 'serverrecordingrepeatconstructor_set-0-id': ['9'], 'serverrecordingrepeatconstructor_set-0-constructor': ['56'], 'serverrecordingrepeatconstructor_set-__prefix__-type': [''], 'serverrecordingrepeatconstructor_set-__prefix__-type_player': [''], 'serverrecordingrepeatconstructor_set-__prefix__-quantity': ['0'], 'serverrecordingrepeatconstructor_set-__prefix__-id': [''], 'serverrecordingrepeatconstructor_set-__prefix__-constructor': ['56'], 'gfxptsconstructor_set-TOTAL_FORMS': ['1'], 'gfxptsconstructor_set-INITIAL_FORMS': ['1'], 'gfxptsconstructor_set-MIN_NUM_FORMS': ['0'], 'gfxptsconstructor_set-MAX_NUM_FORMS': ['1000'], 'gfxptsconstructor_set-0-gfx': ['1'], 'gfxptsconstructor_set-0-license_type': ['2'], 'gfxptsconstructor_set-0-quantity': ['1'], 'gfxptsconstructor_set-0-id': ['20'], 'gfxptsconstructor_set-0-constructor': ['56'], 'gfxptsconstructor_set-__prefix__-gfx': [''], 'gfxptsconstructor_set-__prefix__-quantity': ['0'], 'gfxptsconstructor_set-__prefix__-id': [''], 'gfxptsconstructor_set-__prefix__-constructor': ['56'], 'microphone_quantity': ['5']}>
-
-
-# {'csrfmiddlewaretoken': ['3KKKCltAbB4Gq2NCQvvI9I6RNPDmvsN8MUSYepBaflehyfPGneZ757X2iL1nY3wK'],
-#  'name': ['ghjgfjhghjghj'],
-#  'cameraptsconstructor_set-TOTAL_FORMS': ['1'],
-#  'cameraptsconstructor_set-INITIAL_FORMS': ['0'],
-#  'cameraptsconstructor_set-MIN_NUM_FORMS': ['0'],
-#  'cameraptsconstructor_set-MAX_NUM_FORMS': ['1000'],
-#  'cameraptsconstructor_set-0-cameras': ['2'],
-#  'cameraptsconstructor_set-0-quantity': ['2'],
-#  'cameraptsconstructor_set-0-id': [''],
-#  'cameraptsconstructor_set-0-constructor': [''],
-#  'cameraptsconstructor_set-__prefix__-cameras': [''],
-#  'cameraptsconstructor_set-__prefix__-quantity': ['0'],
-#  'cameraptsconstructor_set-__prefix__-id': [''],
-#  'cameraptsconstructor_set-__prefix__-constructor': [''],
- 
-#  'opticptsconstructor_set-TOTAL_FORMS': ['0'], 'opticptsconstructor_set-INITIAL_FORMS': ['0'], 'opticptsconstructor_set-MIN_NUM_FORMS': ['0'], 'opticptsconstructor_set-MAX_NUM_FORMS': ['1000'], 'opticptsconstructor_set-__prefix__-optics': [''], 'opticptsconstructor_set-__prefix__-quantity': ['0'], 'opticptsconstructor_set-__prefix__-id': [''], 'opticptsconstructor_set-__prefix__-constructor': [''], 'serverrecordingrepeatconstructor_set-TOTAL_FORMS': ['0'], 'serverrecordingrepeatconstructor_set-INITIAL_FORMS': ['0'], 'serverrecordingrepeatconstructor_set-MIN_NUM_FORMS': ['0'], 'serverrecordingrepeatconstructor_set-MAX_NUM_FORMS': ['1000'], 'serverrecordingrepeatconstructor_set-__prefix__-type': [''], 'serverrecordingrepeatconstructor_set-__prefix__-type_player': [''], 'serverrecordingrepeatconstructor_set-__prefix__-quantity': ['0'], 'serverrecordingrepeatconstructor_set-__prefix__-id': [''], 'serverrecordingrepeatconstructor_set-__prefix__-constructor': [''], 'gfxptsconstructor_set-TOTAL_FORMS': ['0'], 'gfxptsconstructor_set-INITIAL_FORMS': ['0'], 'gfxptsconstructor_set-MIN_NUM_FORMS': ['0'], 'gfxptsconstructor_set-MAX_NUM_FORMS': ['1000'], 'gfxptsconstructor_set-__prefix__-gfx': [''], 'gfxptsconstructor_set-__prefix__-quantity': ['0'], 'gfxptsconstructor_set-__prefix__-id': [''], 'gfxptsconstructor_set-__prefix__-constructor': [''], 'microphone_quantity': ['2']}>

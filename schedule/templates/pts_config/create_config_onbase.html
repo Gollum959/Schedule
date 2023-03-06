@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% block title %}<title></title>{% endblock %}
+{% block content %}
+  {% load crispy_forms_tags %}
+  <style>
+    .button_add {
+      margin: 10px;
+      width: 120px;
+    }
+    .camera-form {
+      border-bottom: 1px solid black;
+      margin-bottom: 10px;
+    }
+    .optic-form {
+      border-bottom: 1px solid black;
+      margin-bottom: 10px;
+    }
+    .server-form {
+      border-bottom: 1px solid black;
+      margin-bottom: 10px;
+    }
+    .micro-form {
+      border-bottom: 1px solid black;
+      margin-bottom: 10px;
+    }
+    .gfx-form {
+      border-bottom: 1px solid black;
+      margin-bottom: 10px;
+    }
+    .hidden {
+      display: none
+    }
+  </style>
+  <div class="container p-3">
+    <div class="row justify-content-center">
+      <h1>Создать конфигурацию в {{ cfg_info.place.city_name }}</h1>
+      <h3>Название объекта: {{ cfg_info.place }}</h3>
+      <h3>Вид события: {{ cfg_info.event_type }}</h3>
+      <div class="card">
+        <div class="card-body">        
+          <form method="post" enctype="multipart/form-data" id="cfgForm">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-8">{{ form.name|as_crispy_field }}</div>
+              <div class="col-4">{{ form.image|as_crispy_field }}</div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                {% include 'includes/form.html' with forms=camera style='camera' descr='Блок заказа камер:' hiddenid='camera-id'%}
+              </div>
+              <div class="col-6">
+                {% include 'includes/form.html' with forms=optic style='optic' descr='Блок заказа оптики:' hiddenid='optic-id'%}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                {% include 'includes/form.html' with forms=server style='server' descr='Блок заказа системы записи и повторов:' hiddenid='server-id'%}
+              </div>
+              <div class="col-6">
+                {% include 'includes/form.html' with forms=gfx style='gfx' descr='Блок заказа графической системы:' hiddenid='gfx-id'%} 
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <div class="form-group row my-3 p-3">
+                  <p class="fs-4 " style="border-bottom: 1px solid black;">Блок заказа звукового обеспечения:</p>
+                  {{ form.microphone_quantity|as_crispy_field }}
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">
+                  {% if object %}
+                    Изменить базовую конфигурацию
+                  {% else %}
+                    Создать базовую конфигурацию
+                  {% endif %}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    const addMoreCameraLineBtn = document.getElementById('add-more-camera')
+    const removeCameraLineBtn = document.getElementById('remove-camera')
+    const InitialCameralineFormCount = document.getElementsByClassName('camera-form').length
+
+    addMoreCameraLineBtn.addEventListener('click', e => add_new_form(
+      'camera-form-list',
+      'camera-id', 
+      'camera-form',
+      'id_cameraptsconstructor_set-TOTAL_FORMS',
+      'id_cameraptsconstructor_set',
+      '',
+      removeCameraLineBtn,
+      e))
+    removeCameraLineBtn.addEventListener('click', e => remove_form(
+      'camera-form-list',
+      'camera-form',
+      'id_cameraptsconstructor_set-TOTAL_FORMS',
+      InitialCameralineFormCount,
+      removeCameraLineBtn,
+      e
+    ))
+
+    const addMoreOpticLineBtn = document.getElementById('add-more-optic')
+    const removeOpticLineBtn = document.getElementById('remove-optic')
+    const InitialOpticlineFormCount = document.getElementsByClassName('optic-form').length
+
+    addMoreOpticLineBtn.addEventListener('click', e => add_new_form(
+      'optic-form-list',
+      'optic-id', 
+      'optic-form',
+      'id_opticptsconstructor_set-TOTAL_FORMS',
+      'id_opticptsconstructor_set',
+      '',
+      removeOpticLineBtn,
+      e))
+    removeOpticLineBtn.addEventListener('click', e => remove_form(
+      'optic-form-list',
+      'optic-form',
+      'id_opticptsconstructor_set-TOTAL_FORMS',
+      InitialOpticlineFormCount,
+      removeOpticLineBtn,
+      e
+    ))
+
+    const addMoreServerLineBtn = document.getElementById('add-more-server')
+    const removeServerLineBtn = document.getElementById('remove-server')
+    const InitialServerlineFormCount = document.getElementsByClassName('server-form').length
+
+    addMoreServerLineBtn.addEventListener('click', e => add_new_form(
+      'server-form-list',
+      'server-id', 
+      'server-form',
+      'id_serverrecordingrepeatconstructor_set-TOTAL_FORMS',
+      'id_serverrecordingrepeatconstructor_set',
+      '',
+      removeServerLineBtn,
+      e))
+    removeServerLineBtn.addEventListener('click', e => remove_form(
+      'server-form-list',
+      'server-form',
+      'id_serverrecordingrepeatconstructor_set-TOTAL_FORMS',
+      InitialServerlineFormCount,
+      removeServerLineBtn,
+      e
+    ))
+
+    const addMoreGfxBtn = document.getElementById('add-more-gfx')
+    const removeGfxBtn = document.getElementById('remove-gfx')
+    const InitialGfxFormCount = document.getElementsByClassName('gfx-form').length
+
+    addMoreGfxBtn.addEventListener('click', e => add_new_form(
+      'gfx-form-list',
+      'gfx-id', 
+      'gfx-form',
+      'id_gfxptsconstructor_set-TOTAL_FORMS',
+      'id_gfxptsconstructor_set',
+      '',
+      removeGfxBtn,
+      e))
+    removeGfxBtn.addEventListener('click', e => remove_form(
+      'gfx-form-list',
+      'gfx-form',
+      'id_gfxptsconstructor_set-TOTAL_FORMS',
+      InitialGfxFormCount,
+      removeGfxBtn,
+      e
+    ))
+
+  </script>
+
+{% endblock %} 

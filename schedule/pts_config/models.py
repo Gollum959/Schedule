@@ -278,7 +278,7 @@ class PtsConstructor(models.Model):
         ordering = ('create_date', )
         constraints = [
             models.UniqueConstraint(
-                fields=['name'],
+                fields=['name', 'author'],
                 condition=Q(clone_conf=False),
                 name='unique_name_for_not_clone'
             ),
