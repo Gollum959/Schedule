@@ -114,15 +114,6 @@ class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
         else:
             return self.render_to_response(self.get_context_data(form=form))
 
-        # self.object = form.save()
-
-        # if commlines.is_valid():
-        #     commlines.instance = self.object
-        #     commlines.save()
-        # if techcommlines.is_valid():
-        #     techcommlines.instance = self.object
-        #     techcommlines.save()
-
         return HttpResponseRedirect(self.get_success_url())
 
 

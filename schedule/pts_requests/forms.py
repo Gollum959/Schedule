@@ -76,24 +76,6 @@ class AddRequestFrom(ModelForm):
                 event_type=self.instance.event_type
             )
 
-        # self.fields['event_type'].queryset = EventType.objects.filter(
-        #     direction=self.user.direction
-        # )
-
-    # image = forms.FileField()
-
-    # def clean_image(self):
-    #     uploaded_file = self.cleaned_data['image']
-    #     try:
-    #         im = forms.ImageField()
-    #         im.to_python(uploaded_file)
-    #     except forms.ValidationError:
-    #         name, ext = os.path.splitext(uploaded_file.name)
-    #         if ext not in ['.pdf', '.PDF']:
-    #             raise forms.ValidationError(
-    #                 "Only images and PDF files allowed")
-    #     return uploaded_file
-
     class Meta:
         model = PtsRequest
         fields = [

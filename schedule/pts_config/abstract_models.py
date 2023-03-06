@@ -10,9 +10,9 @@ class ConstrQuantity(models.Model):
         on_delete=models.CASCADE,
     )
     quantity = models.PositiveSmallIntegerField(
-        'Quantity',
+        'Количество',
         validators=(
-            MinValueValidator(0),
+            MinValueValidator(1),
             MaxValueValidator(50),
         ),
         default=0,

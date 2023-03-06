@@ -70,7 +70,7 @@ class PtsConstructorAdmin(admin.ModelAdmin):
     """Displaying the PtsConstructor model in the admin panel."""
 
     fields = ('name', 'author', 'place',
-              'event_type', 'base_conf', 'clone_conf')
+              'event_type', 'base_conf', 'clone_conf', 'microphone_quantity')
     list_display = ('name', 'author')
     list_filter = ('author', 'clone_conf',)
     search_fields = ('name', )

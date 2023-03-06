@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.db.models import Q
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 from pts_config.abstract_models import StrName, ConstrQuantity, StrNameQuantity
 from users.models import User
@@ -37,11 +38,15 @@ class CameraPtsConstructor(ConstrQuantity):
     brend = models.ForeignKey(
         'CameraBrend',
         on_delete=models.CASCADE,
-        verbose_name='Производитель камеры'
+        verbose_name='Производитель камеры',
+        blank=True,
+        null=True
     )
     model = models.ForeignKey(
         'CameraModelBrend',
         on_delete=models.CASCADE,
+        blank=True,
+        null=True
     )
 
 
@@ -75,10 +80,14 @@ class OpticPtsConstructor(ConstrQuantity):
     brend = models.ForeignKey(
         'OpticBrend',
         on_delete=models.CASCADE,
+        blank=True,
+        null=True
     )
     model = models.ForeignKey(
         'OpticModelBrend',
         on_delete=models.CASCADE,
+        blank=True,
+        null=True
     )
 
 
@@ -112,22 +121,22 @@ class ServerRecordingRepeatConstructor(ConstrQuantity):
     type = models.ForeignKey(
         'ServerRecordingRepeatType',
         on_delete=models.CASCADE,
-        blank=True
     )
     type_player = models.ForeignKey(
         'ServerPlayerType',
         on_delete=models.CASCADE,
-        blank=True
     )
     brend = models.ForeignKey(
         'ServerRecordingRepeatBrend',
         on_delete=models.CASCADE,
-        blank=True
+        blank=True,
+        null=True
     )
     model = models.ForeignKey(
         'ServerRecordingRepeatModelBrend',
         on_delete=models.CASCADE,
-        blank=True
+        blank=True,
+        null=True
     )
 
 
@@ -197,6 +206,8 @@ class GfxPtsConstructor(ConstrQuantity):
     model = models.ForeignKey(
         'GfxModel',
         on_delete=models.CASCADE,
+        blank=True,
+        null=True
     )
     judicial_system = models.BooleanField(
         'Подключение к судейской системе?',
@@ -235,6 +246,15 @@ class PtsConstructor(models.Model):
         'Комплектация привязаная к заявке',
         default=False
     )
+    microphone_quantity = models.PositiveSmallIntegerField(
+        'Количество',
+        validators=(
+            MinValueValidator(1),
+            MaxValueValidator(30),
+        ),
+        default=0,
+        blank=True
+    )
     image = models.ImageField(
         'Картинка или pdf',
         upload_to='plans/',
@@ -260,6 +280,12 @@ class PtsConstructor(models.Model):
             models.UniqueConstraint(
                 fields=['name'],
                 condition=Q(clone_conf=False),
-                name='unique_name_not_clone'
-            )
+                name='unique_name_for_not_clone'
+            ),
+            models.UniqueConstraint(
+                fields=['event_type', 'place', 'author'],
+                condition=Q(base_conf=True, ),
+                name='one_base_cfg_to_event_place_author'
+            ),
+
         ]

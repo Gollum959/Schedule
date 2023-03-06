@@ -3,8 +3,9 @@ from pts_config.views import (
                               PtsConfigView,
                               PtsConfigDetail,
                               PtsBaseConfigCreate,
-                              PtsConfigEdit,
+                              PtsBaseConfigEdit,
                               PtsConfigMainPage,
+                              PtsConfigCreateOnBase,
                               load_camera_brend,
                               load_optic_brend,
                               load_server_brend,
@@ -24,7 +25,16 @@ urlpatterns = [
         PtsBaseConfigCreate.as_view(),
         name='config_create'
     ),
-    path('create/<int:pk>/', PtsConfigEdit.as_view(), name='config_edit'),
+    path(
+        'create/<int:pk>/',
+        PtsBaseConfigEdit.as_view(),
+        name='config_edit',
+    ),
+    path(
+        'createonbase/<int:pk>/',
+        PtsConfigCreateOnBase.as_view(),
+        name='config_create_onbase',
+    ),
     path(
         'ajax/load-cam-model/',
         load_camera_brend,

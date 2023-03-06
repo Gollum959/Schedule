@@ -8,11 +8,11 @@
       </div>
       {% if user.is_main_director_or_admin %}
         <div class="col d-flex justify-content-end">
-          <a type="button" id="new-city" class="btn btn-primary" href="{% url 'place:place_create' %}">Изменить базовую кофигурацию</a>
+          <a type="button" id="new-city" class="btn btn-primary" href="{% url 'config:config_edit' conf.pk %}">Изменить базовую кофигурацию</a>
         </div>
       {% endif %}
       <div class="col-md-auto d-flex justify-content-end">
-        <a type="button" id="new-city" class="btn btn-primary" href="{% url 'place:place_create' %}">Создать конфигурацию на основе базовой</a>
+        <a type="button" id="new-city" class="btn btn-primary" href="{% url 'config:config_create_onbase' conf.pk %}">Создать конфигурацию на основе базовой</a>
       </div>
     </div>
     <hr style="border: 1px; margin-top: 15px">
