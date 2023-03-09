@@ -18,7 +18,9 @@ class AddBroadcastPlace(forms.ModelForm):
             '^[0-9a-zA-ZА-я\s]*$',
             message='Только буквы и цифры'
         )],
-        widget=forms.TextInput(attrs={'placeholder': 'Введите название объекта'}),
+        widget=forms.TextInput(
+            attrs={'placeholder': 'Введите название объекта'}
+        ),
     )
     address = forms.CharField(
         label='Адрес',
@@ -75,8 +77,9 @@ class AddBroadcastPlace(forms.ModelForm):
     def clean(self):
         city_name = self.cleaned_data.get('city_name')
         name = self.cleaned_data.get('name')
-        dublicate = PlaceConstructor.objects.filter(city_name=city_name, name=name, author=self.user).count()
-        if dublicate > 0:
+        dublicate = PlaceConstructor.objects.filter(
+            city_name=city_name, name=name, author=self.user).count()
+        if not self.instance.pk and dublicate > 0:
             raise ValidationError(
                 f'Площадка с таким название уже существует в городе '
                 f'{city_name}'

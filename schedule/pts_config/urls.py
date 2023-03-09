@@ -3,9 +3,10 @@ from pts_config.views import (
                               PtsConfigView,
                               PtsConfigDetail,
                               PtsBaseConfigCreate,
-                              PtsBaseConfigEdit,
+                              PtsConfigEdit,
                               PtsConfigMainPage,
                               PtsConfigCreateOnBase,
+                              PtsConfigDelete,
                               load_camera_brend,
                               load_optic_brend,
                               load_server_brend,
@@ -27,13 +28,18 @@ urlpatterns = [
     ),
     path(
         'create/<int:pk>/',
-        PtsBaseConfigEdit.as_view(),
+        PtsConfigEdit.as_view(),
         name='config_edit',
     ),
     path(
         'createonbase/<int:pk>/',
         PtsConfigCreateOnBase.as_view(),
         name='config_create_onbase',
+    ),
+    path(
+        'remove/<int:pk>/',
+        PtsConfigDelete.as_view(),
+        name='config_remove',
     ),
     path(
         'ajax/load-cam-model/',

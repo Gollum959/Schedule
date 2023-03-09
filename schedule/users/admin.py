@@ -8,6 +8,7 @@ class UserAdmin(admin.ModelAdmin):
     """Displaying the user model in the admin panel."""
 
     list_display = ('username', 'email', 'first_name', 'last_name', 'role')
+    exclude = ('groups', 'user_permissions')
     list_filter = ('username', 'email', )
     search_fields = ('username', 'email', )
     list_editable = ('role', )

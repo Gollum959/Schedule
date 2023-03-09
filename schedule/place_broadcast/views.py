@@ -1,5 +1,4 @@
 from typing import Any, Dict
-from django.db import IntegrityError
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
@@ -75,7 +74,7 @@ class PlacesBroadcastCreate(LoginRequiredMixin, CreateView):
     template_name = 'place_broadcast/create_places.html'
 
     def get_form_kwargs(self):
-        kwargs = super(PlacesBroadcastCreate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs.update({'city_id': self.request.GET.get('city_id')})
         kwargs.update({'user': self.request.user})
         return kwargs
@@ -91,6 +90,12 @@ class PlacesBroadcastEdit(EditOnlyAuthorMixin, LoginRequiredMixin, UpdateView):
     model = PlaceConstructor
     template_name = 'place_broadcast/create_places.html'
 
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'city_id': self.request.GET.get('city_id')})
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+    # def form_valid(self, form):
+    #     form.instance.author = self.request.user
+    #     return super().form_valid(form)

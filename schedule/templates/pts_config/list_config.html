@@ -25,7 +25,34 @@
     <div class="row ms-1 align-items-center">
       <div class="col">{{ conf.name }}</div>
       <div class="col d-flex justify-content-end">
-        <a type="button" id="new-city" class="btn btn-primary" href="{% url 'place:place_create' %}">Изменить кофигурацию</a>
+        <a type="button" id="new-city" class="btn btn-primary" href="{% url 'config:config_edit' conf.pk %}">Изменить кофигурацию</a>
+      </div>
+      <div class="col-md-auto d-flex justify-content-end">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          Удалить
+        </button>
+        
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Удалить конфигурацию</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <b>Вы точно хотите удалить конфигурацию {{ conf.name }}</b>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+                <form action="{% url 'config:config_remove' conf.pk %}" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-primary">Да</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   {% endif %}
@@ -35,69 +62,3 @@
       <a type="button" id="new-city" class="btn btn-primary" href="{% url 'config:config_create' %}?place={{place_id}}&event={{event_type_id}}">Добавить базовую кофигурацию</a>
     </div>
 {% endif %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{% comment %}   
-<div class="container py-5">     
-  <h1>Список Конфигураций</h1>
-  <div class="card">
-    <div class="card-body">
-      <select class="form-select" aria-label="Default select example">
-        <option selected id="id_city">Выбирите Вид спорта</option>
-        <option value="1">ВИДСПОРТА1 из базы</option>
-        <option value="2">ВИДСПОРТА2 из базы</option>
-        <option value="3">ВИДСПОРТА3 из базы</option>
-      </select>
-    </div>  
-    <div class="card-body">
-      ТУТ ВСЕ конфигурации для этого вида спорта
-
-
-
-
-
-
-<h1>Config template</h1>
-  {% for config in ptsconstructor_list %}  
-    <article>    
-      <ul>
-        <li>
-          Configurations name: {{ config.name }}
-        </li>
-        <li>
-          Date of creation: {{ config.create_date }}
-        </li>
-        <li>
-          <a href="{% url 'config:config_detail' config.pk %}">
-            detailed information
-          </a> 
-        </li>
-      </ul>
-    </article>
-    {% if not forloop.last %}<hr>{% endif %}
-  {% endfor %}
-  <a class="btn btn-primary" href="{% url 'config:config_create' %}">
-    add config
-  </a> 
-</div> {% endcomment %}

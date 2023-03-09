@@ -1,0 +1,19 @@
+  <div class="card mt-3">
+    <div class="card-header align-items-center">
+      <h5 style="margin-bottom: 0px;">Место проведения</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <h5 class="card-title">{{ ptsrequest.place.name }}</h4>
+          <p class="card-text mb-1"><b>Адрес:</b> г. {{ ptsrequest.place.city_name  }}, {{ ptsrequest.place.address  }}</p>
+          <p class="card-text mb-1"><b>ФИО ответственного за объект:</b> {{ ptsrequest.place.contact_name }}</p>
+          <p class="card-text mb-1"><b>Телефон ответственного:</b> {{ ptsrequest.place.phone  }}</p>
+          {% if ptsrequest.place.web %}
+            <p class="card-text mb-1"><b>Вебсайт:</b> {{ ptsrequest.place.web }}</p>
+          {% endif %}
+          <a href="{% url 'place:place_detail' ptsrequest.place.pk %}" target="_blank" rel="noopener noreferrer">
+            Детальная информация по объекту
+          </a> 
+      </div>
+    </div>
+  </div>

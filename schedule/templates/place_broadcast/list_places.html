@@ -1,8 +1,15 @@
 {% for place in placeconstructor_list %}
-  <hr style="border: 1px;">
-  <div class="row ms-1">{{ place.name }}</div>
+  <hr style="border: 1px; margin-top: 15px">
+  <div class="row ms-1 align-items-center">
+    <div class="col">{{ place.name }}</div>
+    <div class="col d-flex justify-content-end">
+      {% if user.is_main_director_or_admin %}
+        <a type="button" id="new-city" class="btn btn-secondary" href="{% url 'place:place_edit' place.pk %}">Изменить площадку</a>
+      {% endif %}
+    </div>
+  </div>
 {% endfor %}
-<hr style="border: 1px;">
+<hr style="border: 1px; margin-top: 15px">
 {% if city_id != "0" %}
   <div class="row ms-1">
     <div class="d-flex justify-content-end">

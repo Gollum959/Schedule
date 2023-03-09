@@ -229,6 +229,7 @@ class PtsRequest(models.Model):
     def crete_clone(obj):
         obj.pk = None
         obj.clone_conf = True
+        obj.base_conf = False
         obj.save()
         return obj
 
@@ -257,6 +258,11 @@ class PtsRequest(models.Model):
     def is_approval(self):
         """Return True if status is ON APPROVAL."""
         return self.status == self.ON_APPROVAL
+
+    @property
+    def is_draft(self):
+        """Return True if status is ON APPROVAL."""
+        return self.status == self.DRAFT
 
     class Meta:
         verbose_name = 'Заявка ПТС'

@@ -284,7 +284,7 @@ class PtsConstructor(models.Model):
             ),
             models.UniqueConstraint(
                 fields=['event_type', 'place', 'author'],
-                condition=Q(base_conf=True, ),
+                condition=Q(base_conf=True),
                 name='one_base_cfg_to_event_place_author'
             ),
 

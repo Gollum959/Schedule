@@ -8,6 +8,7 @@ from django.views.generic import (ListView,
                                   DetailView,
                                   CreateView,
                                   UpdateView,
+                                  DeleteView,
                                   TemplateView)
 from django.urls import reverse_lazy
 from django.db.models import Q
@@ -36,7 +37,6 @@ from pts_config.forms import (AddPtsConfigFrom,
                               ServerFormset,
                               GfxFormset)
 from core.custom_view import (DetalInformationMixin,
-                              EditOnlyAuthorMixin,
                               CreateOnlyMainDirectorMixin)
 
 
@@ -96,7 +96,7 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
     form_class = AddPtsConfigFrom
     model = PtsConstructor
     template_name = 'pts_config/create_config.html'
-    
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({'place': self.request.GET.get('place')})
@@ -138,16 +138,15 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
             return self.render_to_response(self.get_context_data(form=form))
 
         return HttpResponseRedirect(self.get_success_url())
-    
 
-class PtsConfigCreateOnBase(CreateOnlyMainDirectorMixin, CreateView):
+
+class PtsConfigCreateOnBase(LoginRequiredMixin, CreateView):
 
     BASE_CFG = False
+    login_url = reverse_lazy('users:login')
     form_class = AddPtsConfigOnBaseFrom
     model = PtsConstructor
     template_name = 'pts_config/create_config_onbase.html'
-
-    # def __fill_formset(self, formset_model, formset_form, )
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         data = super().get_context_data(**kwargs)
@@ -184,65 +183,33 @@ class PtsConfigCreateOnBase(CreateOnlyMainDirectorMixin, CreateView):
             self.object.pk = None
 
             for context_key, form in pts_form_fill_cfg.items():
-                cfg_objects = form['formset_model'].objects.filter(constructor=self.kwargs['pk'])
+                cfg_objects = form['formset_model'].objects.filter(
+                    constructor=self.kwargs['pk'])
                 cfg_objects_listofdict = []
                 for cfg_object in cfg_objects:
                     cfg_object_dict = model_to_dict(cfg_object)
                     del cfg_object_dict['id']
                     del cfg_object_dict['constructor']
                     cfg_objects_listofdict.append(cfg_object_dict)
+
                 CfgObjectBaseFormset = forms.inlineformset_factory(
                     PtsConstructor, form['formset_model'],
                     form=form['formset_form'],
                     extra=len(cfg_objects_listofdict),
                     can_delete=True
                 )
-                data[context_key] = CfgObjectBaseFormset(instance=self.object, initial=cfg_objects_listofdict)
-
-                # cameras = CameraPtsConstructor.objects.filter(constructor=self.kwargs['pk'])
-                # cameras_listofdict = []
-                # for camera in cameras:
-                #     camera_dict = model_to_dict(camera)
-                #     del camera_dict['id']
-                #     del camera_dict['constructor']
-                #     cameras_listofdict.append(camera_dict)
-                # CameraBaseFormset = forms.inlineformset_factory(
-                #     PtsConstructor, CameraPtsConstructor,
-                #     form=AddCamera,
-                #     extra=len(cameras_listofdict),
-                #     can_delete=True
-                # )
-                # pubspr_formset = CameraBaseFormset(instance=self.object, initial=cameras_listofdict)
-                # data['camera'] = pubspr_formset
-
-
-            # optics = OpticPtsConstructor.objects.filter(constructor=self.kwargs['pk'])
-            # optics_listofdict = []
-            # for optic in optics:
-            #     optic_dict = model_to_dict(optic)
-            #     del optic_dict['id']
-            #     del optic_dict['constructor']
-            #     optics_listofdict.append(optic_dict)
-            # OpticBaseFormset = forms.inlineformset_factory(
-            #     PtsConstructor, OpticPtsConstructor,
-            #     form=AddOptic,
-            #     extra=len(optics_listofdict),
-            #     can_delete=True
-            # )
-            # optic_formset = OpticBaseFormset(instance=self.object, initial=optics_listofdict)
-            # data['optic'] = optic_formset
-
+                data[context_key] = CfgObjectBaseFormset(
+                    instance=self.object, initial=cfg_objects_listofdict)
 
             data['form'] = AddPtsConfigFrom(instance=self.object)
-        data['cfg_info'] = base_object
 
+        data['cfg_info'] = base_object
         return data
 
     def form_valid(self, form):
         context = self.get_context_data()
         if not form.cleaned_data.get('image'):
             form.instance.image = context.get('cfg_info').image
-
         form.instance.event_type = context.get('cfg_info').event_type
         form.instance.place = context.get('cfg_info').place
         form.instance.author = self.request.user
@@ -260,8 +227,9 @@ class PtsConfigCreateOnBase(CreateOnlyMainDirectorMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
+class PtsConfigEdit(LoginRequiredMixin, UpdateView):
 
-class PtsBaseConfigEdit(CreateOnlyMainDirectorMixin, UpdateView):
+    login_url = reverse_lazy('users:login')
     form_class = AddPtsConfigFrom
     model = PtsConstructor
     template_name = 'pts_config/create_config.html'
@@ -288,6 +256,7 @@ class PtsBaseConfigEdit(CreateOnlyMainDirectorMixin, UpdateView):
         else:
             for context_key, form in pts_cfg.items():
                 data[context_key] = form(instance=self.object)
+        data['city_name'] = self.object.place.city_name
         return data
 
     def form_valid(self, form):
@@ -305,12 +274,65 @@ class PtsBaseConfigEdit(CreateOnlyMainDirectorMixin, UpdateView):
             return self.render_to_response(self.get_context_data(form=form))
 
         return HttpResponseRedirect(self.get_success_url())
-        # for cfg_form in pts_cfg_forms:
-        #     if cfg_form.is_valid():
-        #         cfg_form.instance = self.object
-        #         cfg_form.save()
 
-        # return super().form_valid(form)
+
+class PtsConfigDelete(LoginRequiredMixin, DeleteView):
+
+    model = PtsConstructor
+    template_name = 'pts_config/list_config.html'
+    success_url = reverse_lazy('config:pts_configs')
+
+    def get_object(self, *args, **kwargs):
+        """Only author cat delete the base configuration"""
+        user = self.request.user
+        obj = super().get_object(*args, **kwargs)
+        if not (obj.author == user or user.is_superuser):
+            raise PermissionDenied
+        return obj
+
+
+def load_camera_brend(request):
+    camera_brend_id = request.GET.get('id')
+    camera_models = CameraModelBrend.objects.filter(
+        brend=camera_brend_id).order_by('name')
+    return render(
+        request,
+        'pts_config/camera_model_dropdown_list_options.html',
+        {'camera_models': camera_models}
+    )
+
+
+def load_optic_brend(request):
+    optic_brend_id = request.GET.get('id')
+    optic_models = OpticModelBrend.objects.filter(
+        brend=optic_brend_id).order_by('name')
+    return render(
+        request,
+        'pts_config/optic_model_dropdown_list_options.html',
+        {'optic_models': optic_models}
+    )
+
+
+def load_server_brend(request):
+    server_brend_id = request.GET.get('id')
+    server_models = ServerRecordingRepeatModelBrend.objects.filter(
+        brend=server_brend_id).order_by('name')
+    return render(
+        request,
+        'pts_config/server_model_dropdown_list_options.html',
+        {'server_models': server_models}
+    )
+
+
+def load_micro_brend(request):
+    micro_brend_id = request.GET.get('id')
+    micro_models = MicrophoneModelBrend.objects.filter(
+        brend=micro_brend_id).order_by('name')
+    return render(
+        request,
+        'pts_config/micro_model_dropdown_list_options.html',
+        {'micro_models': micro_models}
+    )
 
 
 # class PtsConfigCreate(LoginRequiredMixin, CreateView):
@@ -391,47 +413,3 @@ class PtsBaseConfigEdit(CreateOnlyMainDirectorMixin, UpdateView):
 #                 cfg_form.save()
 
 #         return super().form_valid(form)
-
-
-def load_camera_brend(request):
-    camera_brend_id = request.GET.get('id')
-    camera_models = CameraModelBrend.objects.filter(
-        brend=camera_brend_id).order_by('name')
-    return render(
-        request,
-        'pts_config/camera_model_dropdown_list_options.html',
-        {'camera_models': camera_models}
-    )
-
-
-def load_optic_brend(request):
-    optic_brend_id = request.GET.get('id')
-    optic_models = OpticModelBrend.objects.filter(
-        brend=optic_brend_id).order_by('name')
-    return render(
-        request,
-        'pts_config/optic_model_dropdown_list_options.html',
-        {'optic_models': optic_models}
-    )
-
-
-def load_server_brend(request):
-    server_brend_id = request.GET.get('id')
-    server_models = ServerRecordingRepeatModelBrend.objects.filter(
-        brend=server_brend_id).order_by('name')
-    return render(
-        request,
-        'pts_config/server_model_dropdown_list_options.html',
-        {'server_models': server_models}
-    )
-
-
-def load_micro_brend(request):
-    micro_brend_id = request.GET.get('id')
-    micro_models = MicrophoneModelBrend.objects.filter(
-        brend=micro_brend_id).order_by('name')
-    return render(
-        request,
-        'pts_config/micro_model_dropdown_list_options.html',
-        {'micro_models': micro_models}
-    )

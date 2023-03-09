@@ -25,7 +25,11 @@
   </style>
   <div class="container p-3">
     <div class="row justify-content-center">
-      <h1>Создать заявку</h1>
+      {% if object %}
+        <h1>Изменить заявку</h1>
+      {% else %}
+        <h1>Создать заявку</h1>
+      {% endif %}
       <div class="card">
         <div class="card-body">        
           <form method="post" enctype="multipart/form-data" id="requestForm" cfg-url="{% url 'pts_requests:ajax_load_cfg' %}" data-places-url="{% url 'pts_requests:ajax_load_places' %}" autocomplete="off">
@@ -85,7 +89,13 @@
             </div>
             <hr style="border: 1px;">
             <div class="d-flex justify-content-end">
-              <button type="submit" class="btn btn-primary">Создать заявку</button>
+              <button type="submit" class="btn btn-primary">
+                {% if object %}
+                  Изменить заявку
+                {% else %}
+                  Создать заявку
+                {% endif %}
+              </button>
             </div>
           </form>
         </div>

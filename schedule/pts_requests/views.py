@@ -1,6 +1,8 @@
 from datetime import date, timedelta, datetime
+from django.http import Http404
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.urls import reverse_lazy
@@ -134,27 +136,47 @@ class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
             data['techcommline'] = TechCommLineFormset(
                 self.request.POST, instance=self.object
             )
+            data['internetline'] = InternetLineFormset(
+                self.request.POST, instance=self.object
+            )
         else:
             data['commline'] = CommLineFormset(instance=self.object)
             data['techcommline'] = TechCommLineFormset(instance=self.object)
+            data['internetline'] = InternetLineFormset(instance=self.object)
 
         return data
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
         context = self.get_context_data()
+        print(context)
+
         commlines = context['commline']
         techcommlines = context['techcommline']
-        self.object = form.save()
-
-        if commlines.is_valid():
+        internetlines = context['internetline']
+        if (
+            commlines.is_valid() and
+            techcommlines.is_valid() and
+            internetlines.is_valid()
+        ):
+            self.object = form.save()
             commlines.instance = self.object
             commlines.save()
-        if techcommlines.is_valid():
             techcommlines.instance = self.object
             techcommlines.save()
+            internetlines.instance = self.object
+            internetlines.save()
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
+        # if commlines.is_valid():
+        #     commlines.instance = self.object
+        #     commlines.save()
+        # if techcommlines.is_valid():
+        #     techcommlines.instance = self.object
+        #     techcommlines.save()
+
+        # return super().form_valid(form)
 
 
 class PtsRequestModerate(LoginRequiredMixin, UpdateView):
@@ -176,6 +198,28 @@ class PtsRequestModerate(LoginRequiredMixin, UpdateView):
         return initial
 
 
+@login_required
+def change_status_to_on_approval(request, pk):
+    """Change PTS request status from draft to on approval."""
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    if pts_request.author != request.user:
+        raise Http404()
+    pts_request.status = 'approval'
+    pts_request.save()
+    return redirect('pts_requests:request_detail', pk=pts_request.pk)
+
+
+@login_required
+def remove_draft_pts_request(request, pk):
+    """Remove draft PTS request, only author."""
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    if pts_request.author != request.user and not pts_request.is_draft:
+        raise Http404()
+    pts_request.delete()
+    return redirect('pts_requests:index')
+
+
+@login_required
 def load_places(request):
     city_id = request.GET.get('city_name')
     if city_id:
@@ -191,6 +235,7 @@ def load_places(request):
     )
 
 
+@login_required
 def load_pts_cfg(request):
     event_id = request.GET.get('event_id')
     place_id = request.GET.get('place_id')
@@ -207,6 +252,7 @@ def load_pts_cfg(request):
     )
 
 
+@login_required
 def load_event_type(request):
     place_id = request.GET.get('place_id')
     if place_id:
