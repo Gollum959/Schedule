@@ -4,7 +4,8 @@ from place_broadcast.views import (CitiesBroadcastView,
                                    PlacesBroadcastDetail,
                                    PlacesBroadcastCreate,
                                    PlacesBroadcastEdit,
-                                   CityBroadcastCreate,)
+                                   CityBroadcastCreate,
+                                   place_delete)
 
 
 app_name = 'pts_broadcast'
@@ -35,5 +36,10 @@ urlpatterns = [
         'ajax/load-places/',
         PlacesBroadcastView.as_view(),
         name='ajax_load_places'
+    ),
+    path(
+        'delete/<int:pk>/',
+        place_delete,
+        name='place_delete'
     ),
 ]

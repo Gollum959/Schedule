@@ -1,5 +1,7 @@
 from django.forms import ModelForm, ModelChoiceField, inlineformset_factory
 from django import forms
+from django.db.models import Q
+
 
 from place_broadcast.models import PlaceConstructor, PlaceCity, EventType
 from pts_requests.models import (PtsRequest,
@@ -39,12 +41,13 @@ class AddRequestFrom(ModelForm):
         self.fields['place'].queryset = PlaceConstructor.objects.none()
         self.fields['pts_cfg'].queryset = PtsConstructor.objects.none()
         self.fields['event_type'].queryset = EventType.objects.none()
-
         if 'city_name' in self.data:
             try:
+                print('self.data')
                 city_id = int(self.data.get('city_name'))
                 place_id = int(self.data.get('place'))
                 event_id = int(self.data.get('event_type'))
+                cfg_id = int(self.data.get('pts_cfg'))
                 self.fields['place'].queryset = (
                     PlaceConstructor.objects.filter(
                         city_name=city_id
@@ -56,7 +59,8 @@ class AddRequestFrom(ModelForm):
                 )
                 self.fields['pts_cfg'].queryset = PtsConstructor.objects.filter(
                     place=place_id,
-                    event_type=event_id
+                    event_type=event_id).filter(
+                    Q(Q(clone_conf=False) | Q(pk=cfg_id))
                 )
             except (ValueError, TypeError):
                 pass
@@ -73,8 +77,9 @@ class AddRequestFrom(ModelForm):
             )
             self.fields['pts_cfg'].queryset = PtsConstructor.objects.filter(
                 place=self.instance.place,
-                event_type=self.instance.event_type
-            )
+                event_type=self.instance.event_type).filter(
+                    Q(Q(clone_conf=False) | Q(pk=self.instance.pts_cfg.pk))
+                )
 
     class Meta:
         model = PtsRequest

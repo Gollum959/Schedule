@@ -7,20 +7,22 @@
         <div class="row">
           <div class="col-4">
             <select class="form-select" id="id_city">
-              <option value=0 selected>Выбирите город</option>
+              <option value=0>Выбирите город</option>
               {% for city in placecity_list %}
-                <option value="{{ city.id }}">{{ city.name }}</option>
+                <option value="{{ city.id }}" {% if city_id == city.name %}selected{% endif %}>{{ city.name }}{% if city_id == city.id %}selected{% endif %}</option>
               {% endfor %}
             </select>
           </div>
         </div>
         <div id="list_places" class="row mt-5" places-url="{% url 'place:ajax_load_places' %}">
         </div>
-        <div class="row ms-1">
-          <div class="d-flex justify-content-end">
-            <a type="button" id="new-city" class="btn btn-primary" href="{% url 'place:place_create' %}">Добавить новый объект</a>
+        {% if user.is_main_director_or_admin %}
+          <div class="row ms-1">
+            <div class="d-flex justify-content-end">
+              <a type="button" id="newCity" class="btn btn-primary" href="{% url 'place:place_create' %}">Добавить новый объект</a>
+            </div>
           </div>
-        </div>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -30,10 +32,10 @@
     $("#id_city").change(function () {
       var url = $("#list_places").attr("places-url");
       var cityId = $(this).val();
-      if (cityId !== "0"){
-        document.getElementById("new-city").style.display = "none";
+      const cityStyle = cityId !== "0" ? "none" : "block";
+      if(document.getElementById("newCity")){
+        document.getElementById("newCity").style.display = cityStyle;
       }
-      else {document.getElementById("new-city").style.display = "initial"}
       $.ajax({
         url: url,
         data: {
@@ -44,6 +46,25 @@
         }
       });
     });
+
+    $(window).on('load', function() {
+      var cityId = $("#id_city").val();
+      var url = $("#list_places").attr("places-url");
+      if (cityId !== "0"){
+        document.getElementById("newCity").style.display = "none";
+        $.ajax({
+          url: url,
+          data: {
+            'city_id': cityId
+          },
+          success: function (data) {
+            $("#list_places").html(data);
+          }
+        });
+      }
+     });
+
+
 
   </script>
 {% endblock %} 

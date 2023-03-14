@@ -1,24 +1,23 @@
   <div class="card mt-3">
       <div class="card-header align-items-center p-0">
           <button class="accordion-button collapsed pt-2 pb-2" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-lines" aria-expanded="false" aria-controls="panelsStayOpen-lines">
-            <h5 style="margin-bottom: 0px; color: black">Заказы видеоканалов</h5>
+            <h5 style="margin-bottom: 0px; color: black">Заказы видеоканалов, каналов связи и интернета</h5>
           </button>
       </div>
       <div id="panelsStayOpen-lines" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-lines">
 
         <div class="card-body">
+
           <div class="row">
-            <h5 class="card-title">{{ ptsrequest.place.name }}</h4>
-            <p class="card-text">
-              <b>Адрес:</b> г. {{ ptsrequest.place.city_name  }}, {{ ptsrequest.place.address  }}</br>
-              <b>ФИО ответственного за объект:</b> {{ ptsrequest.place.contact_name }}</br>
-              <b>Телефон ответственного:</b> {{ ptsrequest.place.phone  }}</br>
-              {% if ptsrequest.place.web %}<b>Вебсайт:</b> {{ ptsrequest.place.web }}{% endif %}</br>
-              <a href="{% url 'place:place_detail' ptsrequest.place.pk %}" target="_blank" rel="noopener noreferrer">
-                Детальная информация по объекту
-              </a> 
-            </p>
+            {% include 'pts_requests/request_lines_video.html' %} 
           </div>
+          <div class="row">
+            {% include 'pts_requests/request_lines_internet.html' %} 
+          </div>
+          <div class="row">
+            {% include 'pts_requests/request_lines_communication.html' %} 
+          </div>
+
         </div>
 
       </div>

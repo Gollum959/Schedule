@@ -74,6 +74,10 @@ class PlaceConstructor(models.Model):
     def get_absolute_url(self):
         return reverse('place:place_detail', kwargs={'pk': self.pk})
 
+    @property
+    def get_events(self):
+        return ", ".join([event.name for event in self.event_type.all()])
+
     class Meta:
         verbose_name = 'Location of the broadcast'
         verbose_name_plural = 'Broadcast locations'

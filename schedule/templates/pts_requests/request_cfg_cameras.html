@@ -1,0 +1,76 @@
+<style>
+html,
+body,
+.intro {
+  height: 100%;
+}
+
+table td,
+table th {
+  text-overflow: ellipsis;
+  white-space: wrap;
+  overflow: hidden;
+}
+
+thead th {
+  color: #fff;
+}
+
+.card {
+  border-radius: .5rem;
+}
+
+.table-scroll {
+  border-radius: .5rem;
+}
+
+.table-scroll table thead th {
+  font-size: 1.25rem;
+}
+thead {
+  top: 0;
+  position: sticky;
+}
+</style>
+<section class="intro">
+    <div class="mask d-flex align-items-center h-100">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-12">
+            <div class="card mb-3">
+              <div class="card-body p-0 ms-2 me-2 mb-2">
+                  <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок камер</p>
+
+                  {% if camera_form|length > 0 %}
+                  <table class="table table-striped mb-0 ps-2 pe-2 ">
+                    <thead style="background-color: lightskyblue;">
+                      <tr class="d-flex">
+                        <th class="col-3">Тип Камеры</th>
+                        <th class="col-3">Количество</th>
+                        <th class="col-3">Бренд</th>
+                        <th class="col-3">Модель</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {{ camera_form.management_form }}
+                      {% for camera in camera_form %}
+                        <tr class="d-flex">
+                          <td class="col-3 pt-2">{{ camera.cameras }}</td>
+                          <td class="col-3">{{ camera.quantity }}</td>
+                          <td class="col-3"></td>
+                          <td class="col-3"></td>
+                        </tr>
+                      {% endfor %}
+
+                    </tbody>
+                  </table>
+                  {% else %}
+                    <p class="fs-5 ms-2 me-2">Информация отсутсвует в конфигурации ПТС</p>
+                  {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>

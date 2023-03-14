@@ -148,7 +148,7 @@ class PtsRequest(models.Model):
     )
     place = models.ForeignKey(
         PlaceConstructor,
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,
         verbose_name='Площадка',
     )
     event_type = models.ForeignKey(
@@ -233,20 +233,20 @@ class PtsRequest(models.Model):
         obj.save()
         return obj
 
-    @staticmethod
-    def delete_clone(id_request):
-        old_request = PtsRequest.objects.get(pk=id_request)
-        if old_request.pts_cfg.clone_conf:
-            old_request.pts_cfg.delete()
+    # @staticmethod
+    # def delete_clone(id_request):
+    #     old_request = PtsRequest.objects.get(pk=id_request)
+    #     if old_request.pts_cfg.clone_conf:
+    #         old_request.pts_cfg.delete()
 
     def save(self, *args, **kwargs):
-        if not self.pk:
+        old_request = PtsRequest.objects.get(pk=self.pk) if self.pk else None
+        if ((not self.pk) or (old_request and old_request.pts_cfg != self.pts_cfg)):
             self.pts_cfg = self.crete_clone(self.pts_cfg)
-        else:
-            # self.delete_clone(self.pk)
-            self.pts_cfg = self.crete_clone(self.pts_cfg)
-
+        old_pts_cfg = old_request.pts_cfg if old_request and old_request.pts_cfg != self.pts_cfg else None
         super().save(*args, **kwargs)
+        if old_pts_cfg:
+            old_pts_cfg.delete()
 
     def get_absolute_url(self):
         return reverse('pts_requests:request_detail', kwargs={"pk": self.pk})
@@ -263,6 +263,11 @@ class PtsRequest(models.Model):
     def is_draft(self):
         """Return True if status is ON APPROVAL."""
         return self.status == self.DRAFT
+
+    @property
+    def is_draft_or_reject(self):
+        """Return True if status is ON APPROVAL."""
+        return (self.status == self.DRAFT or self.status == self.REJECTED)
 
     class Meta:
         verbose_name = 'Заявка ПТС'

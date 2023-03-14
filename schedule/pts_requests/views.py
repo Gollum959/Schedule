@@ -17,6 +17,10 @@ from pts_requests.forms import (AddRequestFrom,
                                 CommLineFormset,
                                 TechCommLineFormset,
                                 InternetLineFormset)
+from pts_config.forms import (CameraModerateFormset,
+                              OpticModerateFormset,
+                              ServerModerateFormset,
+                              GfxModerateFormset)
 from core.custom_view import (DetalInformationMixin,
                               UserToFormMixin,
                               EditOnlyAuthorMixin)
@@ -32,7 +36,7 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
         requests = PtsRequest.objects.all()
         today = date.today()
         start_week = today - timedelta(days=today.weekday())
-        end_week = start_week + timedelta(days=6)
+        end_week = start_week + timedelta(days=7)
 
         if self.request.GET.get('week') == 'next':
             start_week = start_week + timedelta(days=7)
@@ -55,10 +59,26 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
                 broadcast_start_date__range=[start_week, end_week]
             )
 
-        if self.request.user.is_admin or self.request.user.is_moderator:
+        if self.request.user.is_admin:
             return requests
 
-        return requests.filter(author=self.request.user)
+        requests = requests.filter(
+            author__direction=self.request.user.direction
+        )
+        if self.request.user.is_main_director:
+            return requests
+
+        if self.request.user.is_director:
+            return requests.filter(~Q(
+                ~Q(author=self.request.user)
+                & Q(Q(status='draft') | Q(status='rejected'))))
+
+        # return requests.filter(~Q(
+        #   ~Q(author=self.request.user) & Q(status='draft')))
+        # return requests
+        # if self.request.user.is_admin or self.request.user.is_moderator:
+        #     return requests
+        # return requests.filter(~Q(author=self.request.user and status))
 
 
 class PtsRequestDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
@@ -148,8 +168,6 @@ class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
 
     def form_valid(self, form):
         context = self.get_context_data()
-        print(context)
-
         commlines = context['commline']
         techcommlines = context['techcommline']
         internetlines = context['internetline']
@@ -236,6 +254,23 @@ def load_places(request):
 
 
 @login_required
+def load_event_type(request):
+    place_id = request.GET.get('place_id')
+    if place_id:
+        event_types = EventType.objects.filter(
+            placeconstructor__pk=place_id,
+            direction=request.user.direction
+        ).order_by('name')
+    else:
+        event_types = EventType.objects.none()
+    return render(
+        request,
+        'pts_requests/event_type_dropdown_list_options.html',
+        {'event_types': event_types}
+    )
+
+
+@login_required
 def load_pts_cfg(request):
     event_id = request.GET.get('event_id')
     place_id = request.GET.get('place_id')
@@ -253,17 +288,64 @@ def load_pts_cfg(request):
 
 
 @login_required
-def load_event_type(request):
-    place_id = request.GET.get('place_id')
-    if place_id:
-        event_types = EventType.objects.filter(
-            placeconstructor__pk=place_id,
-            direction=request.user.direction
-        ).order_by('name')
-    else:
-        event_types = EventType.objects.none()
+def load_cameras_in_request(request):
+
+    request_id = request.GET.get('requestId')
+    pts_request = get_object_or_404(PtsRequest, pk=request_id)
+    camera_form = CameraModerateFormset(instance=pts_request.pts_cfg)
     return render(
         request,
-        'pts_requests/event_type_dropdown_list_options.html',
-        {'event_types': event_types}
+        'pts_requests/request_cfg_cameras.html',
+        {'camera_form': camera_form}
+    )
+
+
+@login_required
+def load_optics_in_request(request):
+
+    request_id = request.GET.get('requestId')
+    pts_request = get_object_or_404(PtsRequest, pk=request_id)
+    optic_form = OpticModerateFormset(instance=pts_request.pts_cfg)
+    return render(
+        request,
+        'pts_requests/request_cfg_optics.html',
+        {'optic_form': optic_form}
+    )
+
+
+@login_required
+def load_servers_in_request(request):
+
+    request_id = request.GET.get('requestId')
+    pts_request = get_object_or_404(PtsRequest, pk=request_id)
+    server_form = ServerModerateFormset(instance=pts_request.pts_cfg)
+    return render(
+        request,
+        'pts_requests/request_cfg_servers.html',
+        {'server_form': server_form}
+    )
+
+
+@login_required
+def load_gfx_in_request(request):
+
+    request_id = request.GET.get('requestId')
+    pts_request = get_object_or_404(PtsRequest, pk=request_id)
+    gfx_form = GfxModerateFormset(instance=pts_request.pts_cfg)
+    return render(
+        request,
+        'pts_requests/request_cfg_gfx.html',
+        {'gfx_form': gfx_form}
+    )
+
+
+@login_required
+def load_micro_in_request(request):
+    request_id = request.GET.get('requestId')
+    pts_request = get_object_or_404(PtsRequest, pk=request_id)
+
+    return render(
+        request,
+        'pts_requests/request_cfg_micro.html',
+        {'quantity': pts_request.pts_cfg.microphone_quantity}
     )
