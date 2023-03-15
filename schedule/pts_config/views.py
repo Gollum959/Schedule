@@ -206,6 +206,11 @@ class PtsConfigCreateOnBase(LoginRequiredMixin, CreateView):
         data['cfg_info'] = base_object
         return data
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
     def form_valid(self, form):
         context = self.get_context_data()
         if not form.cleaned_data.get('image'):

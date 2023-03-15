@@ -2,7 +2,9 @@ from django.urls import path
 from pts_requests.views import (
     PtsRequestsView, PtsRequestDetail, PtsRequestCreate,
     PtsRequestEdit, PtsRequestModerate, load_places, load_pts_cfg,
-    load_event_type, change_status_to_on_approval, remove_draft_pts_request
+    load_event_type, change_status_to_on_approval, remove_draft_pts_request,
+    load_cameras_in_request, load_optics_in_request, load_servers_in_request,
+    load_gfx_in_request, load_micro_in_request
 )
 
 app_name = 'pts_requests'
@@ -37,5 +39,30 @@ urlpatterns = [
         'ajax/load-event-types/',
         load_event_type,
         name='ajax_load_event_types'
+    ),
+    path(
+        'ajax/load-request-cfg-cam/',
+        load_cameras_in_request,
+        name='ajax_load_cfg_cam'
+    ),
+    path(
+        'ajax/load-request-cfg-optic/',
+        load_optics_in_request,
+        name='ajax_load_cfg_optic'
+    ),
+    path(
+        'ajax/load-request-cfg-server/',
+        load_servers_in_request,
+        name='ajax_load_cfg_server'
+    ),
+    path(
+        'ajax/load-request-cfg-gfx/',
+        load_gfx_in_request,
+        name='ajax_load_cfg_gfx'
+    ),
+    path(
+        'ajax/load-request-cfg-micro/',
+        load_micro_in_request,
+        name='ajax_load_cfg_micro'
     ),
 ]

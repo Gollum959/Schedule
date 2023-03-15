@@ -23,11 +23,13 @@
           </th>
           <td>{{ request.broadcast_start_date|date:'H:i' }} - {{ request.broadcast_end_date|date:'H:i' }}</td>
           <td>
+            {% comment %}
             {%if request.is_approval and user.is_admin %}
             <a href="{% url 'pts_requests:request_moderate' request.pk %}">{{ request.name }} {{request.pk}} </a>  
-            {% else %} 
+            {% else %}
+            {% endcomment %}
             <a href="{% url 'pts_requests:request_detail' request.pk %}">{{ request.name }} {{request.pk}} </a>
-            {% endif %} 
+            {% comment %} {% endif %}  {% endcomment %}
           </td>
           <td>{{ request.get_status_display }}</td>
           <td>{{ request.author.get_full_name }}</td>

@@ -1,0 +1,44 @@
+<section class="intro">
+    <div class="mask d-flex align-items-center h-100">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-12">
+            <div class="card mb-3">
+              <div class="card-body p-0 ms-2 me-2 mb-2">
+                  <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Организация служебной связи</p>
+
+                  {% if ptsrequest.techcommlineconstructor_set.all|length > 0 %}
+                  <table class="table table-striped mb-0 ps-2 pe-2 ">
+                    <thead style="background-color: lightskyblue;">
+                      <tr class="d-flex">
+                        <th class="col-1">Номер канала</th>
+                        <th class="col-3">Дата и время начала оказания услуг</th>
+                        <th class="col-3">Дата и время завершения оказания услуг</th>
+                        <th class="col-3">Тип связи</th>
+                        <th class="col-2">Связь с кем</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for line in ptsrequest.techcommlineconstructor_set.all %}
+                        <tr class="d-flex">
+                          <td class="col-1">{{ forloop.counter }}</td>
+                          <td class="col-3">{{ line.start }}</td>
+                          <td class="col-3">{{ line.end }}</td>
+                          <td class="col-3">{{ line.get_type_display }}</td>
+                          <td class="col-2">{{ line.place }}</td>
+                        </tr>
+                      {% endfor %}
+
+                    </tbody>
+                  </table>
+                  {% else %}
+                    <p class="fs-5 ms-2 me-2">Информация отсутсвует в заявке</p>
+                  {% endif %}
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>

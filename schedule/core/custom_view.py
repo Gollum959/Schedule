@@ -38,6 +38,19 @@ class EditOnlyAuthorMixin:
         return obj
 
 
+class EditOnlyAuthorAdminMainDirMixin:
+    """Edit only for for author, admin or main director of author direction"""
+
+    def get_object(self, queryset=None):
+        """Check that only author and others can see detail information"""
+        obj = super(EditOnlyAuthorAdminMainDirMixin, self).get_object(queryset=queryset)
+        if (obj.author == self.request.user or
+            self.request.user.is_admin or
+            (self.request.user.is_main_director and
+                obj.author.direction == self.request.user.direction)):
+            return obj
+        raise Http404()
+
 # class CreateOnlyMainDirectorMixin:
 #     """Permision only for for main director or admin"""
 

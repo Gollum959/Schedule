@@ -40,6 +40,11 @@
         <div class="card-body">        
           <form method="post" enctype="multipart/form-data" id="cfgForm">
             {% csrf_token %}
+            {% if form.non_field_errors %}
+              <div class="row">
+                <div class="col-12 text-danger">{{ form.non_field_errors }}</div>
+              </div>
+            {% endif %}
             <div class="row">
               <div class="col-8">{{ form.name|as_crispy_field }}</div>
               <div class="col-4">{{ form.image|as_crispy_field }}</div>

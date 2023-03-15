@@ -70,3 +70,17 @@ class User(AbstractUser):
             self.is_superuser or
             self.role == self.MAIN_DIRECTOR
         )
+
+    @property
+    def is_main_director(self):
+        """Return True if user is Admin."""
+        return (
+            self.role == self.MAIN_DIRECTOR
+        )
+
+    @property
+    def is_director(self):
+        """Return True if user is Admin."""
+        return (
+            self.role == self.USER
+        )

@@ -1,25 +1,96 @@
-  <div class="card mt-3">
-      <div class="card-header align-items-center p-0">
-          <button class="accordion-button collapsed pt-2 pb-2" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-config" aria-expanded="false" aria-controls="panelsStayOpen-config">
-            <h5 style="margin-bottom: 0px; color: black">Конфигурация ПТС</h5>
-          </button>
-      </div>
-      <div id="panelsStayOpen-config" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-config">
-
-        <div class="card-body">
-          <div class="row">
-            <h5 class="card-title">{{ ptsrequest.place.name }}</h4>
-            <p class="card-text">
-              <b>Адрес:</b> г. {{ ptsrequest.place.city_name  }}, {{ ptsrequest.place.address  }}</br>
-              <b>ФИО ответственного за объект:</b> {{ ptsrequest.place.contact_name }}</br>
-              <b>Телефон ответственного:</b> {{ ptsrequest.place.phone  }}</br>
-              {% if ptsrequest.place.web %}<b>Вебсайт:</b> {{ ptsrequest.place.web }}{% endif %}</br>
-              <a href="{% url 'place:place_detail' ptsrequest.place.pk %}" target="_blank" rel="noopener noreferrer">
-                Детальная информация по объекту
-              </a> 
-            </p>
-          </div>
-        </div>
-
-      </div>
+<div class="card mt-3">
+  <div class="card-header align-items-center p-0">
+      <button class="accordion-button collapsed pt-2 pb-2" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-config" aria-expanded="false" aria-controls="panelsStayOpen-config">
+        <h5 style="margin-bottom: 0px; color: black">Конфигурация ПТС</h5>
+      </button>
   </div>
+  <div id="panelsStayOpen-config" request-id="{{ ptsrequest.pk }}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-config">
+    <div class="card-body">
+      <h4 class="card-title ms-5">{{ ptsrequest.pts_cfg.name }}</h4>
+      <div class="row">
+        <div id="cfg_cam" cam-url="{% url 'pts_requests:ajax_load_cfg_cam' %}"></div>
+      </div>
+      <div class="row">
+        <div id="cfg_optic" opt-url="{% url 'pts_requests:ajax_load_cfg_optic' %}"></div>
+      </div>
+      <div class="row">
+        <div id="cfg_server" server-url="{% url 'pts_requests:ajax_load_cfg_server' %}"></div>
+      </div>
+      <div class="row">
+          <div id="cfg_gfx" gfx-url="{% url 'pts_requests:ajax_load_cfg_gfx' %}"></div>
+      </div>
+      <div class="row">
+        <div id="cfg_micro" micro-url="{% url 'pts_requests:ajax_load_cfg_micro' %}"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  $(window).on('load', function() {
+    const url = $("#cfg_cam").attr("cam-url");
+    const requestId = $("#panelsStayOpen-config").attr("request-id");
+    $.ajax({
+      url: url,
+       data: {
+        'requestId': requestId
+      },
+      success: function (data) {
+        $("#cfg_cam").html(data);
+      }
+    });
+  });
+  $(window).on('load', function() {
+    const url = $("#cfg_optic").attr("opt-url");
+    const requestId = $("#panelsStayOpen-config").attr("request-id");
+    $.ajax({
+      url: url,
+       data: {
+        'requestId': requestId
+      },
+      success: function (data) {
+        $("#cfg_optic").html(data);
+      }
+    });
+  });
+  $(window).on('load', function() {
+    const url = $("#cfg_server").attr("server-url");
+    const requestId = $("#panelsStayOpen-config").attr("request-id");
+    $.ajax({
+      url: url,
+       data: {
+        'requestId': requestId
+      },
+      success: function (data) {
+        $("#cfg_server").html(data);
+      }
+    });
+  });
+  $(window).on('load', function() {
+    const url = $("#cfg_gfx").attr("gfx-url");
+    const requestId = $("#panelsStayOpen-config").attr("request-id");
+    $.ajax({
+      url: url,
+       data: {
+        'requestId': requestId
+      },
+      success: function (data) {
+        $("#cfg_gfx").html(data);
+      }
+    });
+  });
+  $(window).on('load', function() {
+    const url = $("#cfg_micro").attr("micro-url");
+    const requestId = $("#panelsStayOpen-config").attr("request-id");
+    $.ajax({
+      url: url,
+       data: {
+        'requestId': requestId
+      },
+      success: function (data) {
+        $("#cfg_micro").html(data);
+      }
+    });
+  });
+</script>

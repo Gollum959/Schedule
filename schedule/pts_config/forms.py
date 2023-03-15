@@ -1,6 +1,7 @@
 import os
 from django import forms
 from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 
 from pts_config.models import (PtsConstructor,
                                CameraPtsConstructor,
@@ -30,7 +31,7 @@ class AddPtsConfigFrom(forms.ModelForm):
         self.place_id = kwargs.pop('place', None)
         self.event_id = kwargs.pop('event', None)
         super().__init__(*args, **kwargs)
-        
+
         self.fields['place'].label = 'Название объекта'
         self.fields['place'].disabled = True
         if self.place_id:
@@ -70,6 +71,10 @@ class AddPtsConfigOnBaseFrom(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': 'Введите имя конфигурации'}),
     )
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
     def clean_image(self):
         uploaded_file = self.cleaned_data['image']
         try:
@@ -81,6 +86,16 @@ class AddPtsConfigOnBaseFrom(forms.ModelForm):
                 raise forms.ValidationError(
                     "Only images and PDF files allowed")
         return uploaded_file
+
+    def clean(self):
+        print(self.__dict__)
+        name = self.cleaned_data.get('name')
+        dublicate = PtsConstructor.objects.filter(
+            clone_conf=False, name=name, author=self.user).count()
+        if not self.instance.pk and dublicate > 0:
+            raise ValidationError('Конфигурация с таким именем уже существует')
+
+        return self.cleaned_data
 
     class Meta:
         model = PtsConstructor
@@ -167,6 +182,117 @@ GfxFormset = forms.inlineformset_factory(
     extra=0,
     can_delete=True
 )
+
+
+# Try to create 4 module for cfg in request detail
+
+class ModerateCamera(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['cameras'].disabled = True
+        self.fields['cameras'].required = False
+        self.fields['quantity'].disabled = True
+
+    class Meta:
+        model = CameraPtsConstructor
+        fields = ['cameras', 'quantity']
+
+        widgets = {
+            'cameras': forms.Select(attrs={'style': 'width:140px; height:30px'}),
+            'quantity': forms.TextInput(attrs={'style': 'width:80px'})
+        }
+
+
+CameraModerateFormset = forms.inlineformset_factory(
+    PtsConstructor, CameraPtsConstructor,
+    form=ModerateCamera,
+    extra=0,
+    can_delete=True
+)
+
+
+class ModerateOptic(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['optics'].disabled = True
+        self.fields['optics'].required = False
+        self.fields['quantity'].disabled = True
+
+    class Meta:
+        model = OpticPtsConstructor
+        fields = ['optics', 'quantity']
+
+        widgets = {
+            'optics': forms.Select(attrs={'style': 'width:140px; height:30px'}),
+            'quantity': forms.TextInput(attrs={'style': 'width:80px'})
+        }
+
+
+OpticModerateFormset = forms.inlineformset_factory(
+    PtsConstructor, OpticPtsConstructor,
+    form=ModerateOptic,
+    extra=0,
+    can_delete=True
+)
+
+
+class ModerateServer(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['type'].disabled = True
+        self.fields['type_player'].disabled = True
+        self.fields['type'].required = False
+        self.fields['type_player'].required = False
+        self.fields['quantity'].disabled = True
+
+    class Meta:
+        model = ServerRecordingRepeatConstructor
+        fields = ['type', 'type_player', 'quantity']
+        widgets = {
+            'type': forms.Select(attrs={'style': 'width:160px; height:30px'}),
+            'type_player': forms.Select(attrs={'style': 'width:160px; height:30px'}),
+            'quantity': forms.TextInput(attrs={'style': 'width:80px'})
+        }
+
+
+ServerModerateFormset = forms.inlineformset_factory(
+    PtsConstructor, ServerRecordingRepeatConstructor,
+    form=ModerateServer,
+    extra=0,
+    can_delete=True
+)
+
+
+class ModerateGfx(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['gfx'].disabled = True
+        self.fields['license_type'].disabled = True
+        self.fields['gfx'].required = False
+        self.fields['quantity'].disabled = True
+
+    class Meta:
+        model = GfxPtsConstructor
+        fields = ['gfx', 'judicial_system',
+                  'license_type', 'quantity']
+        widgets = {
+            'gfx': forms.Select(attrs={'style': 'width:160px; height:30px'}),
+            'quantity': forms.TextInput(attrs={'style': 'width:80px'})
+        }
+
+
+GfxModerateFormset = forms.inlineformset_factory(
+    PtsConstructor, GfxPtsConstructor,
+    form=ModerateGfx,
+    extra=0,
+    can_delete=True
+)
+
+
 
 # class AddCamera(forms.ModelForm):
 

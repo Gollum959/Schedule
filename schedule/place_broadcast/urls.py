@@ -36,4 +36,9 @@ urlpatterns = [
         PlacesBroadcastView.as_view(),
         name='ajax_load_places'
     ),
+    # path(
+    #     'delete/<int:pk>/',
+    #     place_delete,
+    #     name='place_delete'
+    # ),
 ]

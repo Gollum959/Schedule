@@ -1,12 +1,16 @@
 from typing import Any, Dict
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
+from django.contrib.auth.decorators import login_required
+from django.db.models.deletion import RestrictedError
+
 
 from place_broadcast.forms import AddBroadcastPlace
 from place_broadcast.models import PlaceConstructor, PlaceCity
-from core.custom_view import DetalInformationMixin, EditOnlyAuthorMixin
+from core.custom_view import DetalInformationMixin, EditOnlyAuthorMixin, EditOnlyAuthorAdminMainDirMixin
 
 
 class CityBroadcastCreate(LoginRequiredMixin, CreateView):
@@ -30,6 +34,27 @@ class CitiesBroadcastView(LoginRequiredMixin, ListView):
     model = PlaceCity
     template_name = 'place_broadcast/list_cities.html'
 
+    def post(self, request, *args, **kwargs):
+        placecity_list = PlaceCity.objects.all()
+        place_to_be_deleted = get_object_or_404(PlaceConstructor, pk=request.POST.get('place_pk'))
+        deleted_place = place_to_be_deleted.name
+        city = place_to_be_deleted.city_name.name
+        if request.method == 'POST' and request.user.is_main_director_or_admin:
+            try:
+                place_to_be_deleted.delete()
+                return render(request, self.template_name, {'place_city': city, 'placecity_list': placecity_list, 'deleted_place': deleted_place, 'exept': False})
+            except RestrictedError:
+                return render(request, self.template_name, {'place_city': city, 'placecity_list': placecity_list, 'deleted_place': deleted_place, 'exept': True})
+        else:
+            raise Http404()
+
+    def get_context_data(self, **kwargs):
+        city = self.request.GET.get('city')
+        if city:
+            context = {'place_city': city}
+            kwargs.update(context)
+        return super().get_context_data(**kwargs)
+    
     # def get_queryset(self):
     #     return PlaceConstructor.objects.filter(author=self.request.user)
 
@@ -44,7 +69,13 @@ class PlacesBroadcastView(LoginRequiredMixin, ListView):
         requests = PlaceConstructor.objects.none()
         city_id = self.request.GET.get('city_id', None)
         if city_id:
-            requests = PlaceConstructor.objects.filter(city_name=city_id)
+            requests = PlaceConstructor.objects.filter(
+                city_name=city_id,
+            )
+        if not self.request.user.is_admin or not self.request.user.is_moderator:
+            requests = requests.filter(
+                author__direction=self.request.user.direction
+            )
 
         return requests
 
@@ -73,6 +104,11 @@ class PlacesBroadcastCreate(LoginRequiredMixin, CreateView):
     form_class = AddBroadcastPlace
     template_name = 'place_broadcast/create_places.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_main_director_or_admin:
+            return HttpResponseForbidden()
+        return super().dispatch(request, *args, **kwargs)
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({'city_id': self.request.GET.get('city_id')})
@@ -81,10 +117,14 @@ class PlacesBroadcastCreate(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        return super().form_valid(form)
+        place = form.save()
+        return redirect(reverse('place:places') + f'?city={place.city_name.name}')
+        # return render(request, self.template_name, {'place_city': city, 'placecity_list': placecity_list, 'deleted_place': deleted_place})
+        # return reverse('place:places', kwargs={'place_city': place.city_name.name})
+        # return super().form_valid(form)
 
 
-class PlacesBroadcastEdit(EditOnlyAuthorMixin, LoginRequiredMixin, UpdateView):
+class PlacesBroadcastEdit(EditOnlyAuthorAdminMainDirMixin, LoginRequiredMixin, UpdateView):
     login_url = reverse_lazy('users:login')
     form_class = AddBroadcastPlace
     model = PlaceConstructor
@@ -95,6 +135,21 @@ class PlacesBroadcastEdit(EditOnlyAuthorMixin, LoginRequiredMixin, UpdateView):
         kwargs.update({'city_id': self.request.GET.get('city_id')})
         kwargs.update({'user': self.request.user})
         return kwargs
+    
+    def form_valid(self, form):
+        place = form.save()
+        return redirect(reverse('place:places') + f'?city={place.city_name.name}')
+    
+
+# @login_required
+# def place_delete(request, pk):
+#     print(id)
+#     place_to_be_deleted = get_object_or_404(PlaceConstructor, pk=pk)
+#     city = place_to_be_deleted.city_name
+#     if request.method == 'POST' and request.user.is_main_director_or_admin:
+#         place_to_be_deleted.delete()
+
+#     return redirect(reverse('place:places') + f'?city_id={city.name}')
 
     # def form_valid(self, form):
     #     form.instance.author = self.request.user

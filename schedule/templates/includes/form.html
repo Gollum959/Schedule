@@ -11,19 +11,3 @@
   <button id="add-more-{{ style }}" type="button" class="button_add">Добавить</button>
   <button id="remove-{{ style }}" type="button" class="hidden">Удалить</button>
 </div>
-
-{% comment %} 
-<div class="form-group row my-3 p-3">
-  <p class="fs-4 " >{{descr}}</p>
-  {{ form.management_form }}
-  <div id="{{ style }}-form-list">
-    {% for form in form %}
-      <div class="{{ style }}-form">
-        {{ form.as_p }}
-      </div>
-    {% endfor %}
-  </div>
-  <div id="{{ hiddenid }}" class="hidden">{{ form.empty_form.as_p }}</div>
-  <button id="add-more-{{ style }}" type="button" class="button_add">Add more</button>
-  <button id="remove-{{ style }}" type="button" class="hidden">Remove</button>
-</div> {% endcomment %}

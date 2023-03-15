@@ -1,19 +1,98 @@
-{% for place in placeconstructor_list %}
-  <hr style="border: 1px; margin-top: 15px">
-  <div class="row ms-1 align-items-center">
-    <div class="col">{{ place.name }}</div>
-    <div class="col d-flex justify-content-end">
-      {% if user.is_main_director_or_admin %}
-        <a type="button" id="new-city" class="btn btn-secondary" href="{% url 'place:place_edit' place.pk %}">Изменить площадку</a>
-      {% endif %}
-    </div>
-  </div>
-{% endfor %}
-<hr style="border: 1px; margin-top: 15px">
-{% if city_id != "0" %}
-  <div class="row ms-1">
+<div class="accordion accordion-flush" id="accordionFlush">
+
+  {% for place in placeconstructor_list %}
+      <div id="place_{{ place.pk }}" class="accordion-item">
+        <h2 class="accordion-header" id="flush-heading{{ forloop.counter }}">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+            <h5 class="p-0 m-0">{{ place.name }}</h5>
+          </button>
+        </h2>
+
+        <div id="flush-collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="flush-heading{{ forloop.counter }}" data-bs-parent="#accordionFlush">
+          <div class="accordion-body">
+            <p class="card-text mb-1"><b>Адрес:</b> г. {{ place.city_name  }}, {{ place.address  }}</p>
+            <p class="card-text mb-1"><b>ФИО ответственного за объект:</b> {{ place.contact_name }}</p>
+            <p class="card-text mb-1"><b>Телефон ответственного:</b> {{ place.phone  }}</p>
+            {% if place.web %}
+              <p class="card-text mb-1"><b>Вебсайт:</b> {{ place.web }}</p>
+            {% endif %}
+            {% if place.email_address %}
+              <p class="card-text mb-1"><b>Email:</b> {{ place.email_address }}</p>
+            {% endif %}
+            <p class="card-text mb-1"><b>Судейская система:</b> {% if place.judge_system %}{{ place.judge_system }}{% else %}нет{% endif %}</p>
+            <p class="card-text mb-1"><b>Виды событий:</b> {{ place.get_events }}</p>
+
+            {% if user.is_main_director_or_admin %}
+              <div class="row">
+                <div class="col d-flex justify-content-end">
+                  <a type="button" class="btn btn-secondary" href="{% url 'place:place_edit' place.pk %}">Изменить площадку</a>
+                </div>
+                <div class="col-md-auto d-flex justify-content-end">
+                  <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#remove-place{{ place.pk }}Modal">
+                    Удалить
+                  </button>
+                </div>
+                    
+                <div class="modal fade" id="remove-place{{ place.pk }}Modal" tabindex="-1" aria-labelledby="remove-draftModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="remove-draftModalLabel">Удалить площадку</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <b>Вы точно хотите удалить площадку {{ place.name }}</b>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+                        <form action="{% url 'place:places' %}" method="POST" id="delete_form_{{ place.pk }}">
+                          {% csrf_token %}
+                          <button type="submit" name="place_pk" class="btn btn-primary" value="{{ place.pk }}">Да</button>
+
+                          {% comment %} <button type="button" onclick="submit_delete({{ place.pk }})" class="btn btn-primary" value="delete">Да</button> {% endcomment %}
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+
+    {% comment %} <hr style="border: 1px; margin-top: 15px">
+    <div class="row ms-1 align-items-center">
+      <div class="col">{{ place.name }}</div>
+      <div class="col d-flex justify-content-end">
+        {% if user.is_main_director_or_admin %}
+          <a type="button" id="new-city" class="btn btn-secondary" href="{% url 'place:place_edit' place.pk %}">Изменить площадку</a>
+        {% endif %}
+      </div>
+    </div> {% endcomment %}
+  {% endfor %}
+</div>
+
+{% comment %} <hr style="border: 1px; margin-top: 15px"> {% endcomment %}
+{% if city_id != "0" and user.is_main_director_or_admin %}
+  <div class="row ms-1 pt-4 me-2">
     <div class="d-flex justify-content-end">
       <a type="button" class="btn btn-primary" href="{% url 'place:place_create' %}?city_id={{ city_id }}">Добавить новый объект</a>
     </div>
   </div>
 {% endif %}
+
+
+{% comment %} <script>
+  function submit_delete(id) {
+      $.ajax({
+          type: $('#delete_form_'+id).attr('method'),
+          url: $('#delete_form_'+id).attr('action'),
+          dataType: 'html'
+          success: function (html) {
+            $("#list_places").html(html);
+          }
+      });
+  } {% endcomment %}
+</script>
