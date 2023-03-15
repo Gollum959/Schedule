@@ -1,10 +1,11 @@
 from typing import Any, Dict
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
+from django.db.models.deletion import RestrictedError
 
 
 from place_broadcast.forms import AddBroadcastPlace
@@ -33,11 +34,27 @@ class CitiesBroadcastView(LoginRequiredMixin, ListView):
     model = PlaceCity
     template_name = 'place_broadcast/list_cities.html'
 
-    def get_context_data(self, **kwargs):
-        context = {'city_id': self.request.GET.get('city_id', None)}
-        kwargs.update(context)
-        return super().get_context_data(**kwargs)
+    def post(self, request, *args, **kwargs):
+        placecity_list = PlaceCity.objects.all()
+        place_to_be_deleted = get_object_or_404(PlaceConstructor, pk=request.POST.get('place_pk'))
+        deleted_place = place_to_be_deleted.name
+        city = place_to_be_deleted.city_name.name
+        if request.method == 'POST' and request.user.is_main_director_or_admin:
+            try:
+                place_to_be_deleted.delete()
+                return render(request, self.template_name, {'place_city': city, 'placecity_list': placecity_list, 'deleted_place': deleted_place, 'exept': False})
+            except RestrictedError:
+                return render(request, self.template_name, {'place_city': city, 'placecity_list': placecity_list, 'deleted_place': deleted_place, 'exept': True})
+        else:
+            raise Http404()
 
+    def get_context_data(self, **kwargs):
+        city = self.request.GET.get('city')
+        if city:
+            context = {'place_city': city}
+            kwargs.update(context)
+        return super().get_context_data(**kwargs)
+    
     # def get_queryset(self):
     #     return PlaceConstructor.objects.filter(author=self.request.user)
 
@@ -100,7 +117,11 @@ class PlacesBroadcastCreate(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        return super().form_valid(form)
+        place = form.save()
+        return redirect(reverse('place:places') + f'?city={place.city_name.name}')
+        # return render(request, self.template_name, {'place_city': city, 'placecity_list': placecity_list, 'deleted_place': deleted_place})
+        # return reverse('place:places', kwargs={'place_city': place.city_name.name})
+        # return super().form_valid(form)
 
 
 class PlacesBroadcastEdit(EditOnlyAuthorAdminMainDirMixin, LoginRequiredMixin, UpdateView):
@@ -115,16 +136,20 @@ class PlacesBroadcastEdit(EditOnlyAuthorAdminMainDirMixin, LoginRequiredMixin, U
         kwargs.update({'user': self.request.user})
         return kwargs
     
+    def form_valid(self, form):
+        place = form.save()
+        return redirect(reverse('place:places') + f'?city={place.city_name.name}')
+    
 
-@login_required
-def place_delete(request, pk):
-    print(id)
-    place_to_be_deleted = get_object_or_404(PlaceConstructor, pk=pk)
-    city = place_to_be_deleted.city_name
-    if request.method == 'POST' and request.user.is_main_director_or_admin:
-        place_to_be_deleted.delete()
+# @login_required
+# def place_delete(request, pk):
+#     print(id)
+#     place_to_be_deleted = get_object_or_404(PlaceConstructor, pk=pk)
+#     city = place_to_be_deleted.city_name
+#     if request.method == 'POST' and request.user.is_main_director_or_admin:
+#         place_to_be_deleted.delete()
 
-    return redirect(reverse('place:places') + f'?city_id={city.name}')
+#     return redirect(reverse('place:places') + f'?city_id={city.name}')
 
     # def form_valid(self, form):
     #     form.instance.author = self.request.user

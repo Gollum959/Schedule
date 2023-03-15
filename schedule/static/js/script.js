@@ -10,6 +10,7 @@ function add_new_form(
     if (event) {
       event.preventDefault()
     }
+
     const formCopyTarget = document.getElementById(listName)
     const currentCommlineForms = document.getElementsByClassName(clonedElementClassName)
 
@@ -17,6 +18,8 @@ function add_new_form(
       removeLineBtn.setAttribute('class', 'button_add')
     }
     var addedFormCount = currentCommlineForms.length
+
+
 
     const copyemptyFormEl = document.getElementById(hiddenElementId).cloneNode(true)
     copyemptyFormEl.setAttribute('class', clonedElementClassName)
@@ -26,6 +29,16 @@ function add_new_form(
     const totalNewForms = document.getElementById(totalNumberOfElementId)
     totalNewForms.setAttribute('value', addedFormCount + 1)
     formCopyTarget.append(copyemptyFormEl)
+
+    const startTimeId = `#${elementPrefix}-${addedFormCount}-start`
+    const endTimeId = `#${elementPrefix}-${addedFormCount}-end`
+
+    $(startTimeId).datetimepicker
+    ({
+      format:'Y-m-d H:i',
+      step: 5
+    });
+
 
     if (brend_url!==''){
       var brendId = `${elementPrefix}-${addedFormCount}-brend`

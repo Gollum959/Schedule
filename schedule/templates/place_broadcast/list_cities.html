@@ -9,12 +9,23 @@
             <select class="form-select" id="id_city">
               <option value=0>Выбирите город</option>
               {% for city in placecity_list %}
-                <option value="{{ city.id }}" {% if city_id == city.name %}selected{% endif %}>{{ city.name }}{% if city_id == city.id %}selected{% endif %}</option>
+                <option value="{{ city.id }}" {% if place_city == city.name %}selected{% endif %}>{{ city.name }}</option>
               {% endfor %}
             </select>
           </div>
         </div>
-        <div id="list_places" class="row mt-5" places-url="{% url 'place:ajax_load_places' %}">
+        {% if deleted_place %}
+          <div id="deleted" class="row ps-3 pt-3">
+            <div class="col">
+              {% if exept %}
+                <h5 style="color: red;">Площадку {{deleted_place}} нельзя удалить она есть в существующих заявках</h5>
+              {% else %}
+                <h5 style="color: red;">Площадка {{deleted_place}} удалена</h5>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+        <div id="list_places" class="row mt-3" places-url="{% url 'place:ajax_load_places' %}">
         </div>
         {% if user.is_main_director_or_admin %}
           <div class="row ms-1">
@@ -30,6 +41,9 @@
   <script>
 
     $("#id_city").change(function () {
+      if(document.getElementById("deleted")){
+        document.getElementById("deleted").style.display = "none"
+      }
       var url = $("#list_places").attr("places-url");
       var cityId = $(this).val();
       const cityStyle = cityId !== "0" ? "none" : "block";
