@@ -21,7 +21,7 @@ from pts_config.models import (
                 ServerPlayerType, ServerRecordingRepeatType)
 class CameraAdmin(admin.ModelAdmin):
     """Displaying Camera, Optic, Microphone, Commentator, Gfx
-       model in the admin panel."""
+       model and other in the admin panel."""
     list_display = ('name', )
 
 

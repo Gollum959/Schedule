@@ -21,10 +21,11 @@ class AddPtsConfigFrom(forms.ModelForm):
     name = forms.CharField(
         label='Название конфигурации ПТС',
         validators=[RegexValidator(
-            '^[0-9a-zA-ZА-я\s]*$',
+            '^[0-9a-zA-ZА-я\\s]*$',
             message='Только буквы и цифры'
         )],
-        widget=forms.TextInput(attrs={'placeholder': 'Введите имя конфигурации'}),
+        widget=forms.TextInput(
+            attrs={'placeholder': 'Введите имя конфигурации'}),
     )
 
     def __init__(self, *args, **kwargs):

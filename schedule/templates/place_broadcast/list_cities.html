@@ -6,7 +6,7 @@
       <div class="card-body">
         <div class="row">
           <div class="col-4">
-            <select class="form-select" id="id_city">
+            <select class="form-select ms-3" id="id_city">
               <option value=0>Выбирите город</option>
               {% for city in placecity_list %}
                 <option value="{{ city.id }}" {% if place_city == city.name %}selected{% endif %}>{{ city.name }}</option>
@@ -77,8 +77,6 @@
         });
       }
      });
-
-
 
   </script>
 {% endblock %} 

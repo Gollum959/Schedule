@@ -3,7 +3,7 @@ from django.db import models
 
 
 class ConstrQuantity(models.Model):
-    """Abstract model for PTS configuration"""
+    """Abstract model for PTS configuration."""
 
     constructor = models.ForeignKey(
         'PtsConstructor',
@@ -24,7 +24,8 @@ class ConstrQuantity(models.Model):
 
 
 class StrName(models.Model):
-    """Abstract model with __str__ method"""
+    """Abstract model with __str__ method."""
+
     def __str__(self) -> str:
         return f'{self.name}'
 
@@ -33,7 +34,8 @@ class StrName(models.Model):
 
 
 class StrNameQuantity(models.Model):
-    """Abstract model with __str__ method and quantity field"""
+    """Abstract model with __str__ method and quantity field."""
+
     quantity = models.PositiveSmallIntegerField(
         'Quantity',
         validators=(
