@@ -43,7 +43,6 @@ class AddRequestFrom(ModelForm):
         self.fields['event_type'].queryset = EventType.objects.none()
         if 'city_name' in self.data:
             try:
-                print('self.data')
                 city_id = int(self.data.get('city_name'))
                 place_id = int(self.data.get('place'))
                 event_id = int(self.data.get('event_type'))

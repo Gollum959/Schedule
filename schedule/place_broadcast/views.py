@@ -4,11 +4,11 @@ from django.db.models.deletion import RestrictedError
 from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView
 
 from place_broadcast.forms import AddBroadcastPlace
 from place_broadcast.models import PlaceConstructor, PlaceCity
-from core.custom_view import EditOnlyAuthorAdminMainDirMixin
+from core.custom_view import EditOnlyAuthorAdminMainDirMixin, DetalInformationMixin
 
 
 class CityBroadcastCreate(LoginRequiredMixin, CreateView):
@@ -103,6 +103,15 @@ class PlacesBroadcastView(LoginRequiredMixin, ListView):
         data['city_id'] = self.request.GET.get('city_id', None)
 
         return data
+
+
+class PlacesBroadcastDetail(
+    DetalInformationMixin, LoginRequiredMixin, DetailView
+):
+    """Place detail view"""
+    login_url = reverse_lazy('users:login')
+    model = PlaceConstructor
+    template_name = 'place_broadcast/place_detail.html'
 
 
 class PlacesBroadcastCreate(LoginRequiredMixin, CreateView):

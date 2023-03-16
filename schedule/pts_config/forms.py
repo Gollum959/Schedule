@@ -5,30 +5,49 @@ from django.core.exceptions import ValidationError
 
 from pts_config.models import (PtsConstructor,
                                CameraPtsConstructor,
-                               CameraModelBrend,
                                OpticPtsConstructor,
-                               OpticModelBrend,
                                ServerRecordingRepeatConstructor,
-                               ServerRecordingRepeatModelBrend,
-                               MicrophonePtsConstructor,
-                               MicrophoneModelBrend,
-                               GfxPtsConstructor)
+                               GfxPtsConstructor,
+                               Optic)
 
 
-class AddPtsConfigFrom(forms.ModelForm):
+class CreatePtsConfigurationMixin(forms.ModelForm):
+    """Mixin to creat configuration with 2 fields(image, name)
+     and mclean_image method"""
 
     image = forms.FileField()
     name = forms.CharField(
         label='Название конфигурации ПТС',
         validators=[RegexValidator(
-            '^[0-9a-zA-ZА-я\\s]*$',
+            '^[-()\".,!?a-zA-Z0-9_А-я\\s]*$',
             message='Только буквы и цифры'
         )],
         widget=forms.TextInput(
             attrs={'placeholder': 'Введите имя конфигурации'}),
     )
 
+    def clean_image(self):
+        """Checks if a file is an image or a pdf"""
+
+        uploaded_file = self.cleaned_data['image']
+        try:
+            im = forms.ImageField()
+            im.to_python(uploaded_file)
+        except forms.ValidationError:
+            name, ext = os.path.splitext(uploaded_file.name)
+            if ext not in ['.pdf', '.PDF']:
+                raise forms.ValidationError(
+                    "Only images and PDF files allowed")
+        return uploaded_file
+
+
+class AddPtsConfigFrom(CreatePtsConfigurationMixin):
+    """Form for creating base PTS configurations."""
+
     def __init__(self, *args, **kwargs):
+        """Extracts a place and event type from kwargs.
+        Adds an initial value for a place and event type."""
+
         self.place_id = kwargs.pop('place', None)
         self.event_id = kwargs.pop('event', None)
         super().__init__(*args, **kwargs)
@@ -43,53 +62,27 @@ class AddPtsConfigFrom(forms.ModelForm):
         if self.event_id:
             self.fields['event_type'].initial = self.event_id
 
-    def clean_image(self):
-        uploaded_file = self.cleaned_data['image']
-        try:
-            im = forms.ImageField()
-            im.to_python(uploaded_file)
-        except forms.ValidationError:
-            name, ext = os.path.splitext(uploaded_file.name)
-            if ext not in ['.pdf', '.PDF']:
-                raise forms.ValidationError(
-                    "Only images and PDF files allowed")
-        return uploaded_file
-
     class Meta:
         model = PtsConstructor
-        fields = ('place', 'event_type', 'name', 'microphone_quantity', 'image')
+        fields = ('place', 'event_type',
+                  'name', 'microphone_quantity', 'image')
 
 
-class AddPtsConfigOnBaseFrom(forms.ModelForm):
-
-    image = forms.FileField(required=False)
-    name = forms.CharField(
-        label='Название конфигурации ПТС',
-        validators=[RegexValidator(
-            '^[0-9a-zA-ZА-я\s]*$',
-            message='Только буквы и цифры'
-        )],
-        widget=forms.TextInput(attrs={'placeholder': 'Введите имя конфигурации'}),
-    )
+class AddPtsConfigOnBaseFrom(CreatePtsConfigurationMixin):
+    """Form for creation user own configuration based on the basic
+     configuration."""
 
     def __init__(self, *args, **kwargs):
+        """Add user to form."""
+
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-
-    def clean_image(self):
-        uploaded_file = self.cleaned_data['image']
-        try:
-            im = forms.ImageField()
-            im.to_python(uploaded_file)
-        except forms.ValidationError:
-            name, ext = os.path.splitext(uploaded_file.name)
-            if ext not in ['.pdf', '.PDF']:
-                raise forms.ValidationError(
-                    "Only images and PDF files allowed")
-        return uploaded_file
+        self.fields['image'].required = False
 
     def clean(self):
-        print(self.__dict__)
+        """Checks that three fields: clone_conf, name, author,
+        have unique constraint."""
+
         name = self.cleaned_data.get('name')
         dublicate = PtsConstructor.objects.filter(
             clone_conf=False, name=name, author=self.user).count()
@@ -104,6 +97,8 @@ class AddPtsConfigOnBaseFrom(forms.ModelForm):
 
 
 class AddCamera(forms.ModelForm):
+    """Form for CameraPtsConstructor model.
+     Uses for creation base or onbase configuration"""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -123,10 +118,14 @@ CameraFormset = forms.inlineformset_factory(
 
 
 class AddOptic(forms.ModelForm):
+    """Form for OpticPtsConstructor model.
+     Uses for creation base or onbase configuration"""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['optics'].empty_label = 'Выберете кратность'
+        self.fields['optics'].queryset = Optic.objects.filter(
+            visible_to_user=True)
 
     class Meta:
         model = OpticPtsConstructor
@@ -142,6 +141,8 @@ OpticFormset = forms.inlineformset_factory(
 
 
 class AddServer(forms.ModelForm):
+    """Form for ServerRecordingRepeatConstructor model.
+     Uses for creation base or onbase configuration"""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -164,6 +165,8 @@ ServerFormset = forms.inlineformset_factory(
 
 
 class AddGfx(forms.ModelForm):
+    """Form for GfxPtsConstructor model.
+     Uses for creation base or onbase configuration"""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -184,8 +187,8 @@ GfxFormset = forms.inlineformset_factory(
     can_delete=True
 )
 
-
 # Try to create 4 module for cfg in request detail
+
 
 class ModerateCamera(forms.ModelForm):
 
@@ -200,7 +203,8 @@ class ModerateCamera(forms.ModelForm):
         fields = ['cameras', 'quantity']
 
         widgets = {
-            'cameras': forms.Select(attrs={'style': 'width:140px; height:30px'}),
+            'cameras': forms.Select(
+                attrs={'style': 'width:140px; height:30px'}),
             'quantity': forms.TextInput(attrs={'style': 'width:80px'})
         }
 
@@ -226,7 +230,8 @@ class ModerateOptic(forms.ModelForm):
         fields = ['optics', 'quantity']
 
         widgets = {
-            'optics': forms.Select(attrs={'style': 'width:140px; height:30px'}),
+            'optics': forms.Select(
+                attrs={'style': 'width:140px; height:30px'}),
             'quantity': forms.TextInput(attrs={'style': 'width:80px'})
         }
 
@@ -254,7 +259,8 @@ class ModerateServer(forms.ModelForm):
         fields = ['type', 'type_player', 'quantity']
         widgets = {
             'type': forms.Select(attrs={'style': 'width:160px; height:30px'}),
-            'type_player': forms.Select(attrs={'style': 'width:160px; height:30px'}),
+            'type_player': forms.Select(
+                attrs={'style': 'width:160px; height:30px'}),
             'quantity': forms.TextInput(attrs={'style': 'width:80px'})
         }
 
@@ -292,132 +298,3 @@ GfxModerateFormset = forms.inlineformset_factory(
     extra=0,
     can_delete=True
 )
-
-
-
-# class AddCamera(forms.ModelForm):
-
-#     class Meta:
-#         model = CameraPtsConstructor
-#         fields = ['cameras', 'brend', 'model', 'quantity']
-
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields['model'].queryset = CameraModelBrend.objects.none()
-#         if 'cameraptsconstructor_set-0-brend' in self.data:
-#             try:
-#                 self.fields['model'].queryset = CameraModelBrend.objects.all().order_by('name')
-#             except (ValueError, TypeError):
-#                 pass
-#         elif self.instance.pk:
-#             # Need to create subscription(in JS) for existing model
-#             # self.fields['model'].queryset = CameraModelBrend.objects.filter(brend=self.instance.brend_id).order_by('name') 
-#             self.fields['model'].queryset = CameraModelBrend.objects.all().order_by('name') 
-
-
-# CameraFormset = forms.inlineformset_factory(
-#     PtsConstructor, CameraPtsConstructor,
-#     form=AddCamera,
-#     extra=0,
-#     can_delete=True
-# )
-
-
-# class AddOptic(forms.ModelForm):
-
-#     class Meta:
-#         model = OpticPtsConstructor
-#         fields = ['optics', 'brend', 'model', 'quantity']
-
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields['model'].queryset = OpticModelBrend.objects.none()
-#         if 'opticptsconstructor_set-0-brend' in self.data:
-#             try:
-#                 self.fields['model'].queryset = OpticModelBrend.objects.all().order_by('name')
-#             except (ValueError, TypeError):
-#                 pass
-#         elif self.instance.pk:
-#             # Need to create subscription(in JS) for existing model
-#             # self.fields['model'].queryset = OpticModelBrend.objects.filter(brend=self.instance.brend_id).order_by('name') 
-#             self.fields['model'].queryset = OpticModelBrend.objects.all().order_by('name') 
-
-
-# OpticFormset = forms.inlineformset_factory(
-#     PtsConstructor, OpticPtsConstructor,
-#     form=AddOptic,
-#     extra=0,
-#     can_delete=True
-# )
-
-
-# class AddServer(forms.ModelForm):
-
-#     class Meta:
-#         model = ServerRecordingRepeatConstructor
-#         fields = ['type', 'type_player', 'brend', 'model', 'quantity']
-
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields['model'].queryset = ServerRecordingRepeatModelBrend.objects.none()
-#         if 'serverrecordingrepeatconstructor_set-0-brend' in self.data:
-#             try:
-#                 self.fields['model'].queryset = ServerRecordingRepeatModelBrend.objects.all().order_by('name')
-#             except (ValueError, TypeError):
-#                 pass
-#         elif self.instance.pk:
-#             # Need to create subscription(in JS) for existing model
-#             # self.fields['model'].queryset = ServerRecordingRepeatModelBrend.objects.filter(brend=self.instance.brend_id).order_by('name') 
-#             self.fields['model'].queryset = ServerRecordingRepeatModelBrend.objects.all().order_by('name')
-
-
-# ServerFormset = forms.inlineformset_factory(
-#     PtsConstructor, ServerRecordingRepeatConstructor,
-#     form=AddServer,
-#     extra=0,
-#     can_delete=True
-# )
-
-
-# class AddMicrophone(forms.ModelForm):
-
-#     class Meta:
-#         model = MicrophonePtsConstructor
-#         fields = ['type', 'brend', 'model', 'quantity']
-
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields['model'].queryset = MicrophoneModelBrend.objects.none()
-#         if 'microphoneptsconstructor_set-0-brend' in self.data:
-#             try:
-#                 self.fields['model'].queryset = MicrophoneModelBrend.objects.all().order_by('name')
-#             except (ValueError, TypeError):
-#                 pass
-#         elif self.instance.pk:
-#             # Need to create subscription(in JS) for existing model
-#             # self.fields['model'].queryset = MicrophoneModelBrend.objects.filter(brend=self.instance.brend_id).order_by('name') 
-#             self.fields['model'].queryset = MicrophoneModelBrend.objects.all().order_by('name')
-
-
-# MicroFormset = forms.inlineformset_factory(
-#     PtsConstructor, MicrophonePtsConstructor,
-#     form=AddMicrophone,
-#     extra=0,
-#     can_delete=True
-# )
-
-
-# class AddGfx(forms.ModelForm):
-
-#     class Meta:
-#         model = GfxPtsConstructor
-#         fields = ['gfx', 'model', 'judicial_system',
-#                   'license_type', 'quantity']
-
-
-# GfxFormset = forms.inlineformset_factory(
-#     PtsConstructor, GfxPtsConstructor,
-#     form=AddGfx,
-#     extra=0,
-#     can_delete=True
-# )

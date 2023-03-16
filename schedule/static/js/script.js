@@ -38,6 +38,11 @@ function add_new_form(
       format:'Y-m-d H:i',
       step: 5
     });
+    $(endTimeId).datetimepicker
+    ({
+      format:'Y-m-d H:i',
+      step: 5
+    });
 
 
     if (brend_url!==''){
