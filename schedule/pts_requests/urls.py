@@ -4,7 +4,7 @@ from pts_requests.views import (
     PtsRequestEdit, PtsRequestModerate, load_places, load_pts_cfg,
     load_event_type, change_status_to_on_approval, remove_draft_pts_request,
     load_cameras_in_request, load_optics_in_request, load_servers_in_request,
-    load_gfx_in_request, load_micro_in_request
+    load_gfx_in_request, load_micro_in_request, printbtk,
 )
 
 app_name = 'pts_requests'
@@ -65,4 +65,6 @@ urlpatterns = [
         load_micro_in_request,
         name='ajax_load_cfg_micro'
     ),
+    path('print/', printbtk, name='printbtk'),
 ]
+ #path('create/<int:pk>/', PtsRequestEdit.as_view(), name='request_edit'),

@@ -349,3 +349,67 @@ def load_micro_in_request(request):
         'pts_requests/request_cfg_micro.html',
         {'quantity': pts_request.pts_cfg.microphone_quantity}
     )
+
+def printbtk (request):
+    id = 73
+    #db_data = PtsRequest.objects.all()
+    db_data = PtsRequest.objects.get(pk=id)
+    contract_status = True
+    signer = 'Ю.Н.Колячко'
+    director = 'Левада И. В.'
+    dir_position = 'режиссёр'
+    dir_phone = '+375 44 764-33-10' 
+    pts_chief = 'Крупко В. С..'
+    pts_chief_position = 'начальник смены ПТС «Янiна»'
+    pts_chief_phone = 'начальник смены ПТС «Янiна»'  
+    chief = 'Васильев В. В.'
+    chief_position = 'начальник цеха ПТС'
+    chief_phone = '+375 29 375-07-88'
+    place_name = 'Ледового дворца'
+    place_full_address = 'ул. К.Маркса, 3/1'
+    request_date = '20 марта 2023 г.'
+    pts_arrive_time = '16:00'
+    lines_time_start = '17:00'
+    lines_time_end = '22:20'
+    vpn_speed = '10 Мбит/с'
+    internet_speed = '20/20 Мбит/c' 
+    city_name = 'г. Жлобин'
+    effir_time_start = '19:05'
+    effir_time_end = '21:50'
+    pts_name = '«Янiна»'
+    request_name =  '«Хоккей. Чемпионат Беларуси. 1/4 финала. Шестой матч»'
+
+    return render(
+        request,
+        
+        'pts_requests/print_request.html',
+        {
+         'contract_status': contract_status,   
+         'signer': signer,
+         'director': director,
+         'dir_position': dir_position,
+         'dir_phone': dir_phone,
+         'pts_chief': pts_chief,
+         'pts_chief_position': pts_chief_position,
+         'pts_chief_phone': pts_chief_phone,
+         'chief':chief,
+         'chief_position':chief_position,
+         'chief_phone': chief_phone,
+         'place_name':place_name,
+         'place_full_address':place_full_address,
+         'request_date':request_date,
+         'pts_arrive_time':pts_arrive_time,
+         'lines_time_start':lines_time_start,
+         'lines_time_end':lines_time_end,
+         'vpn_speed':vpn_speed,
+         'internet_speed':internet_speed,
+         'city_name':city_name,
+         'effir_time_start':effir_time_start,
+         'effir_time_end':effir_time_end,
+         'pts_name':pts_name,
+         'request_name':request_name,
+         'db_data':db_data,
+
+         
+         }
+    )

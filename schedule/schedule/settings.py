@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     "crispy_forms",
     "crispy_bootstrap5",
+    "api.apps.ApiConfig",
+    "rest_framework",
+    "frontend.apps.FrontendConfig",
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

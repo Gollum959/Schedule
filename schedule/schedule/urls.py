@@ -8,4 +8,6 @@ urlpatterns = [
     path('auth/', include('users.urls', namespace='users')),
     path('place/', include('place_broadcast.urls', namespace='place')),
     path('config/', include('pts_config.urls', namespace='config')),
+    path('api/', include('api.urls')),
+    path('react/', include('frontend.urls')),
 ]

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% block title %}<title>Письмо в белтелеком {{ name }} </title>{% endblock %}
+<style> 
+    body{
+        width: 21cm;
+        height: 29.7cm;
+        margin: 30mm 45mm 30mm 45mm;
+        border: solid;
+        
+        /* change the margins as you want them to be. */
+   } 
+
+    .btk { 
+      {% comment %} display: block; {% endcomment %}
+      {% comment %} float: right; {% endcomment %}
+        position: fixed;
+        top: 300px;
+        left:700px;
+        width: 250px;
+        margin-top: 0;
+        background: yellow;
+        padding: 10px;
+        font-family: "Times New Roman", Times, serif;
+        font-size: 15pt;
+    }
+    .btk_fil { 
+        {% comment %} display: block; {% endcomment %}
+        {% comment %} float: right; {% endcomment %}
+        position: fixed;
+        top: 450px;
+        left:700px;
+        width: 250px;
+        margin-top: 0;
+        background: yellow;
+        padding: 10px;
+        font-size: 15pt;
+
+      }
+      .titel {
+        position: fixed;
+        top: 580px;
+        width: 400px;
+        margin-top: 0;
+        background: yellow;
+        padding-left: 20px;
+        font-size: 15pt;
+      }
+      .main-text{
+        position: fixed;
+        top: 650px;
+        width: 750px;
+        margin-left: 20;
+        background: yellow;
+        padding-left: 20px;
+        font-size: 15pt;
+        
+      }
+      .contacts{
+        position: fixed;
+        top: 1050px;
+        width: 750px;
+        margin-top: 0;
+        background: yellow;
+        padding-left: 20px;
+        font-size: 15pt;
+      }
+      .sign_name{
+        position: fixed;
+        top: 1500px;
+        width: 800px;
+        margin-top: 0;
+        background: yellow;
+        padding-left: 20px;
+        font-size: 15pt;
+      }
+      .signer{
+        position: fixed;
+        top: 1900px;
+        left:600px;
+        width: 100px;
+        margin-top: 0;
+        background: yellow;
+        padding-right: 20px;
+        font-size: 15pt;
+      }
+</style>
+</head>
+<body>
+  {% block content %}
+  {{db_data.pts_name}}
+<div class="btk">
+  Заместителю<br />генерального директора<br />по техническим вопросам<br />РУП &laquo;Белтелеком&raquo;<br />Жаркевичу А.Р.
+</div>
+<div class="btk_fil">
+  Директору филиала<br />&laquo;Междугородная связь&raquo;<br />РУП &laquo;Белтелеком&raquo;<br />Фурсевичу А.Н.</div>
+            
+        
+        <div class="titel">
+            Об организации временных линий связи
+        </div>
+        <div class="main-text ">
+            Для обеспечения проведения трансляций {{db_data.name}}  {{db_data.broadcast_start_date.date}} c {{db_data.broadcast_start_date.time}} до {{db_data.broadcast_end_date.time}}
+            из {{db_data.place.head_fullname}} ({{db_data.place.city_name}}, {{db_data.place.address}}) просим
+            предоставить услуги электросвязи по обеспечению и сопровождению телевизионных трансляций:
+       
+            1. ТВ-канал (HD-SDI c эмбедированным звуком – 4 канала) от ПТС
+            {{db_data.pts_name}} OLDDATA{{pts_name}} ({{db_data.place.city_name}}, {{db_data.place.address}}) до ЦА Белтелерадиокомпании (г.
+            Минск, ул. Макаёнка, 9) с предоставлением активного каналообразующего
+            оборудования РУП «Белтелеком».<br>
+            Готовность ТВ-канала:
+            {{db_data.create_date}} c {{broadcast_start_date.time}} до {{broadcast_end_date.time}}. <br>
+        
+            
+            2. Одну линию ГТС {{db_data.place.city_name}} в ПТС с возможностью набора абонентов г. Минск.
+            
+            <br>
+            3. Одну точку доступа к сети интернет по технологии GPON
+
+            со скоростью {{internet_speed}} в ПТС.<br>
+           
+                4. Осуществить объединение корпоративных сетей по IP протоколу (VPN) с
+                пропускной способностью {{vpn_speed}} в ПТС.<br>
+                Готовность линий связи:
+                {{request_date}} c {{lines_time_start}} до {{lines_time_end}}
+           <br>
+                Оплата будет произведена на основании 
+                {% if contract_status == True %}
+                договора №XX-12-543.
+                {% else %}
+                соответствующего договора.
+                {% endif %}
+            </div>
+
+           
+        </div>
+        <div class="contacts">
+            ПТС будет находиться у {{db_data.name}} ({{db_data.place.city_name}}, {{db_data.place.address}}) {{broadcast_start_date.data}} в {{pts_arrive_time}}.    
+        
+        
+            Контактные телефоны:
+        
+        
+            {{chief}} - {{chief_position}}, тел. {{chief_phone}};<br>
+            {{pts_chief}} - {{pts_chief_position}}, тел. {{pts_chief_phone}};<br>
+            {{director}} - {{dir_position}} тел. {{dir_phone}}.
+        </div>
+
+        
+            <div class="sign_name">Главный директор главной технической дирекции</div>
+            <div class="signer">{{signer}}</div>
+
+       
+        
+
+{% endblock %} 
+</body>
+</html>
