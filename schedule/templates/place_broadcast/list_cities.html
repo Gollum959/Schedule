@@ -6,10 +6,10 @@
       <div class="card-body">
         <div class="row">
           <div class="col-4">
-            <select class="form-select" id="id_city">
+            <select class="form-select ms-3" id="id_city">
               <option value=0>Выбирите город</option>
               {% for city in placecity_list %}
-                <option value="{{ city.id }}" {% if place_city == city.name %}selected{% endif %}>{{ city.name }}</option>
+                <option  {% if place_city == city.name %}selected{% endif %} value="{{ city.id }}">{{ city.name }}</option>
               {% endfor %}
             </select>
           </div>
@@ -40,6 +40,23 @@
 
   <script>
 
+    $(window).on('load', function() {
+      var cityId = $("#id_city").val();
+      var url = $("#list_places").attr("places-url");
+      if (cityId !== "0"){
+        document.getElementById("newCity").style.display = "none";
+        $.ajax({
+          url: url,
+          data: {
+            'city_id': cityId
+          },
+          success: function (data) {
+            $("#list_places").html(data);
+          }
+        });
+      }
+     });
+
     $("#id_city").change(function () {
       if(document.getElementById("deleted")){
         document.getElementById("deleted").style.display = "none"
@@ -60,25 +77,6 @@
         }
       });
     });
-
-    $(window).on('load', function() {
-      var cityId = $("#id_city").val();
-      var url = $("#list_places").attr("places-url");
-      if (cityId !== "0"){
-        document.getElementById("newCity").style.display = "none";
-        $.ajax({
-          url: url,
-          data: {
-            'city_id': cityId
-          },
-          success: function (data) {
-            $("#list_places").html(data);
-          }
-        });
-      }
-     });
-
-
 
   </script>
 {% endblock %} 

@@ -4,7 +4,7 @@ from users.models import User
 
 
 class PlaceCity(models.Model):
-    """City model"""
+    """City model."""
     name = models.CharField('City name', unique=True, max_length=30)
 
     def __str__(self) -> str:
@@ -12,7 +12,7 @@ class PlaceCity(models.Model):
 
 
 class EventType(models.Model):
-    """Event type model"""
+    """Event type model."""
 
     GPC = 'gpc'
     ATN = 'atn'
@@ -40,7 +40,8 @@ class EventType(models.Model):
 
 
 class PlaceConstructor(models.Model):
-    """Broadcast address constructor"""
+    """Broadcast address constructor."""
+
     name = models.CharField('Название Объекта', max_length=70)
     city_name = models.ForeignKey(
         'PlaceCity',
@@ -76,6 +77,8 @@ class PlaceConstructor(models.Model):
 
     @property
     def get_events(self):
+        """Returns a string with all event_types that the site has"""
+
         return ", ".join([event.name for event in self.event_type.all()])
 
     class Meta:

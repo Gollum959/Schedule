@@ -1,11 +1,12 @@
 from django import forms
-from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 
 from place_broadcast.models import PlaceConstructor, PlaceCity, EventType
 
 
 class AddBroadcastPlace(forms.ModelForm):
+    """Form for PlaceConstructor model."""
 
     city_name = forms.ModelChoiceField(
         queryset=PlaceCity.objects.all(),
@@ -15,7 +16,7 @@ class AddBroadcastPlace(forms.ModelForm):
     name = forms.CharField(
         label='Название Объекта',
         validators=[RegexValidator(
-            '^[0-9a-zA-ZА-я\s]*$',
+            '^[-()\".,!?a-zA-Z0-9_А-я\\s]*$',
             message='Только буквы и цифры'
         )],
         widget=forms.TextInput(
@@ -29,7 +30,7 @@ class AddBroadcastPlace(forms.ModelForm):
     contact_name = forms.CharField(
         label='ФИО ответственного лица на объекте',
         validators=[RegexValidator(
-            '^[a-zA-ZА-я\s]*$',
+            '^[a-zA-ZА-я\\s]*$',
             message='Только буквы'
         )],
         widget=forms.TextInput(attrs={'placeholder': 'Введите ФИО'})
@@ -65,6 +66,9 @@ class AddBroadcastPlace(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
+        """Add city id and user to form,
+        filters event types according to direction"""
+
         self.selected_city = kwargs.pop('city_id', None)
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
@@ -75,6 +79,10 @@ class AddBroadcastPlace(forms.ModelForm):
             self.fields['city_name'].initial = self.selected_city
 
     def clean(self):
+        """Checks that three fields: name city, name, author,
+        have unique constraint.
+        Cleans field judge_system if 'judge' field is false"""
+
         city_name = self.cleaned_data.get('city_name')
         name = self.cleaned_data.get('name')
         dublicate = PlaceConstructor.objects.filter(

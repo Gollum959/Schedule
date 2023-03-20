@@ -227,11 +227,23 @@ class PtsRequest(models.Model):
 
     @staticmethod
     def crete_clone(obj):
-        obj.pk = None
-        obj.clone_conf = True
-        obj.base_conf = False
-        obj.save()
-        return obj
+        related_fields = [obj.cameraptsconstructor_set.all(),
+                          obj.opticptsconstructor_set.all(),
+                          obj.serverrecordingrepeatconstructor_set.all(),
+                          obj.gfxptsconstructor_set.all()]
+        clone = obj._meta.model.objects.get(pk=obj.pk)
+        clone.pk = None
+        clone.clone_conf = True
+        clone.base_conf = False
+        clone.save()
+        for related_field in related_fields:
+            if related_field:
+                for field in related_field:
+                    field.pk = None
+                    field.constructor = clone
+                    field.save()
+
+        return clone
 
     # @staticmethod
     # def delete_clone(id_request):

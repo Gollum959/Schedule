@@ -53,6 +53,10 @@ class CameraPtsConstructor(ConstrQuantity):
 class Optic(StrName):
     """Optics type model."""
     name = models.CharField('Optical magnification', max_length=50)
+    visible_to_user = models.BooleanField(
+        'Видят ли пользователи',
+        default=False
+    )
 
 
 class OpticBrend(StrName):
@@ -218,6 +222,12 @@ class GfxPtsConstructor(ConstrQuantity):
         blank=True,
     )
 
+    @property
+    def get_license_type(self):
+        return ", ".join(
+            [license_type.name for license_type in self.license_type.all()]
+        )
+
 
 class PtsConstructor(models.Model):
     """PTS configuration model."""
@@ -270,6 +280,7 @@ class PtsConstructor(models.Model):
 
     @property
     def get_base_name(self):
+        """Add string to configuration name if it's base"""
         return f'{self.name}. Базовая' if self.base_conf else f'{self.name}'
 
     class Meta:

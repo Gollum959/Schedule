@@ -41,23 +41,28 @@ from core.custom_view import (DetalInformationMixin,
 
 
 class PtsConfigMainPage(LoginRequiredMixin, TemplateView):
+    """PTS configuration main page."""
 
     login_url = reverse_lazy('users:login')
     template_name = "pts_config/config_main.html"
 
     def get_context_data(self, **kwargs):
+        """Add cities to context."""
         context = super().get_context_data(**kwargs)
         context['cities'] = PlaceCity.objects.all()
         return context
 
 
 class PtsConfigView(LoginRequiredMixin, ListView):
-    """User PTS configs list view"""
+    """PTS configs list view."""
+
     login_url = reverse_lazy('users:login')
     model = PtsConstructor
     template_name = 'pts_config/list_config.html'
 
     def get_queryset(self):
+        """Filters PtsConstructor objects."""
+
         requests = PtsConstructor.objects.none()
         place_id = self.request.GET.get('place_id', None)
         event_type_id = self.request.GET.get('event_type_id', None)
@@ -73,6 +78,8 @@ class PtsConfigView(LoginRequiredMixin, ListView):
         return requests
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        """Add place_id, event_type_id  to context."""
+
         data = super().get_context_data(**kwargs)
         place_id = self.request.GET.get('place_id', None)
         event_type_id = self.request.GET.get('event_type_id', None)
@@ -91,6 +98,7 @@ class PtsConfigDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
 
 
 class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
+    """CreateView class to create a basic configuration"""
 
     BASE_CFG = True
     form_class = AddPtsConfigFrom
@@ -98,12 +106,16 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
     template_name = 'pts_config/create_config.html'
 
     def get_form_kwargs(self):
+        """Adds attributes(place, event) to form's kwargs."""
+
         kwargs = super().get_form_kwargs()
         kwargs.update({'place': self.request.GET.get('place')})
         kwargs.update({'event': self.request.GET.get('event')})
         return kwargs
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        """Add to context inlineformset_factories"""
+
         data = super().get_context_data(**kwargs)
         pts_cfg = {
             'camera': CameraFormset,
@@ -124,6 +136,8 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
         return data
 
     def form_valid(self, form):
+        """Saves the new object and all inlineformset_factories"""
+
         form.instance.author = self.request.user
         form.instance.base_conf = self.BASE_CFG
         context = self.get_context_data()
@@ -141,6 +155,7 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
 
 
 class PtsConfigCreateOnBase(LoginRequiredMixin, CreateView):
+    """CreateView class to create a configuration based on a base"""
 
     BASE_CFG = False
     login_url = reverse_lazy('users:login')
@@ -149,6 +164,8 @@ class PtsConfigCreateOnBase(LoginRequiredMixin, CreateView):
     template_name = 'pts_config/create_config_onbase.html'
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        """Add to context cleared data from inlineformset_factories"""
+
         data = super().get_context_data(**kwargs)
         pts_cfg = {
             'camera': CameraFormset,
@@ -207,11 +224,15 @@ class PtsConfigCreateOnBase(LoginRequiredMixin, CreateView):
         return data
 
     def get_form_kwargs(self):
+        """Adds user to form's kwargs."""
+
         kwargs = super().get_form_kwargs()
         kwargs.update({'user': self.request.user})
         return kwargs
 
     def form_valid(self, form):
+        """Saves the new object and all inlineformset_factories"""
+
         context = self.get_context_data()
         if not form.cleaned_data.get('image'):
             form.instance.image = context.get('cfg_info').image
@@ -240,13 +261,16 @@ class PtsConfigEdit(LoginRequiredMixin, UpdateView):
     template_name = 'pts_config/create_config.html'
 
     def get_object(self, *args, **kwargs):
-        """Only author cat edit the base configuration"""
+        """Only author or admin can edit the base configuration"""
+
         obj = super().get_object(*args, **kwargs)
-        if obj.author != self.request.user:
+        if obj.author != self.request.user and not self.request.user.is_admin:
             raise PermissionDenied()
         return obj
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        """Add to context inlineformset_factories"""
+
         data = super().get_context_data(**kwargs)
         pts_cfg = {
             'camera': CameraFormset,
@@ -261,10 +285,13 @@ class PtsConfigEdit(LoginRequiredMixin, UpdateView):
         else:
             for context_key, form in pts_cfg.items():
                 data[context_key] = form(instance=self.object)
+
         data['city_name'] = self.object.place.city_name
+
         return data
 
     def form_valid(self, form):
+
         form.instance.author = self.request.user
         context = self.get_context_data()
         pts_cfg_forms = [context['camera'], context['optic'],
@@ -282,16 +309,17 @@ class PtsConfigEdit(LoginRequiredMixin, UpdateView):
 
 
 class PtsConfigDelete(LoginRequiredMixin, DeleteView):
+    """View class for delete PTS configuration."""
 
     model = PtsConstructor
     template_name = 'pts_config/list_config.html'
     success_url = reverse_lazy('config:pts_configs')
 
     def get_object(self, *args, **kwargs):
-        """Only author cat delete the base configuration"""
+        """Only author or admin can delete the base configuration"""
         user = self.request.user
         obj = super().get_object(*args, **kwargs)
-        if not (obj.author == user or user.is_superuser):
+        if not (obj.author == user or user.is_admin):
             raise PermissionDenied
         return obj
 
@@ -338,83 +366,3 @@ def load_micro_brend(request):
         'pts_config/micro_model_dropdown_list_options.html',
         {'micro_models': micro_models}
     )
-
-
-# class PtsConfigCreate(LoginRequiredMixin, CreateView):
-#     login_url = reverse_lazy('users:login')
-#     form_class = AddPtsConfigFrom
-#     model = PtsConstructor
-#     template_name = 'pts_config/create_config.html'
-
-#     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-#         data = super().get_context_data(**kwargs)
-#         pts_cfg = {
-#             'camera': CameraFormset,
-#             'optic': OpticFormset,
-#             'server': ServerFormset,
-#             'micro': MicroFormset,
-#             'gfx': GfxFormset,
-#         }
-#         if self.request.POST:
-#             for context_key, form in pts_cfg.items():
-#                 data[context_key] = form(self.request.POST)
-#         else:
-#             for context_key, form in pts_cfg.items():
-#                 data[context_key] = form()
-
-#         return data
-
-#     def form_valid(self, form):
-#         form.instance.author = self.request.user
-#         context = self.get_context_data()
-#         pts_cfg_forms = [context['camera'], context['optic'],
-#                          context['server'], context['micro'],
-#                          context['gfx'],]
-#         self.object = form.save()
-#         for cfg_form in pts_cfg_forms:
-#             if cfg_form.is_valid():
-#                 cfg_form.instance = self.object
-#                 cfg_form.save()
-
-#         return super().form_valid(form)
-
-
-# class PtsConfigEdit(EditOnlyAuthorMixin, LoginRequiredMixin, UpdateView):
-#     login_url = reverse_lazy('users:login')
-#     form_class = AddPtsConfigFrom
-#     model = PtsConstructor
-#     template_name = 'pts_config/create_config.html'
-
-#     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-#         data = super().get_context_data(**kwargs)
-#         pts_cfg = {
-#             'camera': CameraFormset,
-#             'optic': OpticFormset,
-#             'server': ServerFormset,
-#             'micro': MicroFormset,
-#             'gfx': GfxFormset,
-#         }
-#         if self.request.POST:
-#             for context_key, form in pts_cfg.items():
-#                 data[context_key] = form(self.request.POST,
-#                                          instance=self.object)
-#         else:
-#             for context_key, form in pts_cfg.items():
-#                 data[context_key] = form(instance=self.object)
-
-#         return data
-
-#     def form_valid(self, form):
-#         form.instance.author = self.request.user
-#         context = self.get_context_data()
-#         pts_cfg_forms = [context['camera'], context['optic'],
-#                          context['server'], context['micro'],
-#                          context['gfx'],]
-#         self.object = form.save()
-
-#         for cfg_form in pts_cfg_forms:
-#             if cfg_form.is_valid():
-#                 cfg_form.instance = self.object
-#                 cfg_form.save()
-
-#         return super().form_valid(form)

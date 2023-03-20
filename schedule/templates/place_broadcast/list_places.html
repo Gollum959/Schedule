@@ -48,8 +48,6 @@
                         <form action="{% url 'place:places' %}" method="POST" id="delete_form_{{ place.pk }}">
                           {% csrf_token %}
                           <button type="submit" name="place_pk" class="btn btn-primary" value="{{ place.pk }}">Да</button>
-
-                          {% comment %} <button type="button" onclick="submit_delete({{ place.pk }})" class="btn btn-primary" value="delete">Да</button> {% endcomment %}
                         </form>
                       </div>
                     </div>
@@ -57,24 +55,12 @@
                 </div>
               </div>
             {% endif %}
-
           </div>
         </div>
       </div>
-
-    {% comment %} <hr style="border: 1px; margin-top: 15px">
-    <div class="row ms-1 align-items-center">
-      <div class="col">{{ place.name }}</div>
-      <div class="col d-flex justify-content-end">
-        {% if user.is_main_director_or_admin %}
-          <a type="button" id="new-city" class="btn btn-secondary" href="{% url 'place:place_edit' place.pk %}">Изменить площадку</a>
-        {% endif %}
-      </div>
-    </div> {% endcomment %}
   {% endfor %}
 </div>
 
-{% comment %} <hr style="border: 1px; margin-top: 15px"> {% endcomment %}
 {% if city_id != "0" and user.is_main_director_or_admin %}
   <div class="row ms-1 pt-4 me-2">
     <div class="d-flex justify-content-end">
@@ -82,17 +68,3 @@
     </div>
   </div>
 {% endif %}
-
-
-{% comment %} <script>
-  function submit_delete(id) {
-      $.ajax({
-          type: $('#delete_form_'+id).attr('method'),
-          url: $('#delete_form_'+id).attr('action'),
-          dataType: 'html'
-          success: function (html) {
-            $("#list_places").html(html);
-          }
-      });
-  } {% endcomment %}
-</script>

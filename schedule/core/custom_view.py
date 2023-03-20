@@ -10,12 +10,12 @@ class DetalInformationMixin:
         """Check that only author can see detail information"""
         obj = super(DetalInformationMixin, self).get_object(queryset=queryset)
         if (
-            obj.author != self.request.user
-            and not self.request.user.is_admin
-            and not self.request.user.is_moderator
+            self.request.user.is_admin or
+            obj.author.direction == self.request.user.direction
         ):
-            raise Http404()
-        return obj
+            return obj
+
+        raise Http404()
 
 
 class UserToFormMixin:
