@@ -47,12 +47,12 @@ class CommLineConstructor(LineConstructor):
         (DIRECTION_CUSTOM, 'Другое'),
     ]
     custom = models.CharField(
-        'Custom direction',
+        'Ваше направление',
         max_length=200,
         blank=True
     )
     direction = models.CharField(
-        verbose_name='Direction',
+        verbose_name='Направление',
         max_length=20,
         choices=DIRECTION,
     )
@@ -101,8 +101,8 @@ class InternetLineConstructor(LineConstructor):
     SPEED3 = '3'
     COMM_TYPE = [
         (SPEED1, '20/20 Мбит/c'),
-        (SPEED1, '80/40 Мбит/c'),
-        (SPEED1, '200/200 Мбит/c'),
+        (SPEED2, '80/40 Мбит/c'),
+        (SPEED3, '200/200 Мбит/c'),
     ]
 
     speed = models.CharField(

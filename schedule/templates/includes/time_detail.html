@@ -14,14 +14,7 @@
           </div>
         </div>
         <div class="col-sm-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Тракт</h5>
-              {% if ptsrequest.is_draft %}
-                <p class="card-text">Информация появится после утверждения заявки</p>
-              {% endif %}
-            </div>
-          </div>
+          {% include 'includes/time_trakt.html' %}
         </div>
         <div class="col-sm-4">
           <div class="card">
@@ -36,3 +29,16 @@
       </div>
     </div>
   </div>
+
+
+  {% comment %} <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Тракт</h5>
+      {% if ptsrequest.is_draft %}
+        <p class="card-text">Информация появится после утверждения заявки</p>
+      {% endif %}
+      {% if user.is_admin_or_moderator %}
+        <p class="card-text">Информация появится после утверждения заявки</p>
+      {% endif %}
+    </div>
+  </div> {% endcomment %}

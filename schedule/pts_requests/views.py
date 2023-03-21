@@ -14,6 +14,7 @@ from pts_requests.models import PtsRequest
 from pts_config.models import PtsConstructor
 from pts_requests.forms import (AddRequestFrom,
                                 ModerateRequestFrom,
+                                UpdateTraktTime,
                                 CommLineFormset,
                                 TechCommLineFormset,
                                 InternetLineFormset)
@@ -87,12 +88,26 @@ class PtsRequestDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
     model = PtsRequest
     template_name = 'pts_requests/request_detail.html'
 
-    # def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-    #     data = super().get_context_data(**kwargs)
-    #     data['trakt'] = (
-    #         data['object'].broadcast_start_date - timedelta(hours=1)
-    #     )
-    #     return data
+    def __initial_time(self, time_field, broadcast_time):
+        if not time_field:
+            time_field = broadcast_time - timedelta(hours=1)
+        return time_field
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        data = super().get_context_data(**kwargs)
+        initial_dict = {
+            'trakt_start_date': self.__initial_time(
+                self.object.trakt_start_date,
+                self.object.broadcast_start_date),
+            'trakt_end_date': self.__initial_time(
+                self.object.trakt_end_date,
+                self.object.broadcast_end_date)
+        }
+        data['trakt'] = UpdateTraktTime(
+            instance=self.object,
+            initial=initial_dict
+        )
+        return data
 
 
 class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
@@ -195,25 +210,6 @@ class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
         #     techcommlines.save()
 
         # return super().form_valid(form)
-
-
-class PtsRequestModerate(LoginRequiredMixin, UpdateView):
-    login_url = reverse_lazy('users:login')
-    form_class = ModerateRequestFrom
-    model = PtsRequest
-    template_name = 'pts_requests/request_detail2.html'
-
-    def get_initial(self):
-        initial = super(PtsRequestModerate, self).get_initial()
-        if not self.object.trakt_start_date:
-            initial['trakt_start_date'] = (
-                self.object.broadcast_start_date - timedelta(hours=1)
-            )
-        if not self.object.trakt_end_date:
-            initial['trakt_end_date'] = (
-                self.object.broadcast_end_date - timedelta(hours=0, minutes=15)
-            )
-        return initial
 
 
 @login_required
@@ -349,3 +345,24 @@ def load_micro_in_request(request):
         'pts_requests/request_cfg_micro.html',
         {'quantity': pts_request.pts_cfg.microphone_quantity}
     )
+
+# Forms for time block
+
+
+class PtsRequestModerate(LoginRequiredMixin, UpdateView): # need add moderator role permission
+    login_url = reverse_lazy('users:login')
+    form_class = ModerateRequestFrom
+    model = PtsRequest
+    template_name = 'pts_requests/request_detail2.html'
+
+    def get_initial(self):
+        initial = super().get_initial()
+        if not self.object.trakt_start_date:
+            initial['trakt_start_date'] = (
+                self.object.broadcast_start_date - timedelta(hours=1)
+            )
+        if not self.object.trakt_end_date:
+            initial['trakt_end_date'] = (
+                self.object.broadcast_end_date - timedelta(hours=0, minutes=15)
+            )
+        return initial

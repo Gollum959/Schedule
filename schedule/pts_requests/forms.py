@@ -154,3 +154,24 @@ InternetLineFormset = inlineformset_factory(
     extra=0,
     can_delete=True
 )
+
+# Forms for time block
+
+
+class UpdateTraktTime(ModelForm):
+
+    class Meta:
+        model = PtsRequest
+        fields = ['trakt_start_date', 'trakt_end_date', ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['trakt_start_date'].required = True
+        self.fields['trakt_end_date'].required = True
+
+
+class UpdateDepartureTime(ModelForm):
+
+    class Meta:
+        model = PtsRequest
+        fields = ['start_date', 'end_date',]

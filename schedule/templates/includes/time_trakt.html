@@ -1,0 +1,22 @@
+  {% load crispy_forms_tags %}
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Тракт</h5>
+      {% if ptsrequest.is_draft %}
+        <p class="card-text">Информация появится после утверждения заявки</p>
+      {% endif %}
+      {% if user.is_admin_or_moderator %}
+      <form method="post" enctype="multipart/form-data" id="requestForm" autocomplete="off">
+        {% csrf_token %}
+        {{ trakt|crispy }}
+        <button type="submit" class="btn btn-primary">
+          {% if object.trakt_start_date and object.trakt_end_date %}
+            Изменить
+          {% else %}
+            Сохранить
+          {% endif %}
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
