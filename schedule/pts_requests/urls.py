@@ -1,10 +1,11 @@
 from django.urls import path
 from pts_requests.views import (
     PtsRequestsView, PtsRequestDetail, PtsRequestCreate,
-    PtsRequestEdit, PtsRequestModerate, load_places, load_pts_cfg,
+    PtsRequestEdit, load_places, load_pts_cfg,
     load_event_type, change_status_to_on_approval, remove_draft_pts_request,
     load_cameras_in_request, load_optics_in_request, load_servers_in_request,
-    load_gfx_in_request, load_micro_in_request
+    load_gfx_in_request, load_micro_in_request, time_trakt_edit_form,
+    time_travel_edit_form
 )
 
 app_name = 'pts_requests'
@@ -18,11 +19,6 @@ urlpatterns = [
     ),
     path('create/', PtsRequestCreate.as_view(), name='request_create'),
     path('create/<int:pk>/', PtsRequestEdit.as_view(), name='request_edit'),
-    path(
-        'moderate/<int:pk>/',
-        PtsRequestModerate.as_view(),
-        name='request_moderate'
-    ),
     path(
         'send_request/<int:pk>/',
         change_status_to_on_approval,
@@ -66,3 +62,18 @@ urlpatterns = [
         name='ajax_load_cfg_micro'
     ),
 ]
+
+htmx_urlpatterns = [
+    path(
+        'request/<int:pk>/trakt-edit/',
+        time_trakt_edit_form,
+        name='trakt_time_edit'
+    ),
+    path(
+        'request/<int:pk>/travel-edit/',
+        time_travel_edit_form,
+        name='travel_time_edit'
+    )
+]
+
+urlpatterns += htmx_urlpatterns

@@ -1,4 +1,5 @@
 from datetime import date, timedelta, datetime
+from django.http import QueryDict
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -15,6 +16,7 @@ from pts_config.models import PtsConstructor
 from pts_requests.forms import (AddRequestFrom,
                                 ModerateRequestFrom,
                                 UpdateTraktTime,
+                                UpdateTravelTime,
                                 CommLineFormset,
                                 TechCommLineFormset,
                                 InternetLineFormset)
@@ -24,7 +26,8 @@ from pts_config.forms import (CameraModerateFormset,
                               GfxModerateFormset)
 from core.custom_view import (DetalInformationMixin,
                               UserToFormMixin,
-                              EditOnlyAuthorMixin)
+                              EditOnlyAuthorMixin,
+                              EditOnlyAdminOrModeratorMixin)
 
 
 class PtsRequestsView(LoginRequiredMixin, ListView):
@@ -88,26 +91,26 @@ class PtsRequestDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
     model = PtsRequest
     template_name = 'pts_requests/request_detail.html'
 
-    def __initial_time(self, time_field, broadcast_time):
-        if not time_field:
-            time_field = broadcast_time - timedelta(hours=1)
-        return time_field
+    # def __initial_time(self, time_field, broadcast_time):
+    #     if not time_field:
+    #         time_field = broadcast_time - timedelta(hours=1)
+    #     return time_field
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        data = super().get_context_data(**kwargs)
-        initial_dict = {
-            'trakt_start_date': self.__initial_time(
-                self.object.trakt_start_date,
-                self.object.broadcast_start_date),
-            'trakt_end_date': self.__initial_time(
-                self.object.trakt_end_date,
-                self.object.broadcast_end_date)
-        }
-        data['trakt'] = UpdateTraktTime(
-            instance=self.object,
-            initial=initial_dict
-        )
-        return data
+    # def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    #     data = super().get_context_data(**kwargs)
+    #     initial_dict = {
+    #         'trakt_start_date': self.__initial_time(
+    #             self.object.trakt_start_date,
+    #             self.object.broadcast_start_date),
+    #         'trakt_end_date': self.__initial_time(
+    #             self.object.trakt_end_date,
+    #             self.object.broadcast_end_date)
+    #     }
+    #     data['trakt'] = UpdateTraktTime(
+    #         instance=self.object,
+    #         initial=initial_dict
+    #     )
+    #     return data
 
 
 class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
@@ -349,20 +352,87 @@ def load_micro_in_request(request):
 # Forms for time block
 
 
-class PtsRequestModerate(LoginRequiredMixin, UpdateView): # need add moderator role permission
-    login_url = reverse_lazy('users:login')
-    form_class = ModerateRequestFrom
-    model = PtsRequest
-    template_name = 'pts_requests/request_detail2.html'
+# class PtsRequestTraktTimeModerate(EditOnlyAdminOrModeratorMixin,
+#                                   UpdateView):
+#     form_class = UpdateTraktTime
+#     model = PtsRequest
+#     template_name = 'includes/trakt_time_edit.html'
 
-    def get_initial(self):
-        initial = super().get_initial()
-        if not self.object.trakt_start_date:
-            initial['trakt_start_date'] = (
-                self.object.broadcast_start_date - timedelta(hours=1)
-            )
-        if not self.object.trakt_end_date:
-            initial['trakt_end_date'] = (
-                self.object.broadcast_end_date - timedelta(hours=0, minutes=15)
-            )
-        return initial
+#     def get_initial(self):
+#         initial = super().get_initial()
+#         if not self.object.trakt_start_date:
+#             initial['trakt_start_date'] = (
+#                 self.object.broadcast_start_date - timedelta(hours=1)
+#             )
+#         if not self.object.trakt_end_date:
+#             initial['trakt_end_date'] = (
+#                 self.object.broadcast_end_date - timedelta(hours=0, minutes=15)
+#             )
+#         return initial
+
+#     def post(self, request, **kwargs):
+#         print(request.data)
+#         return super().post(request, **kwargs)
+
+# View functions for time block
+
+@login_required
+def time_trakt_edit_form(request, pk):
+    ptsrequest = get_object_or_404(PtsRequest, pk=pk)
+    step = request.GET.get('step')
+
+    if step == 'back':
+        return render(
+            request,
+            'includes/time_trakt.html',
+            {'ptsrequest': ptsrequest}
+        )
+
+    initial_dict = {}
+    if not ptsrequest.trakt_start_date:
+        initial_dict['trakt_start_date'] = ptsrequest.broadcast_start_date - timedelta(hours=1)
+    if not ptsrequest.trakt_end_date:
+        initial_dict['trakt_end_date'] = ptsrequest.broadcast_start_date - timedelta(minutes=10)
+
+    if request.method == 'PUT':
+        data = QueryDict(request.body).dict()
+        form = UpdateTraktTime(data, instance=ptsrequest)
+        context = {'ptsrequest': ptsrequest}
+        if form.is_valid():
+            form.save()
+            return render(request, 'includes/time_trakt.html', context)
+
+        context['form'] = form
+        return render(request, 'includes/time_trakt_edit.html', context)
+
+    form = UpdateTraktTime(instance=ptsrequest, initial=initial_dict)
+    context = {'ptsrequest': ptsrequest, 'form': form}
+    return render(request, 'includes/time_trakt_edit.html', context)
+
+
+@login_required
+def time_travel_edit_form(request, pk):
+    ptsrequest = get_object_or_404(PtsRequest, pk=pk)
+    step = request.GET.get('step')
+
+    if step == 'back':
+        return render(
+            request,
+            'includes/time_travel.html',
+            {'ptsrequest': ptsrequest}
+        )
+
+    if request.method == 'PUT':
+        data = QueryDict(request.body).dict()
+        form = UpdateTravelTime(data, instance=ptsrequest)
+        context = {'ptsrequest': ptsrequest}
+        if form.is_valid():
+            form.save()
+            return render(request, 'includes/time_travel.html', context)
+
+        context['form'] = form
+        return render(request, 'includes/time_travel_edit.html', context)
+
+    form = UpdateTravelTime(instance=ptsrequest)
+    context = {'ptsrequest': ptsrequest, 'form': form}
+    return render(request, 'includes/time_travel_edit.html', context)

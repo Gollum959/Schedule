@@ -1,26 +1,26 @@
-<div id="time-trakt">
+<div id="time-travel">
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title">Тракт</h5>
+      <h5 class="card-title">Время работы ПТС</h5>
         <p class="card-text">
           <b>Начало:</b> 
-          {% if ptsrequest.trakt_start_date %}
-            {{ ptsrequest.trakt_start_date|date:'H:i' }}
+          {% if ptsrequest.start_date %}
+            {{ ptsrequest.start_date|date:'H:i' }}
           {% else %}
             &mdash;
           {% endif %}
           </br>
           <b>Конец:</b> 
-          {% if ptsrequest.trakt_end_date %}
-            {{ ptsrequest.trakt_end_date|date:'H:i' }}
+          {% if ptsrequest.end_date %}
+            {{ ptsrequest.end_date|date:'H:i' }}
           {% else %}
             &mdash;
           {% endif %}
         </p>
         {% if user.is_admin_or_moderator %}
           <button class="btn btn-secondary btn-sm"
-            hx-get="{% url 'pts_requests:trakt_time_edit' ptsrequest.pk %}"
-            hx-target="#time-trakt"
+            hx-get="{% url 'pts_requests:travel_time_edit' ptsrequest.pk %}"
+            hx-target="#time-travel"
           >
             Изменить
           </button>

@@ -170,8 +170,13 @@ class UpdateTraktTime(ModelForm):
         self.fields['trakt_end_date'].required = True
 
 
-class UpdateDepartureTime(ModelForm):
+class UpdateTravelTime(ModelForm):
 
     class Meta:
         model = PtsRequest
         fields = ['start_date', 'end_date',]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['start_date'].required = True
+        self.fields['end_date'].required = True

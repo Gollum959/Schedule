@@ -9,36 +9,35 @@
             <div class="card-body">
               <h5 class="card-title">{{ ptsrequest.type }}</h5>
               <p class="card-text"><b>Начало:</b> {{ ptsrequest.broadcast_start_date|date:'H:i' }}</br>
-              <b>Конец:</b> {{ ptsrequest.broadcast_start_date|date:'H:i' }}</p>
+              <b>Конец:</b> {{ ptsrequest.broadcast_end_date|date:'H:i' }}</p>
             </div>
           </div>
         </div>
-        <div class="col-sm-4">
-          {% include 'includes/time_trakt.html' %}
-        </div>
-        <div class="col-sm-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Время работы ПТС</h5>
-              {% if ptsrequest.is_draft %}
+        {% if ptsrequest.is_draft %}
+          <div class="col-sm-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Тракт</h5>
                 <p class="card-text">Информация появится после утверждения заявки</p>
-              {% endif %}
+              </div>
             </div>
           </div>
-        </div>
+          <div class="col-sm-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Время работы ПТС</h5>
+                <p class="card-text">Информация появится после утверждения заявки</p>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="col-sm-4">
+            {% include 'includes/time_trakt.html' %}
+          </div>
+          <div class="col-sm-4">
+            {% include 'includes/time_travel.html' %}
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>
-
-
-  {% comment %} <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Тракт</h5>
-      {% if ptsrequest.is_draft %}
-        <p class="card-text">Информация появится после утверждения заявки</p>
-      {% endif %}
-      {% if user.is_admin_or_moderator %}
-        <p class="card-text">Информация появится после утверждения заявки</p>
-      {% endif %}
-    </div>
-  </div> {% endcomment %}

@@ -273,7 +273,7 @@ class PtsRequest(models.Model):
 
     @property
     def is_draft(self):
-        """Return True if status is ON APPROVAL."""
+        """Return True if status is DRAFT."""
         return self.status == self.DRAFT
 
     @property
