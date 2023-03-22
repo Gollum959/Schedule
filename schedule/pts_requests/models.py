@@ -263,6 +263,7 @@ class PtsRequest(models.Model):
     def get_absolute_url(self):
         return reverse('pts_requests:request_detail', kwargs={"pk": self.pk})
 
+    @property
     def get_pts(self):
         return ", ".join([pts.name for pts in self.pts_name.all()])
 

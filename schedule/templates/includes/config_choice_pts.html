@@ -1,0 +1,23 @@
+<div id="config-choice-pts">
+  <div class="row ms-3 pb-3 align-items-center">
+    <div class="col-auto">
+      <b>Выбраная ПТС: </b>
+      {% if ptsrequest.get_pts %}
+        {{ ptsrequest.get_pts }}
+      {% else %}
+        &mdash;
+      {% endif %}
+    </div>
+    {% if user.is_admin_or_moderator %}
+      <div class="col justify-content-start">
+        <button class="btn btn-secondary btn-sm"
+          hx-get="{% url 'pts_requests:config_choice_pts' ptsrequest.pk %}"
+          hx-target="#config-choice-pts"
+        >
+          Изменить
+        </button>
+      </div>
+    {% endif %}
+  </div>
+</div>
+

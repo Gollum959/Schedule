@@ -5,6 +5,7 @@ from django.db.models import Q
 
 from place_broadcast.models import PlaceConstructor, PlaceCity, EventType
 from pts_requests.models import (PtsRequest,
+                                 PtsName,
                                  CommLineConstructor,
                                  TechCommLineConstructor,
                                  InternetLineConstructor)
@@ -180,3 +181,22 @@ class UpdateTravelTime(ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['start_date'].required = True
         self.fields['end_date'].required = True
+
+# Forms for config block
+
+
+class UpdatePTS(ModelForm):
+
+    # pts_name = ModelChoiceField(
+    #     queryset=PtsName.objects.all(),
+    #     label='ПТС',
+    #     empty_label='Выберите ПТС'
+    # )
+
+    class Meta:
+        model = PtsRequest
+        fields = ['pts_name', ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['pts_name'].required = True

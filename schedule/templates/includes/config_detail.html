@@ -7,6 +7,9 @@
   <div id="panelsStayOpen-config" request-id="{{ ptsrequest.pk }}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-config">
     <div class="card-body">
       <h4 class="card-title ms-5">{{ ptsrequest.pts_cfg.name }}</h4>
+
+      {% include 'includes/config_choice_pts.html' %}
+
       <div class="row">
         <div id="cfg_cam" cam-url="{% url 'pts_requests:ajax_load_cfg_cam' %}"></div>
       </div>

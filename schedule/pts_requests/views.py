@@ -14,9 +14,9 @@ from place_broadcast.models import PlaceConstructor, EventType
 from pts_requests.models import PtsRequest
 from pts_config.models import PtsConstructor
 from pts_requests.forms import (AddRequestFrom,
-                                ModerateRequestFrom,
                                 UpdateTraktTime,
                                 UpdateTravelTime,
+                                UpdatePTS,
                                 CommLineFormset,
                                 TechCommLineFormset,
                                 InternetLineFormset)
@@ -77,40 +77,12 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
                 ~Q(author=self.request.user)
                 & Q(Q(status='draft') | Q(status='rejected'))))
 
-        # return requests.filter(~Q(
-        #   ~Q(author=self.request.user) & Q(status='draft')))
-        # return requests
-        # if self.request.user.is_admin or self.request.user.is_moderator:
-        #     return requests
-        # return requests.filter(~Q(author=self.request.user and status))
-
 
 class PtsRequestDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
     """Request detail view"""
     login_url = reverse_lazy('users:login')
     model = PtsRequest
     template_name = 'pts_requests/request_detail.html'
-
-    # def __initial_time(self, time_field, broadcast_time):
-    #     if not time_field:
-    #         time_field = broadcast_time - timedelta(hours=1)
-    #     return time_field
-
-    # def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-    #     data = super().get_context_data(**kwargs)
-    #     initial_dict = {
-    #         'trakt_start_date': self.__initial_time(
-    #             self.object.trakt_start_date,
-    #             self.object.broadcast_start_date),
-    #         'trakt_end_date': self.__initial_time(
-    #             self.object.trakt_end_date,
-    #             self.object.broadcast_end_date)
-    #     }
-    #     data['trakt'] = UpdateTraktTime(
-    #         instance=self.object,
-    #         initial=initial_dict
-    #     )
-    #     return data
 
 
 class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
@@ -205,14 +177,6 @@ class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
             return self.render_to_response(self.get_context_data(form=form))
 
         return HttpResponseRedirect(self.get_success_url())
-        # if commlines.is_valid():
-        #     commlines.instance = self.object
-        #     commlines.save()
-        # if techcommlines.is_valid():
-        #     techcommlines.instance = self.object
-        #     techcommlines.save()
-
-        # return super().form_valid(form)
 
 
 @login_required
@@ -349,35 +313,10 @@ def load_micro_in_request(request):
         {'quantity': pts_request.pts_cfg.microphone_quantity}
     )
 
-# Forms for time block
-
-
-# class PtsRequestTraktTimeModerate(EditOnlyAdminOrModeratorMixin,
-#                                   UpdateView):
-#     form_class = UpdateTraktTime
-#     model = PtsRequest
-#     template_name = 'includes/trakt_time_edit.html'
-
-#     def get_initial(self):
-#         initial = super().get_initial()
-#         if not self.object.trakt_start_date:
-#             initial['trakt_start_date'] = (
-#                 self.object.broadcast_start_date - timedelta(hours=1)
-#             )
-#         if not self.object.trakt_end_date:
-#             initial['trakt_end_date'] = (
-#                 self.object.broadcast_end_date - timedelta(hours=0, minutes=15)
-#             )
-#         return initial
-
-#     def post(self, request, **kwargs):
-#         print(request.data)
-#         return super().post(request, **kwargs)
-
-# View functions for time block
 
 @login_required
 def time_trakt_edit_form(request, pk):
+
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
     step = request.GET.get('step')
 
@@ -412,6 +351,7 @@ def time_trakt_edit_form(request, pk):
 
 @login_required
 def time_travel_edit_form(request, pk):
+
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
     step = request.GET.get('step')
 
@@ -436,3 +376,35 @@ def time_travel_edit_form(request, pk):
     form = UpdateTravelTime(instance=ptsrequest)
     context = {'ptsrequest': ptsrequest, 'form': form}
     return render(request, 'includes/time_travel_edit.html', context)
+
+# View functions for config block
+
+
+@login_required
+def config_choice_pts_edit_form(request, pk):
+
+    ptsrequest = get_object_or_404(PtsRequest, pk=pk)
+    step = request.GET.get('step')
+
+    if step == 'back':
+        return render(
+            request,
+            'includes/config_choice_pts.html',
+            {'ptsrequest': ptsrequest}
+        )
+
+    if request.method == 'POST':
+
+        form = UpdatePTS(request.POST, instance=ptsrequest)
+        context = {'ptsrequest': ptsrequest}
+        if form.is_valid():
+            form.save()
+            return render(request, 'includes/config_choice_pts.html',
+                          context)
+
+        context['form'] = form
+        return render(request, 'includes/config_choise_pts_edit.html', context)
+
+    form = UpdatePTS(instance=ptsrequest)
+    context = {'ptsrequest': ptsrequest, 'form': form}
+    return render(request, 'includes/config_choise_pts_edit.html', context)
