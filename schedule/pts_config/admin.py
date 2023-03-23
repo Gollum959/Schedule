@@ -9,7 +9,7 @@ from pts_config.models import (
     Gfx, GfxPtsConstructor, GfxModel, GfxLicenseType,
     ServerRecordingRepeatBrend, ServerRecordingRepeatModelBrend,
     ServerRecordingRepeatConstructor, ServerPlayerType,
-    ServerRecordingRepeatType
+    ServerRecordingRepeatType, TypePtsForConfiguration
 )
 
 
@@ -18,7 +18,8 @@ from pts_config.models import (
                 Gfx, GfxModel, GfxLicenseType, CameraBrend,
                 CameraModelBrend, OpticBrend, OpticModelBrend,
                 ServerRecordingRepeatBrend, ServerRecordingRepeatModelBrend,
-                ServerPlayerType, ServerRecordingRepeatType)
+                ServerPlayerType, ServerRecordingRepeatType,
+                TypePtsForConfiguration)
 class CameraAdmin(admin.ModelAdmin):
     """Displaying Camera, Optic, Microphone, Commentator, Gfx
        model and other in the admin panel."""

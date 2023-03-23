@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse
 
 from users.models import User
-from pts_config.models import PtsConstructor
+from pts_config.models import PtsConstructor, TypePtsForConfiguration
 from place_broadcast.models import PlaceConstructor, EventType
 from pts_requests.abstract_models import NameModel, LineConstructor
 
@@ -33,6 +33,12 @@ class PtsName(NameModel):
         'Примечание',
         max_length=2000,
         blank=True)
+    type = models.ForeignKey(
+        TypePtsForConfiguration,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
+    )
 
 
 class CommLineConstructor(LineConstructor):

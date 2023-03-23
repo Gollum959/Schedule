@@ -1,14 +1,18 @@
 import os
+from django.db.models import Q
 from django import forms
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 
 from pts_config.models import (PtsConstructor,
                                CameraPtsConstructor,
+                               CameraBrend,
+                               CameraModelBrend,
                                OpticPtsConstructor,
                                ServerRecordingRepeatConstructor,
                                GfxPtsConstructor,
                                Optic)
+from pts_requests.models import PtsRequest
 
 
 class CreatePtsConfigurationMixin(forms.ModelForm):
@@ -198,6 +202,21 @@ class ModerateCamera(forms.ModelForm):
         self.fields['quantity'].disabled = True
         self.fields['cameras'].widget.attrs['readonly'] = True
         self.fields['quantity'].widget.attrs['readonly'] = True
+        pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
+        self.fields['brend'].queryset = CameraBrend.objects.filter(
+            Q(type_pts=pts_request.pts_name.type) | Q(type_pts__isnull=True)
+            ).filter(cameramodelbrend__type=self.instance.cameras).distinct()
+        self.fields['model'].queryset = CameraModelBrend.objects.none()
+
+        if 'cameraptsconstructor_set-0-brend' in self.data:
+            try:
+                self.fields['model'].queryset = CameraModelBrend.objects.all().order_by('name')
+            except (ValueError, TypeError):
+                pass
+        elif self.instance.pk:
+            self.fields['model'].queryset = CameraModelBrend.objects.filter(
+                    brend=self.instance.brend_id, type=self.instance.cameras
+                ).order_by('name')
 
     class Meta:
         model = CameraPtsConstructor
