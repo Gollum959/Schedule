@@ -185,9 +185,12 @@ class PtsRequest(models.Model):
         blank=True,
         null=True
     )
-    pts_name = models.ManyToManyField(
+    pts_name = models.ForeignKey(
         PtsName,
+        on_delete=models.RESTRICT,
+        verbose_name='ПТС',
         blank=True,
+        null=True
     )
     pts_cfg = models.ForeignKey(
         PtsConstructor,
@@ -263,9 +266,9 @@ class PtsRequest(models.Model):
     def get_absolute_url(self):
         return reverse('pts_requests:request_detail', kwargs={"pk": self.pk})
 
-    @property
-    def get_pts(self):
-        return ", ".join([pts.name for pts in self.pts_name.all()])
+    # @property
+    # def get_pts(self):
+    #     return ", ".join([pts.name for pts in self.pts_name.all()])
 
     @property
     def is_approval(self):

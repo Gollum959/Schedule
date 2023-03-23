@@ -74,6 +74,11 @@ htmx_urlpatterns = [
         views.config_choice_pts_edit_form,
         name='config_choice_pts'
     ),
+    path(
+        'request/<int:pk>/config-cameras/',
+        views.config_cameras_edit_form,
+        name='config_cameras_edit'
+    ),
 ]
 
 urlpatterns += htmx_urlpatterns

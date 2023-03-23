@@ -2,8 +2,8 @@
   <div class="row ms-3 pb-3 align-items-center">
     <div class="col-auto">
       <b>Выбраная ПТС: </b>
-      {% if ptsrequest.get_pts %}
-        {{ ptsrequest.get_pts }}
+      {% if ptsrequest.pts_name %}
+        {{ ptsrequest.pts_name }}
       {% else %}
         &mdash;
       {% endif %}

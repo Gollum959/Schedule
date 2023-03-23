@@ -1,0 +1,97 @@
+<style>
+  html,
+  body,
+  .intro {
+    height: 100%;
+  }
+
+  table td,
+  table th {
+    text-overflow: ellipsis;
+    white-space: wrap;
+    overflow: hidden;
+  }
+
+  thead th {
+    color: #fff;
+  }
+
+  .card {
+    border-radius: .5rem;
+  }
+
+  .table-scroll {
+    border-radius: .5rem;
+  }
+
+  .table-scroll table thead th {
+    font-size: 1.25rem;
+  }
+  thead {
+    top: 0;
+    position: sticky;
+  }
+</style>
+<div id="config-cameras-edit">
+  <div class="row">
+    <section class="intro">
+        <div class="mask d-flex align-items-center h-100">
+          <div class="container">
+            <div class="card mb-3">
+              <div class="card-body p-0 ms-2 me-2 mb-2">
+                <div class="row justify-content-center">
+                  <div class="col-12">
+                    <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок камер</p>
+
+                    {% if ptsrequest.pts_cfg.cameraptsconstructor_set.all|length > 0 %}
+                    <table class="table table-striped mb-0 ps-2 pe-2 ">
+                      <thead style="background-color: lightskyblue;">
+                        <tr class="d-flex">
+                          <th class="col-3 text-center">Тип Камеры</th>
+                          <th class="col-3 text-center">Количество</th>
+                          <th class="col-3 text-center">Бренд</th>
+                          <th class="col-3 text-center">Модель</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for camera in ptsrequest.pts_cfg.cameraptsconstructor_set.all %}
+                          <tr class="d-flex">
+                            <td class="col-3 pt-2 ps-3">{{ camera.cameras }}</td>
+                            <td class="col-3 text-center">{{ camera.quantity }}</td>
+                            {% if camera.brend %}
+                              <td class="col-3">{{ camera.brend }}</td>
+                            {% else %}
+                              <td class="col-3 text-center">&mdash;</td>
+                            {% endif %}
+                            {% if camera.model %}
+                              <td class="col-3">{{ camera.model }}</td>
+                            {% else %}
+                              <td class="col-3 text-center">&mdash;</td>
+                            {% endif %}
+                          </tr>
+                        {% endfor %}
+
+                      </tbody>
+                    </table>
+                    {% else %}
+                      <p class="fs-5 ms-2 me-2">Информация отсутсвует в конфигурации ПТС</p>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="row pt-3">
+                  <div class="col d-flex justify-content-end">
+                    <button class="btn btn-secondary btn-sm"
+                      hx-get="{% url 'pts_requests:config_cameras_edit' ptsrequest.pk %}"
+                      hx-target="#config-cameras-edit"
+                    >
+                      Изменить
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+  </div>
+</div>

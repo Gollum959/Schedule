@@ -313,14 +313,15 @@ def load_micro_in_request(request):
         {'quantity': pts_request.pts_cfg.microphone_quantity}
     )
 
+# View functions for time block
+
 
 @login_required
 def time_trakt_edit_form(request, pk):
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
-    step = request.GET.get('step')
 
-    if step == 'back':
+    if request.GET.get('step') == 'back':
         return render(
             request,
             'includes/time_trakt.html',
@@ -353,9 +354,8 @@ def time_trakt_edit_form(request, pk):
 def time_travel_edit_form(request, pk):
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
-    step = request.GET.get('step')
 
-    if step == 'back':
+    if request.GET.get('step') == 'back':
         return render(
             request,
             'includes/time_travel.html',
@@ -384,18 +384,17 @@ def time_travel_edit_form(request, pk):
 def config_choice_pts_edit_form(request, pk):
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
-    step = request.GET.get('step')
 
-    if step == 'back':
+    if request.GET.get('step') == 'back':
         return render(
             request,
             'includes/config_choice_pts.html',
             {'ptsrequest': ptsrequest}
         )
 
-    if request.method == 'POST':
-
-        form = UpdatePTS(request.POST, instance=ptsrequest)
+    if request.method == 'PUT':
+        data = QueryDict(request.body).dict()
+        form = UpdatePTS(data, instance=ptsrequest)
         context = {'ptsrequest': ptsrequest}
         if form.is_valid():
             form.save()
@@ -403,8 +402,36 @@ def config_choice_pts_edit_form(request, pk):
                           context)
 
         context['form'] = form
-        return render(request, 'includes/config_choise_pts_edit.html', context)
+        return render(request, 'includes/config_choice_pts_edit.html', context)
 
     form = UpdatePTS(instance=ptsrequest)
     context = {'ptsrequest': ptsrequest, 'form': form}
-    return render(request, 'includes/config_choise_pts_edit.html', context)
+    return render(request, 'includes/config_choice_pts_edit.html', context)
+
+
+def config_cameras_edit_form(request, pk):
+
+    ptsrequest = get_object_or_404(PtsRequest, pk=pk)
+
+    if request.GET.get('step') == 'back':
+        return render(
+            request,
+            'includes/config_cameras.html',
+            {'ptsrequest': ptsrequest}
+        )
+
+    if request.method == 'POST':
+        form = CameraModerateFormset(request.POST, instance=ptsrequest.pts_cfg)
+        context = {'ptsrequest': ptsrequest}
+
+        if form.is_valid():
+            form.save()
+            return render(request, 'includes/config_cameras.html',
+                          context)
+
+        context['camera_forms'] = form
+        return render(request, 'includes/config_cameras_edit.html', context)
+
+    camera_forms = CameraModerateFormset(instance=ptsrequest.pts_cfg)
+    context = {'ptsrequest': ptsrequest, 'camera_forms': camera_forms}
+    return render(request, 'includes/config_cameras_edit.html', context)

@@ -71,7 +71,7 @@ class PtsRequestAdmin(admin.ModelAdmin):
     """Displaying the PtsRequest model in the admin panel."""
 
     list_display = ('name', 'broadcast_start_date', 'place', 'type',
-                    'start_date', 'end_date', 'get_pts', 'pts_cfg', 'author')
+                    'start_date', 'end_date', 'pts_name', 'pts_cfg', 'author')
     list_filter = ('author', 'broadcast_start_date', )
     search_fields = ('author', )
     inlines = (

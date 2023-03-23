@@ -195,12 +195,13 @@ class ModerateCamera(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['cameras'].disabled = True
-        self.fields['cameras'].required = False
         self.fields['quantity'].disabled = True
+        self.fields['cameras'].widget.attrs['readonly'] = True
+        self.fields['quantity'].widget.attrs['readonly'] = True
 
     class Meta:
         model = CameraPtsConstructor
-        fields = ['cameras', 'quantity']
+        fields = ['cameras', 'quantity', 'brend', 'model']
 
         widgets = {
             'cameras': forms.Select(

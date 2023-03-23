@@ -8,6 +8,11 @@ from users.models import User
 from place_broadcast.models import EventType, PlaceConstructor
 
 
+class TypePtsForConfiguration(StrName):
+    """PTS type model."""
+    name = models.CharField('Type of PTS', max_length=50)
+
+
 class Camera(StrName):
     """Camera type model."""
     name = models.CharField('Type of cameras', max_length=50)
@@ -16,6 +21,13 @@ class Camera(StrName):
 class CameraBrend(StrName):
     """Camera brend model."""
     name = models.CharField('Camera brend', max_length=50)
+    type_pts = models.ForeignKey(
+        TypePtsForConfiguration,
+        on_delete=models.CASCADE,
+        help_text="If this brand can be used everywhere, choose nothing",
+        blank=True,
+        null=True
+    )
 
 
 class CameraModelBrend(StrNameQuantity):
@@ -24,6 +36,12 @@ class CameraModelBrend(StrNameQuantity):
     brend = models.ForeignKey(
         CameraBrend,
         on_delete=models.CASCADE,
+    )
+    type = models.ForeignKey(
+        Camera,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
     )
 
 

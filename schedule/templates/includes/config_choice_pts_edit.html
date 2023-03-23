@@ -1,7 +1,7 @@
   {% load crispy_forms_tags %}
   <div class="row ms-3 pb-3 align-items-center">
     <div class="col-3 justify-content-start">
-      <form hx-post="{% url 'pts_requests:config_choice_pts' ptsrequest.pk %}" hx-target="#config-choice-pts">
+      <form hx-put="{% url 'pts_requests:config_choice_pts' ptsrequest.pk %}" hx-target="#config-choice-pts">
         {% csrf_token %}
     
         {{ form|crispy }}

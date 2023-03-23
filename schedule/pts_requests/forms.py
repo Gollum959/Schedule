@@ -5,7 +5,6 @@ from django.db.models import Q
 
 from place_broadcast.models import PlaceConstructor, PlaceCity, EventType
 from pts_requests.models import (PtsRequest,
-                                 PtsName,
                                  CommLineConstructor,
                                  TechCommLineConstructor,
                                  InternetLineConstructor)
@@ -186,12 +185,6 @@ class UpdateTravelTime(ModelForm):
 
 
 class UpdatePTS(ModelForm):
-
-    # pts_name = ModelChoiceField(
-    #     queryset=PtsName.objects.all(),
-    #     label='ПТС',
-    #     empty_label='Выберите ПТС'
-    # )
 
     class Meta:
         model = PtsRequest

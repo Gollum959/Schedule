@@ -9,11 +9,12 @@
       <h4 class="card-title ms-5">{{ ptsrequest.pts_cfg.name }}</h4>
 
       {% include 'includes/config_choice_pts.html' %}
+      {% include 'includes/config_cameras.html' %}
 
-      <div class="row">
+      {% comment %} <div class="row">
         <div id="cfg_cam" cam-url="{% url 'pts_requests:ajax_load_cfg_cam' %}"></div>
-      </div>
-      <div class="row">
+      </div> {% endcomment %}
+      {% comment %} <div class="row">
         <div id="cfg_optic" opt-url="{% url 'pts_requests:ajax_load_cfg_optic' %}"></div>
       </div>
       <div class="row">
@@ -21,7 +22,7 @@
       </div>
       <div class="row">
           <div id="cfg_gfx" gfx-url="{% url 'pts_requests:ajax_load_cfg_gfx' %}"></div>
-      </div>
+      </div> {% endcomment %}
       <div class="row">
         <div id="cfg_micro" micro-url="{% url 'pts_requests:ajax_load_cfg_micro' %}"></div>
       </div>

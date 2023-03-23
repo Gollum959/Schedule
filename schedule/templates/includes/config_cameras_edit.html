@@ -1,0 +1,83 @@
+  {% load crispy_forms_tags %}
+
+
+
+  {% comment %} <div class="row ms-3 pb-3 align-items-center">
+    <div class="col-3 justify-content-start">
+      <form hx-put="{% url 'pts_requests:config_choice_pts' ptsrequest.pk %}" hx-target="#config-choice-pts">
+        {% csrf_token %}
+    
+        {{ form|crispy }}
+      
+        <button class="btn btn-secondary btn-sm" type="submit">
+          Сохранить
+        </button>
+        <button class="btn btn-secondary btn-sm"
+          hx-get="{% url 'pts_requests:config_cameras_edit' ptsrequest.pk %}?step=back"
+          hx-target="#config-cameras-edit"
+        >
+          Назад
+        </button>
+    </div>
+  </div> {% endcomment %}
+
+  <div class="row">
+    <section class="intro">
+        <div class="mask d-flex align-items-center h-100">
+          <div class="container">
+            <div class="card mb-3">
+              <div class="card-body p-0 ms-2 me-2 mb-2">
+                <form hx-post="{% url 'pts_requests:config_cameras_edit' ptsrequest.pk %}" hx-target="#config-cameras-edit">
+                  {% csrf_token %}
+                  <div class="row justify-content-center">
+                    <div class="col-12">
+                      <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок камер</p>
+                      <table class="table table-striped mb-0 ps-2 pe-2 ">
+                        <thead style="background-color: lightskyblue;">
+                          <tr class="d-flex">
+                            <th class="col-3 text-center">Тип Камеры</th>
+                            <th class="col-3 text-center">Количество</th>
+                            <th class="col-3 text-center">Бренд</th>
+                            <th class="col-3 text-center">Модель</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {{ camera_forms.management_form }}
+                          {% for camera in camera_forms %}
+
+                            {% for hidden in camera.hidden_fields %}
+                              {{ hidden }}
+                            {% endfor %}
+
+                            <tr class="d-flex">
+                              <td class="col-3 pt-2 ps-3">{{ camera.cameras }}</td>
+                              <td class="col-3 text-center">{{ camera.quantity }}</td>
+                              <td class="col-3 text-center">{{ camera.brend }}</td>
+                              <td class="col-3 text-center">{{ camera.model }}</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="row pt-3">
+                    <div class="col d-flex justify-content-end">
+                      <button class="btn btn-secondary btn-sm me-3" 
+                        hx-get="{% url 'pts_requests:config_cameras_edit' ptsrequest.pk %}?step=back"
+                        hx-target="#config-cameras-edit"
+                      >
+                        Назад
+                      </button>
+                      <button class="btn btn-secondary btn-sm" type="submit">
+                        Изменить
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+  </div>
+
