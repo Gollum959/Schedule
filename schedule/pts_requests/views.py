@@ -345,6 +345,7 @@ def config_choice_pts_edit_form(request, pk):
     return render(request, 'includes/config_choice_pts_edit.html', context)
 
 
+@login_required
 def config_cameras_edit_form(request, pk):
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
@@ -373,6 +374,7 @@ def config_cameras_edit_form(request, pk):
     return render(request, 'includes/config_cameras_edit.html', context)
 
 
+@login_required
 def config_optics_edit_form(request, pk):
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
@@ -399,3 +401,32 @@ def config_optics_edit_form(request, pk):
     optic_forms = OpticModerateFormset(instance=ptsrequest.pts_cfg)
     context = {'ptsrequest': ptsrequest, 'optic_forms': optic_forms}
     return render(request, 'includes/config_optics_edit.html', context)
+
+
+@login_required
+def config_servers_edit_form(request, pk):
+
+    ptsrequest = get_object_or_404(PtsRequest, pk=pk)
+
+    if request.GET.get('step') == 'back':
+        return render(
+            request,
+            'includes/config_servers.html',
+            {'ptsrequest': ptsrequest}
+        )
+
+    if request.method == 'POST':
+        form = ServerModerateFormset(request.POST, instance=ptsrequest.pts_cfg)
+        context = {'ptsrequest': ptsrequest}
+
+        if form.is_valid():
+            form.save()
+            return render(request, 'includes/config_servers.html',
+                          context)
+
+        context['server_forms'] = form
+        return render(request, 'includes/config_servers_edit.html', context)
+
+    server_forms = ServerModerateFormset(instance=ptsrequest.pts_cfg)
+    context = {'ptsrequest': ptsrequest, 'server_forms': server_forms}
+    return render(request, 'includes/config_servers_edit.html', context)

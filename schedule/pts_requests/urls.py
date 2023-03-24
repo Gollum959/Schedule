@@ -63,6 +63,11 @@ htmx_urlpatterns = [
         views.config_optics_edit_form,
         name='config_optics_edit'
     ),
+    path(
+        'request/<int:pk>/config-servers/',
+        views.config_servers_edit_form,
+        name='config_servers_edit'
+    ),
 ]
 
 urlpatterns += htmx_urlpatterns

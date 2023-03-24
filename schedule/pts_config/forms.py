@@ -275,15 +275,17 @@ class ModerateServer(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['type'].disabled = True
-        self.fields['type_player'].disabled = True
-        self.fields['type'].required = False
-        self.fields['type_player'].required = False
-        self.fields['quantity'].disabled = True
+        self.__make_disable_readonly('type')
+        self.__make_disable_readonly('type_player')
+        self.__make_disable_readonly('quantity')
+
+    def __make_disable_readonly(self, field_name):
+        self.fields[field_name].disabled = True
+        self.fields[field_name].widget.attrs['readonly'] = True
 
     class Meta:
         model = ServerRecordingRepeatConstructor
-        fields = ['type', 'type_player', 'quantity']
+        fields = ['type', 'type_player', 'quantity', 'brend', 'model']
         widgets = {
             'type': forms.Select(attrs={'style': 'width:160px; height:30px'}),
             'type_player': forms.Select(

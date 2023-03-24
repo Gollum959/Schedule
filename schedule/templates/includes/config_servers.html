@@ -1,4 +1,4 @@
-<div id="config-optics-edit">
+<div id="config-servers-edit">
   <div class="row">
     <section class="intro">
         <div class="mask d-flex align-items-center h-100">
@@ -7,30 +7,32 @@
               <div class="card-body p-0 ms-2 me-2 mb-2">
                 <div class="row justify-content-center">
                   <div class="col-12">
-                    <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок оптики</p>
+                    <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок системы записи и повторов</p>
 
-                    {% if ptsrequest.pts_cfg.opticptsconstructor_set.all|length > 0 %}
+                    {% if ptsrequest.pts_cfg.serverrecordingrepeatconstructor_set.all|length > 0 %}
                     <table class="table table-striped mb-0 ps-2 pe-2 ">
                       <thead style="background-color: lightskyblue;">
                         <tr class="d-flex">
-                          <th class="col-3 text-center">Кратность Оптики</th>
-                          <th class="col-3 text-center">Количество</th>
-                          <th class="col-3 text-center">Бренд</th>
+                          <th class="col-2 text-center">Тип сервера</th>
+                          <th class="col-3 text-center">Конфигурация</th>
+                          <th class="col-2 text-center">Количество</th>
+                          <th class="col-2 text-center">Бренд</th>
                           <th class="col-3 text-center">Модель</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {% for optic in ptsrequest.pts_cfg.opticptsconstructor_set.all %}
+                        {% for server in ptsrequest.pts_cfg.serverrecordingrepeatconstructor_set.all %}
                           <tr class="d-flex">
-                            <td class="col-3 pt-2 ps-5">{{ optic.optics }}</td>
-                            <td class="col-3 text-center">{{ optic.quantity }}</td>
-                            {% if optic.brend %}
-                              <td class="col-3">{{ optic.brend }}</td>
+                            <td class="col-2 pt-2 ps-4">{{ server.type }}</td>
+                            <td class="col-3 ps-4">{{ server.type_player }}</td>
+                            <td class="col-2 text-center">{{ server.quantity }}</td>
+                            {% if server.brend %}
+                              <td class="col-2 text-center">{{ server.brend }}</td>
                             {% else %}
-                              <td class="col-3 text-center">&mdash;</td>
+                              <td class="col-2 text-center">&mdash;</td>
                             {% endif %}
-                            {% if optic.model %}
-                              <td class="col-3">{{ optic.model }}</td>
+                            {% if server.model %}
+                              <td class="col-3 text-center">{{ server.model }}</td>
                             {% else %}
                               <td class="col-3 text-center">&mdash;</td>
                             {% endif %}
@@ -47,8 +49,8 @@
                 <div class="row pt-3">
                   <div class="col d-flex justify-content-end">
                     <button class="btn btn-secondary btn-sm"
-                      hx-get="{% url 'pts_requests:config_optics_edit' ptsrequest.pk %}"
-                      hx-target="#config-optics-edit"
+                      hx-get="{% url 'pts_requests:config_servers_edit' ptsrequest.pk %}"
+                      hx-target="#config-servers-edit"
                     >
                       Изменить
                     </button>

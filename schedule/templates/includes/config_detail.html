@@ -11,13 +11,10 @@
       {% include 'includes/config_choice_pts.html' %}
       {% include 'includes/config_cameras.html' %}
       {% include 'includes/config_optics.html' %}
+      {% include 'includes/config_servers.html' %}
 
-      {% comment %} <div class="row">
-        <div id="cfg_cam" cam-url="{% url 'pts_requests:ajax_load_cfg_cam' %}"></div>
-      </div> {% endcomment %}
-      {% comment %} <div class="row">
-        <div id="cfg_optic" opt-url="{% url 'pts_requests:ajax_load_cfg_optic' %}"></div>
-      </div>
+
+      {% comment %}
       <div class="row">
         <div id="cfg_server" server-url="{% url 'pts_requests:ajax_load_cfg_server' %}"></div>
       </div>
@@ -26,13 +23,14 @@
       </div> {% endcomment %}
       {% comment %} <div class="row">
         <div id="cfg_micro" micro-url="{% url 'pts_requests:ajax_load_cfg_micro' %}"></div>
-      </div> {% endcomment %}
+      </div> 
+      {% endcomment %}
 
     </div>
   </div>
 </div>
 
-<script>
+{% comment %} <script>
   $(window).on('load', function() {
     const url = $("#cfg_cam").attr("cam-url");
     const requestId = $("#panelsStayOpen-config").attr("request-id");
@@ -98,4 +96,4 @@
       }
     });
   });
-</script>
+</script> {% endcomment %}
