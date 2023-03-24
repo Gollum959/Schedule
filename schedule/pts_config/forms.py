@@ -210,7 +210,8 @@ class ModerateCamera(forms.ModelForm):
 
         if 'cameraptsconstructor_set-0-brend' in self.data:
             try:
-                self.fields['model'].queryset = CameraModelBrend.objects.all().order_by('name')
+                self.fields['model'].queryset = CameraModelBrend.objects.all()\
+                    .order_by('name')
             except (ValueError, TypeError):
                 pass
         elif self.instance.pk:
@@ -239,18 +240,24 @@ CameraModerateFormset = forms.inlineformset_factory(
 
 class ModerateOptic(forms.ModelForm):
 
+    user_magnification = forms.ModelChoiceField(
+        queryset=Optic.objects.all(),
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['optics'].disabled = True
-        self.fields['optics'].required = False
+        self.fields['user_magnification'].initial = self.instance.optics
+        self.fields['user_magnification'].disabled = True
         self.fields['quantity'].disabled = True
+        self.fields['user_magnification'].widget.attrs['readonly'] = True
+        self.fields['quantity'].widget.attrs['readonly'] = True
 
     class Meta:
         model = OpticPtsConstructor
-        fields = ['optics', 'quantity']
+        fields = ['user_magnification', 'optics', 'quantity', 'brend', 'model']
 
         widgets = {
-            'optics': forms.Select(
+            'user_magnification': forms.Select(
                 attrs={'style': 'width:140px; height:30px'}),
             'quantity': forms.TextInput(attrs={'style': 'width:80px'})
         }

@@ -10,6 +10,7 @@
 
       {% include 'includes/config_choice_pts.html' %}
       {% include 'includes/config_cameras.html' %}
+      {% include 'includes/config_optics.html' %}
 
       {% comment %} <div class="row">
         <div id="cfg_cam" cam-url="{% url 'pts_requests:ajax_load_cfg_cam' %}"></div>
@@ -23,9 +24,9 @@
       <div class="row">
           <div id="cfg_gfx" gfx-url="{% url 'pts_requests:ajax_load_cfg_gfx' %}"></div>
       </div> {% endcomment %}
-      <div class="row">
+      {% comment %} <div class="row">
         <div id="cfg_micro" micro-url="{% url 'pts_requests:ajax_load_cfg_micro' %}"></div>
-      </div>
+      </div> {% endcomment %}
 
     </div>
   </div>

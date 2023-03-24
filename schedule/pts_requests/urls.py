@@ -13,7 +13,11 @@ urlpatterns = [
         name='request_detail'
     ),
     path('create/', views.PtsRequestCreate.as_view(), name='request_create'),
-    path('create/<int:pk>/', views.PtsRequestEdit.as_view(), name='request_edit'),
+    path(
+        'create/<int:pk>/',
+        views.PtsRequestEdit.as_view(),
+        name='request_edit'
+    ),
     path(
         'send_request/<int:pk>/',
         views.change_status_to_on_approval,
@@ -30,31 +34,6 @@ urlpatterns = [
         'ajax/load-event-types/',
         views.load_event_type,
         name='ajax_load_event_types'
-    ),
-    path(
-        'ajax/load-request-cfg-cam/',
-        views.load_cameras_in_request,
-        name='ajax_load_cfg_cam'
-    ),
-    path(
-        'ajax/load-request-cfg-optic/',
-        views.load_optics_in_request,
-        name='ajax_load_cfg_optic'
-    ),
-    path(
-        'ajax/load-request-cfg-server/',
-        views.load_servers_in_request,
-        name='ajax_load_cfg_server'
-    ),
-    path(
-        'ajax/load-request-cfg-gfx/',
-        views.load_gfx_in_request,
-        name='ajax_load_cfg_gfx'
-    ),
-    path(
-        'ajax/load-request-cfg-micro/',
-        views.load_micro_in_request,
-        name='ajax_load_cfg_micro'
     ),
 ]
 
@@ -78,6 +57,11 @@ htmx_urlpatterns = [
         'request/<int:pk>/config-cameras/',
         views.config_cameras_edit_form,
         name='config_cameras_edit'
+    ),
+    path(
+        'request/<int:pk>/config-optics/',
+        views.config_optics_edit_form,
+        name='config_optics_edit'
     ),
 ]
 

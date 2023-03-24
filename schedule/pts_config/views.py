@@ -325,9 +325,12 @@ class PtsConfigDelete(LoginRequiredMixin, DeleteView):
 
 
 def load_camera_brend(request):
-    camera_brend_id = request.GET.get('id')
-    camera_models = CameraModelBrend.objects.filter(
-        brend=camera_brend_id).order_by('name')
+    camera_brend_id = request.GET.get('brend')
+    camera_id = request.GET.get('camera')
+    camera_models = []
+    if camera_brend_id:
+        camera_models = CameraModelBrend.objects.filter(
+            brend=camera_brend_id, type=camera_id).order_by('name')
     return render(
         request,
         'pts_config/camera_model_dropdown_list_options.html',

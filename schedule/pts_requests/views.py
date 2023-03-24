@@ -249,70 +249,6 @@ def load_pts_cfg(request):
         {'cfgs': cfgs}
     )
 
-
-@login_required
-def load_cameras_in_request(request):
-
-    request_id = request.GET.get('requestId')
-    pts_request = get_object_or_404(PtsRequest, pk=request_id)
-    camera_form = CameraModerateFormset(instance=pts_request.pts_cfg)
-    return render(
-        request,
-        'pts_requests/request_cfg_cameras.html',
-        {'camera_form': camera_form}
-    )
-
-
-@login_required
-def load_optics_in_request(request):
-
-    request_id = request.GET.get('requestId')
-    pts_request = get_object_or_404(PtsRequest, pk=request_id)
-    optic_form = OpticModerateFormset(instance=pts_request.pts_cfg)
-    return render(
-        request,
-        'pts_requests/request_cfg_optics.html',
-        {'optic_form': optic_form}
-    )
-
-
-@login_required
-def load_servers_in_request(request):
-
-    request_id = request.GET.get('requestId')
-    pts_request = get_object_or_404(PtsRequest, pk=request_id)
-    server_form = ServerModerateFormset(instance=pts_request.pts_cfg)
-    return render(
-        request,
-        'pts_requests/request_cfg_servers.html',
-        {'server_form': server_form}
-    )
-
-
-@login_required
-def load_gfx_in_request(request):
-
-    request_id = request.GET.get('requestId')
-    pts_request = get_object_or_404(PtsRequest, pk=request_id)
-    gfx_form = GfxModerateFormset(instance=pts_request.pts_cfg)
-    return render(
-        request,
-        'pts_requests/request_cfg_gfx.html',
-        {'gfx_form': gfx_form}
-    )
-
-
-@login_required
-def load_micro_in_request(request):
-    request_id = request.GET.get('requestId')
-    pts_request = get_object_or_404(PtsRequest, pk=request_id)
-
-    return render(
-        request,
-        'pts_requests/request_cfg_micro.html',
-        {'quantity': pts_request.pts_cfg.microphone_quantity}
-    )
-
 # View functions for time block
 
 
@@ -435,3 +371,31 @@ def config_cameras_edit_form(request, pk):
     camera_forms = CameraModerateFormset(instance=ptsrequest.pts_cfg)
     context = {'ptsrequest': ptsrequest, 'camera_forms': camera_forms}
     return render(request, 'includes/config_cameras_edit.html', context)
+
+
+def config_optics_edit_form(request, pk):
+
+    ptsrequest = get_object_or_404(PtsRequest, pk=pk)
+
+    if request.GET.get('step') == 'back':
+        return render(
+            request,
+            'includes/config_optics.html',
+            {'ptsrequest': ptsrequest}
+        )
+
+    if request.method == 'POST':
+        form = OpticModerateFormset(request.POST, instance=ptsrequest.pts_cfg)
+        context = {'ptsrequest': ptsrequest}
+
+        if form.is_valid():
+            form.save()
+            return render(request, 'includes/config_optics.html',
+                          context)
+
+        context['optic_forms'] = form
+        return render(request, 'includes/config_optics_edit.html', context)
+
+    optic_forms = OpticModerateFormset(instance=ptsrequest.pts_cfg)
+    context = {'ptsrequest': ptsrequest, 'optic_forms': optic_forms}
+    return render(request, 'includes/config_optics_edit.html', context)
