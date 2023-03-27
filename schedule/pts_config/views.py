@@ -16,10 +16,12 @@ from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
 
 
+from pts_requests.models import PtsRequest
 from place_broadcast.models import PlaceCity
 from pts_config.models import (PtsConstructor,
                                CameraModelBrend,
                                CameraPtsConstructor,
+                               OpticBrend,
                                OpticModelBrend,
                                OpticPtsConstructor,
                                ServerRecordingRepeatModelBrend,
@@ -338,10 +340,30 @@ def load_camera_brend(request):
     )
 
 
-def load_optic_brend(request):
-    optic_brend_id = request.GET.get('id')
-    optic_models = OpticModelBrend.objects.filter(
-        brend=optic_brend_id).order_by('name')
+def load_optic_brend(request, pk):
+    optic_id = request.GET.get('optic')
+    base_object = get_object_or_404(PtsRequest, pk=pk)
+    optic_brends = []
+    if optic_id:
+        optic_brends = OpticBrend.objects.filter(
+            type_pts=base_object.pts_name.type,
+            opticmodelbrend__type__pk=optic_id).order_by('name')
+        print(optic_brends)
+    return render(
+        request,
+        'pts_config/optic_brend_dropdown_list_options.html',
+        {'optic_brends': optic_brends}
+    )
+
+
+def load_optic_model(request):
+    optic_id = request.GET.get('optic')
+    brend_id = request.GET.get('brend')
+    optic_models = []
+    if brend_id:
+        optic_models = OpticModelBrend.objects.filter(
+                brend__pk=brend_id, type__pk=optic_id
+            ).order_by('name')
     return render(
         request,
         'pts_config/optic_model_dropdown_list_options.html',

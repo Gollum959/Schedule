@@ -8,6 +8,8 @@ from pts_config.models import (PtsConstructor,
                                CameraPtsConstructor,
                                CameraBrend,
                                CameraModelBrend,
+                               OpticBrend,
+                               OpticModelBrend,
                                OpticPtsConstructor,
                                ServerRecordingRepeatConstructor,
                                GfxPtsConstructor,
@@ -203,9 +205,10 @@ class ModerateCamera(forms.ModelForm):
         self.fields['cameras'].widget.attrs['readonly'] = True
         self.fields['quantity'].widget.attrs['readonly'] = True
         pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
-        self.fields['brend'].queryset = CameraBrend.objects.filter(
+        brend = CameraBrend.objects.filter(
             Q(type_pts=pts_request.pts_name.type) | Q(type_pts__isnull=True)
             ).filter(cameramodelbrend__type=self.instance.cameras).distinct()
+        self.fields['brend'].queryset = brend
         self.fields['model'].queryset = CameraModelBrend.objects.none()
 
         if 'cameraptsconstructor_set-0-brend' in self.data:
@@ -214,10 +217,16 @@ class ModerateCamera(forms.ModelForm):
                     .order_by('name')
             except (ValueError, TypeError):
                 pass
-        elif self.instance.pk:
+        elif self.instance.pk and self.instance.model:
             self.fields['model'].queryset = CameraModelBrend.objects.filter(
                     brend=self.instance.brend_id, type=self.instance.cameras
                 ).order_by('name')
+        else:
+            model = CameraModelBrend.objects.filter(
+                brend=brend.first(), type=self.instance.cameras)
+            self.initial['brend'] = brend.first()
+            self.fields['model'].queryset = model
+            self.initial['model'] = model.first()
 
     class Meta:
         model = CameraPtsConstructor
@@ -247,10 +256,40 @@ class ModerateOptic(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['user_magnification'].initial = self.instance.optics
-        self.fields['user_magnification'].disabled = True
-        self.fields['quantity'].disabled = True
-        self.fields['user_magnification'].widget.attrs['readonly'] = True
-        self.fields['quantity'].widget.attrs['readonly'] = True
+        self.__make_disable_readonly('user_magnification')
+        self.__make_disable_readonly('quantity')
+        pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
+        self.fields['optics'].queryset = Optic.objects.filter(
+                opticmodelbrend__type__isnull=False
+            ).filter(
+                Q(
+                    opticmodelbrend__brend__type_pts=pts_request.pts_name.type
+                ) | Q(
+                    opticmodelbrend__brend__type_pts__isnull=True
+                )
+            ).distinct().order_by('name')
+        self.fields['brend'].queryset = OpticBrend.objects.none()
+        self.fields['model'].queryset = OpticModelBrend.objects.none()
+
+        if 'opticptsconstructor_set-0-brend' in self.data:
+            try:
+                self.fields['brend'].queryset = OpticBrend.objects.all()
+                self.fields['model'].queryset = OpticModelBrend.objects.all()
+            except (ValueError, TypeError):
+                pass
+        elif self.instance.pk:
+            self.fields['brend'].queryset = OpticBrend.objects.filter(
+                    Q(
+                        type_pts=pts_request.pts_name.type
+                    ) | Q(type_pts__isnull=True)
+                ).order_by('name')
+            self.fields['model'].queryset = OpticModelBrend.objects.filter(
+                    brend=self.instance.brend_id, type=self.instance.optics
+                ).order_by('name')
+
+    def __make_disable_readonly(self, field_name):
+        self.fields[field_name].disabled = True
+        self.fields[field_name].widget.attrs['readonly'] = True
 
     class Meta:
         model = OpticPtsConstructor

@@ -80,6 +80,13 @@ class Optic(StrName):
 class OpticBrend(StrName):
     """Optic brend model."""
     name = models.CharField('Optic brend', max_length=50)
+    type_pts = models.ForeignKey(
+        TypePtsForConfiguration,
+        on_delete=models.CASCADE,
+        help_text="If this brand can be used everywhere, choose nothing",
+        blank=True,
+        null=True
+    )
 
 
 class OpticModelBrend(StrNameQuantity):
@@ -88,6 +95,12 @@ class OpticModelBrend(StrNameQuantity):
     brend = models.ForeignKey(
         OpticBrend,
         on_delete=models.CASCADE,
+    )
+    type = models.ForeignKey(
+        Optic,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
     )
 
 

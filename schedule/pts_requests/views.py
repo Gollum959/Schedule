@@ -360,8 +360,8 @@ def config_cameras_edit_form(request, pk):
     if request.method == 'POST':
         form = CameraModerateFormset(request.POST, instance=ptsrequest.pts_cfg)
         context = {'ptsrequest': ptsrequest}
-
         if form.is_valid():
+
             form.save()
             return render(request, 'includes/config_cameras.html',
                           context)

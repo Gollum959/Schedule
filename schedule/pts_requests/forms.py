@@ -145,7 +145,7 @@ class AddInternetLine(ModelForm):
 
     class Meta:
         model = InternetLineConstructor
-        fields = ['speed', 'quantity', 'start', 'end', ]
+        fields = ['speed', 'phone', 'quantity', 'start', 'end', ]
 
 
 InternetLineFormset = inlineformset_factory(

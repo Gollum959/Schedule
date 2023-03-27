@@ -13,8 +13,9 @@
                       <tr class="d-flex">
                         <th class="col-3">Дата и время начала оказания услуг</th>
                         <th class="col-3">Дата и время завершения оказания услуг</th>
-                        <th class="col-3">Количество точек</th>
-                        <th class="col-3">Скорость доступа</th>
+                        <th class="col-2">Количество точек</th>
+                        <th class="col-2">Скорость доступа</th>
+                        <th class="col-2">Телефон</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -22,8 +23,9 @@
                         <tr class="d-flex">
                           <td class="col-3">{{ line.start }}</td>
                           <td class="col-3">{{ line.end }}</td>
-                          <td class="col-3">{{ line.quantity }}</td>
-                          <td class="col-3">{{ line.get_speed_display }}</td>
+                          <td class="col-2">{{ line.quantity }}</td>
+                          <td class="col-2">{{ line.get_speed_display }}</td>
+                          <td class="col-2">{% if line.phone %}Да{% else %}Нет{% endif %}</td>
                         </tr>
                       {% endfor %}
 

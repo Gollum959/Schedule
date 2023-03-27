@@ -110,7 +110,10 @@ class InternetLineConstructor(LineConstructor):
         (SPEED2, '80/40 Мбит/c'),
         (SPEED3, '200/200 Мбит/c'),
     ]
-
+    phone = models.BooleanField(
+        'Наличие телефона',
+        default=False
+    )
     speed = models.CharField(
         verbose_name='Скорость соединения',
         max_length=30,
@@ -232,6 +235,12 @@ class PtsRequest(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+    )
+    moderator = models.ForeignKey(
+        User,
+        on_delete=models.RESTRICT,
+        blank=True,
+        null=True
     )
 
     @staticmethod

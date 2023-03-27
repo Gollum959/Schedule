@@ -7,14 +7,15 @@
             <div class="card mb-3">
               <div class="card-body p-0 ms-2 me-2 mb-2">
                 <form id="optic_form" 
-                  cam-url="{% url 'config:ajax_load_cam_model' %}"
+                  opt-url="{% url 'config:ajax_load_optic_brend' ptsrequest.pk %}"
+                  brend-url="{% url 'config:ajax_load_optic_model' %}"
                   hx-post="{% url 'pts_requests:config_optics_edit' ptsrequest.pk %}" 
                   hx-target="#config-optics-edit"
                 >
                   {% csrf_token %}
                   <div class="row justify-content-center">
                     <div class="col-12">
-                      <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок камер</p>
+                      <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок оптики</p>
                       <table class="table table-striped mb-0 ps-2 pe-2 ">
                         <thead style="background-color: lightskyblue;">
                           <tr class="d-flex">
@@ -66,26 +67,44 @@
     </section>
   </div>
 
-  {% comment %} <script>
-    var countForm = $("#id_cameraptsconstructor_set-TOTAL_FORMS").val()
+  <script>
+    var countForm = $("#id_opticptsconstructor_set-TOTAL_FORMS").val()
     for (let i = 0; i < countForm; i++) {
       
-      $(`#id_cameraptsconstructor_set-${i}-brend`).change(function () {
-        const url = $("#cam_form").attr("cam-url");  
-        const cameraId = $(`#id_cameraptsconstructor_set-${i}-cameras`).val()
-        const brendId = $(`#id_cameraptsconstructor_set-${i}-brend`).val(); 
+      $(`#id_opticptsconstructor_set-${i}-optics`).change(function () {
+        const url = $("#optic_form").attr("opt-url");  
+        const opticId = $(`#id_opticptsconstructor_set-${i}-optics`).val()
 
         $.ajax({                       
           url: url,                   
           data: {
-            'brend': brendId,
-            'camera': cameraId        
+            'optic': opticId        
           },
           success: function (data) {  
-            $(`#id_cameraptsconstructor_set-${i}-model`).html(data);  
+            $(`#id_opticptsconstructor_set-${i}-brend`).html(data);  
+            $(`#id_opticptsconstructor_set-${i}-model`).html('<option value="">---------</option>');
           }
         });
 
       });
+
+      $(`#id_opticptsconstructor_set-${i}-brend`).change(function () {
+        const url = $("#optic_form").attr("brend-url");  
+        const opticId = $(`#id_opticptsconstructor_set-${i}-optics`).val()
+        const brendId = $(`#id_opticptsconstructor_set-${i}-brend`).val()
+
+        $.ajax({                       
+          url: url,                   
+          data: {
+            'optic': opticId,
+            'brend': brendId   
+          },
+          success: function (data) {  
+            $(`#id_opticptsconstructor_set-${i}-model`).html(data);  
+          }
+        });
+
+      });
+
     }
-  </script> {% endcomment %}
+  </script>

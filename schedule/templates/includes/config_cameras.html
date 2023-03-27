@@ -78,16 +78,18 @@
                     {% endif %}
                   </div>
                 </div>
-                <div class="row pt-3">
-                  <div class="col d-flex justify-content-end">
-                    <button class="btn btn-secondary btn-sm"
-                      hx-get="{% url 'pts_requests:config_cameras_edit' ptsrequest.pk %}"
-                      hx-target="#config-cameras-edit"
-                    >
-                      Изменить
-                    </button>
+                {% if user.is_admin_or_moderator and ptsrequest.is_draft != True %}
+                  <div class="row pt-3">
+                    <div class="col d-flex justify-content-end">
+                      <button class="btn btn-secondary btn-sm"
+                        hx-get="{% url 'pts_requests:config_cameras_edit' ptsrequest.pk %}"
+                        hx-target="#config-cameras-edit"
+                      >
+                        Изменить
+                      </button>
+                    </div>
                   </div>
-                </div>
+                {% endif %}
               </div>
             </div>
           </div>
