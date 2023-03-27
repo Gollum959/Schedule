@@ -239,6 +239,7 @@ class PtsRequest(models.Model):
     moderator = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
+        related_name="moderator",
         blank=True,
         null=True
     )
