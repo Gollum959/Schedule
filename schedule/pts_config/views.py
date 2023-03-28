@@ -144,7 +144,7 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
         form.instance.base_conf = self.BASE_CFG
         context = self.get_context_data()
         pts_cfg_forms = [context['camera'], context['optic'],
-                         context['server'], context['gfx'],]
+                         context['server'], context['gfx']]
         if all([inline_form.is_valid() for inline_form in pts_cfg_forms]):
             self.object = form.save()
             for cfg_form in pts_cfg_forms:
@@ -243,7 +243,7 @@ class PtsConfigCreateOnBase(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         form.instance.base_conf = self.BASE_CFG
         pts_cfg_forms = [context['camera'], context['optic'],
-                         context['server'], context['gfx'],]
+                         context['server'], context['gfx']]
         if all([inline_form.is_valid() for inline_form in pts_cfg_forms]):
             self.object = form.save()
             for cfg_form in pts_cfg_forms:
@@ -297,7 +297,7 @@ class PtsConfigEdit(LoginRequiredMixin, UpdateView):
         form.instance.author = self.request.user
         context = self.get_context_data()
         pts_cfg_forms = [context['camera'], context['optic'],
-                         context['server'], context['gfx'],]
+                         context['server'], context['gfx']]
 
         if all([inline_form.is_valid() for inline_form in pts_cfg_forms]):
             self.object = form.save()
@@ -368,6 +368,17 @@ def load_optic_model(request):
         request,
         'pts_config/optic_model_dropdown_list_options.html',
         {'optic_models': optic_models}
+    )
+
+
+def load_server_config(request):
+    server_brend_id = request.GET.get('id')
+    server_models = ServerRecordingRepeatModelBrend.objects.filter(
+        brend=server_brend_id).order_by('name')
+    return render(
+        request,
+        'pts_config/server_model_dropdown_list_options.html',
+        {'server_models': server_models}
     )
 
 

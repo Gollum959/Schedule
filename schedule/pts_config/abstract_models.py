@@ -12,11 +12,12 @@ class ConstrQuantity(models.Model):
     quantity = models.PositiveSmallIntegerField(
         'Количество',
         validators=(
-            MinValueValidator(1),
+            MinValueValidator(0),
             MaxValueValidator(50),
         ),
         default=0,
-        blank=True
+        blank=True,
+        null=True
     )
 
     class Meta:

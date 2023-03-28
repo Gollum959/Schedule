@@ -159,7 +159,7 @@ class AddServer(forms.ModelForm):
 
     class Meta:
         model = ServerRecordingRepeatConstructor
-        fields = ['type', 'type_player', 'quantity']
+        fields = ['type', 'type_player', ]
 
 
 ServerFormset = forms.inlineformset_factory(
@@ -198,12 +198,12 @@ GfxFormset = forms.inlineformset_factory(
 
 class ModerateCamera(forms.ModelForm):
 
+    quantity = forms.IntegerField(min_value=0, max_value=30)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['cameras'].disabled = True
-        self.fields['quantity'].disabled = True
         self.fields['cameras'].widget.attrs['readonly'] = True
-        self.fields['quantity'].widget.attrs['readonly'] = True
         pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
         brend = CameraBrend.objects.filter(
             Q(type_pts=pts_request.pts_name.type) | Q(type_pts__isnull=True)
@@ -213,6 +213,7 @@ class ModerateCamera(forms.ModelForm):
 
         if 'cameraptsconstructor_set-0-brend' in self.data:
             try:
+                # if some validation appears, will be needed to change queryset
                 self.fields['model'].queryset = CameraModelBrend.objects.all()\
                     .order_by('name')
             except (ValueError, TypeError):
@@ -235,7 +236,6 @@ class ModerateCamera(forms.ModelForm):
         widgets = {
             'cameras': forms.Select(
                 attrs={'style': 'width:140px; height:30px'}),
-            'quantity': forms.TextInput(attrs={'style': 'width:80px'})
         }
 
 
@@ -249,6 +249,7 @@ CameraModerateFormset = forms.inlineformset_factory(
 
 class ModerateOptic(forms.ModelForm):
 
+    quantity = forms.IntegerField(min_value=0, max_value=30)
     user_magnification = forms.ModelChoiceField(
         queryset=Optic.objects.all(),
     )
@@ -257,7 +258,6 @@ class ModerateOptic(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['user_magnification'].initial = self.instance.optics
         self.__make_disable_readonly('user_magnification')
-        self.__make_disable_readonly('quantity')
         pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
         self.fields['optics'].queryset = Optic.objects.filter(
                 opticmodelbrend__type__isnull=False
@@ -273,6 +273,7 @@ class ModerateOptic(forms.ModelForm):
 
         if 'opticptsconstructor_set-0-brend' in self.data:
             try:
+                # if some validation appears, will be needed to change queryset
                 self.fields['brend'].queryset = OpticBrend.objects.all()
                 self.fields['model'].queryset = OpticModelBrend.objects.all()
             except (ValueError, TypeError):

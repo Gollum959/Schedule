@@ -2,7 +2,7 @@
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">Тракт</h5>
-      <form method="post" hx-put="{% url 'pts_requests:trakt_time_edit' ptsrequest.pk %}" hx-target="#time-trakt">
+      <form method="post" hx-put="{% url 'pts_requests:trakt_time_edit' ptsrequest.pk %}" hx-target="#time-trakt" autocomplete="off">
         {% csrf_token %}
     
         {{ form|crispy }}

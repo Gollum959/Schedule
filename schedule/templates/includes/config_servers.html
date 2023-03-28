@@ -8,7 +8,7 @@
                 <div class="row justify-content-center">
                   <div class="col-12">
                     <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок системы записи и повторов</p>
-
+                    {% if message %}<p class="fs-5 text-danger ms-2 me-2">{{ message }}</p>{% endif %}
                     {% if ptsrequest.pts_cfg.serverrecordingrepeatconstructor_set.all|length > 0 %}
                     <table class="table table-striped mb-0 ps-2 pe-2 ">
                       <thead style="background-color: lightskyblue;">

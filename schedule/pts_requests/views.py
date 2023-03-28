@@ -22,12 +22,12 @@ from pts_requests.forms import (AddRequestFrom,
                                 InternetLineFormset)
 from pts_config.forms import (CameraModerateFormset,
                               OpticModerateFormset,
-                              ServerModerateFormset,
-                              GfxModerateFormset)
+                              ServerModerateFormset)
+#   GfxModerateFormset)
 from core.custom_view import (DetalInformationMixin,
                               UserToFormMixin,
-                              EditOnlyAuthorMixin,
-                              EditOnlyAdminOrModeratorMixin)
+                              EditOnlyAuthorMixin)
+#   EditOnlyAdminOrModeratorMixin)
 
 
 class PtsRequestsView(LoginRequiredMixin, ListView):
@@ -266,9 +266,11 @@ def time_trakt_edit_form(request, pk):
 
     initial_dict = {}
     if not ptsrequest.trakt_start_date:
-        initial_dict['trakt_start_date'] = ptsrequest.broadcast_start_date - timedelta(hours=1)
+        initial_dict['trakt_start_date'] = (
+            ptsrequest.broadcast_start_date - timedelta(hours=1))
     if not ptsrequest.trakt_end_date:
-        initial_dict['trakt_end_date'] = ptsrequest.broadcast_start_date - timedelta(minutes=10)
+        initial_dict['trakt_end_date'] = (
+            ptsrequest.broadcast_start_date - timedelta(minutes=10))
 
     if request.method == 'PUT':
         data = QueryDict(request.body).dict()
@@ -350,6 +352,14 @@ def config_cameras_edit_form(request, pk):
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
 
+    if not ptsrequest.pts_name:
+        return render(
+            request,
+            'includes/config_cameras.html',
+            {'ptsrequest': ptsrequest,
+             'message': 'Выберете ПТС'}
+        )
+
     if request.GET.get('step') == 'back':
         return render(
             request,
@@ -379,6 +389,14 @@ def config_optics_edit_form(request, pk):
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
 
+    if not ptsrequest.pts_name:
+        return render(
+            request,
+            'includes/config_optics.html',
+            {'ptsrequest': ptsrequest,
+             'message': 'Выберете ПТС'}
+        )
+
     if request.GET.get('step') == 'back':
         return render(
             request,
@@ -407,6 +425,14 @@ def config_optics_edit_form(request, pk):
 def config_servers_edit_form(request, pk):
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
+
+    if not ptsrequest.pts_name:
+        return render(
+            request,
+            'includes/config_servers.html',
+            {'ptsrequest': ptsrequest,
+             'message': 'Выберете ПТС'}
+        )
 
     if request.GET.get('step') == 'back':
         return render(

@@ -134,6 +134,11 @@ class ServerRecordingRepeatType(StrName):
 class ServerPlayerType(StrName):
     """Server player type model"""
     name = models.CharField('Server player type', max_length=40)
+    rec_rep_type = models.ForeignKey(
+        ServerRecordingRepeatType,
+        on_delete=models.CASCADE,
+    )
+
 
 
 class ServerRecordingRepeatBrend(StrName):

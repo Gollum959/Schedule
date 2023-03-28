@@ -11,7 +11,8 @@ from pts_config.views import (
                               load_optic_brend,
                               load_server_brend,
                               load_micro_brend,
-                              load_optic_model)
+                              load_optic_model,
+                              load_server_config)
 
 app_name = 'pts_config'
 
@@ -56,6 +57,11 @@ urlpatterns = [
         'ajax/load-optic-model/',
         load_optic_model,
         name='ajax_load_optic_model'
+    ),
+    path(
+        'ajax/load-server-config/',
+        load_server_config,
+        name='ajax_load_server_config'
     ),
     path(
         'ajax/load-server-model/',
