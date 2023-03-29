@@ -6,8 +6,8 @@
           <div class="container">
             <div class="card mb-3">
               <div class="card-body p-0 ms-2 me-2 mb-2">
-                <form id="optic_form" 
-                  server-url="{% url 'config:ajax_load_cam_model' %}"
+                <form id="server_form" 
+                  server-url="{% url 'config:ajax_load_server_model' %}"
                   hx-post="{% url 'pts_requests:config_servers_edit' ptsrequest.pk %}" 
                   hx-target="#config-servers-edit"
                 >
@@ -19,8 +19,9 @@
                         <thead style="background-color: lightskyblue;">
                           <tr class="d-flex">
                             <th class="col-2 text-center">Тип сервера</th>
-                            <th class="col-3 text-center">Конфигурация</th>
-                            <th class="col-2 text-center">Количество</th>
+                            <th class="col-2 text-center">Конфигурация</th>
+                            <th class="col-2 text-center">Реальная конфигурация</th>
+                            <th class="col-1 text-center">Кол.</th>
                             <th class="col-2 text-center">Бренд</th>
                             <th class="col-3 text-center">Модель</th>
                           </tr>
@@ -35,8 +36,9 @@
 
                             <tr class="d-flex">
                               <td class="col-2 text-center">{{ server.type }}</td>
-                              <td class="col-3 text-center">{{ server.type_player }}</td>
-                              <td class="col-2 text-center">{{ server.quantity }}</td>
+                              <td class="col-2 text-center">{{ server.user_type_player }}</td>
+                              <td class="col-2 text-center">{{ server.type_player }}</td>
+                              <td class="col-1 text-center">{{ server.quantity }}</td>
                               <td class="col-2 text-center">{{ server.brend }}</td>
                               <td class="col-3 text-center">{{ server.model }}</td>
                             </tr>
@@ -66,26 +68,24 @@
     </section>
   </div>
 
-  {% comment %} <script>
-    var countForm = $("#id_cameraptsconstructor_set-TOTAL_FORMS").val()
+<script>
+    var countForm = $("#id_serverrecordingrepeatconstructor_set-TOTAL_FORMS").val()
     for (let i = 0; i < countForm; i++) {
       
-      $(`#id_cameraptsconstructor_set-${i}-brend`).change(function () {
-        const url = $("#cam_form").attr("cam-url");  
-        const cameraId = $(`#id_cameraptsconstructor_set-${i}-cameras`).val()
-        const brendId = $(`#id_cameraptsconstructor_set-${i}-brend`).val(); 
+      $(`#id_serverrecordingrepeatconstructor_set-${i}-brend`).change(function () {
+        const url = $("#server_form").attr("server-url");  
+        const brendId = $(`#id_serverrecordingrepeatconstructor_set-${i}-brend`).val(); 
 
         $.ajax({                       
           url: url,                   
           data: {
-            'brend': brendId,
-            'camera': cameraId        
+            'id': brendId,
           },
           success: function (data) {  
-            $(`#id_cameraptsconstructor_set-${i}-model`).html(data);  
+            $(`#id_serverrecordingrepeatconstructor_set-${i}-model`).html(data);  
           }
         });
 
       });
     }
-  </script> {% endcomment %}
+  </script>

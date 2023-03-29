@@ -26,6 +26,7 @@ from pts_config.models import (PtsConstructor,
                                OpticPtsConstructor,
                                ServerRecordingRepeatModelBrend,
                                ServerRecordingRepeatConstructor,
+                               ServerPlayerType,
                                GfxPtsConstructor,
                                MicrophoneModelBrend)
 from pts_config.forms import (AddPtsConfigFrom,
@@ -372,20 +373,25 @@ def load_optic_model(request):
 
 
 def load_server_config(request):
-    server_brend_id = request.GET.get('id')
-    server_models = ServerRecordingRepeatModelBrend.objects.filter(
-        brend=server_brend_id).order_by('name')
+    server_type_id = request.GET.get('id')
+    server_type_players = []
+    if server_type_id:
+        server_type_players = ServerPlayerType.objects.filter(
+            rec_rep_type=server_type_id,
+            visible_to_user=True).order_by('name')
     return render(
         request,
-        'pts_config/server_model_dropdown_list_options.html',
-        {'server_models': server_models}
+        'pts_config/server_type_dropdown_list_options.html',
+        {'server_type_players': server_type_players}
     )
 
 
 def load_server_brend(request):
     server_brend_id = request.GET.get('id')
-    server_models = ServerRecordingRepeatModelBrend.objects.filter(
-        brend=server_brend_id).order_by('name')
+    server_models = []
+    if server_brend_id:
+        server_models = ServerRecordingRepeatModelBrend.objects.filter(
+            brend=server_brend_id).order_by('name')
     return render(
         request,
         'pts_config/server_model_dropdown_list_options.html',

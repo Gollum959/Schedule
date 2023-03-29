@@ -12,6 +12,9 @@ from pts_config.models import (PtsConstructor,
                                OpticModelBrend,
                                OpticPtsConstructor,
                                ServerRecordingRepeatConstructor,
+                               ServerPlayerType,
+                               ServerRecordingRepeatBrend,
+                               ServerRecordingRepeatModelBrend,
                                GfxPtsConstructor,
                                Optic)
 from pts_requests.models import PtsRequest
@@ -156,6 +159,20 @@ class AddServer(forms.ModelForm):
         self.fields['type_player'].empty_label = 'Выберете конфигурацию'
         self.fields['type'].label = 'Тип сервера'
         self.fields['type_player'].label = 'Конфигурация'
+        self.fields['type_player'].queryset = ServerPlayerType.objects.none()
+
+        if 'serverrecordingrepeatconstructor_set-0-type' in self.data:
+            try:
+                # if validation fails, the queryset will not work correctly
+                self.fields['type_player'].queryset = ServerPlayerType.\
+                    objects.filter(visible_to_user=True).order_by('name')
+            except (ValueError, TypeError):
+                pass
+
+        elif self.instance.pk:
+            self.fields['type_player'].queryset = ServerPlayerType.objects.\
+                filter(rec_rep_type=self.instance.type,
+                       visible_to_user=True).order_by('name')
 
     class Meta:
         model = ServerRecordingRepeatConstructor
@@ -313,11 +330,32 @@ OpticModerateFormset = forms.inlineformset_factory(
 
 class ModerateServer(forms.ModelForm):
 
+    user_type_player = forms.ModelChoiceField(
+        queryset=ServerPlayerType.objects.all(),
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['user_type_player'].initial = self.instance.type_player
         self.__make_disable_readonly('type')
-        self.__make_disable_readonly('type_player')
-        self.__make_disable_readonly('quantity')
+        self.__make_disable_readonly('user_type_player')
+        pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
+        self.fields['type_player'].queryset = ServerPlayerType.objects.filter(
+            visible_to_user=False)
+        self.fields['brend'].queryset = ServerRecordingRepeatBrend.objects.filter(
+            type_pts=pts_request.pts_name.type)
+        self.fields['model'].queryset = ServerRecordingRepeatModelBrend.objects.none()
+
+        if 'serverrecordingrepeatconstructor_set-0-model' in self.data:
+            try:
+                # if some validation appears, will be needed to change queryset
+                self.fields['model'].queryset = ServerRecordingRepeatModelBrend.objects.all()\
+                    .order_by('name')
+            except (ValueError, TypeError):
+                pass
+        elif self.instance.pk and self.instance.model:
+            self.fields['model'].queryset = ServerRecordingRepeatModelBrend.objects.filter(
+                    brend=self.instance.brend_id).order_by('name')
 
     def __make_disable_readonly(self, field_name):
         self.fields[field_name].disabled = True
@@ -325,7 +363,8 @@ class ModerateServer(forms.ModelForm):
 
     class Meta:
         model = ServerRecordingRepeatConstructor
-        fields = ['type', 'type_player', 'quantity', 'brend', 'model']
+        fields = ['type', 'user_type_player', 'type_player',
+                  'quantity', 'brend', 'model']
         widgets = {
             'type': forms.Select(attrs={'style': 'width:160px; height:30px'}),
             'type_player': forms.Select(

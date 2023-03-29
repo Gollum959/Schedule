@@ -42,7 +42,7 @@
       </h1>
       <div class="card">
         <div class="card-body">        
-          <form method="post" enctype="multipart/form-data" id="cfgForm">
+          <form method="post" server-url="{% url 'config:ajax_load_server_config' %}" enctype="multipart/form-data" id="cfgForm">
             {% csrf_token %}
             <div class="row">
               <div class="col-6">{{ form.place|as_crispy_field }}</div>
@@ -149,7 +149,7 @@
       'server-form',
       'id_serverrecordingrepeatconstructor_set-TOTAL_FORMS',
       'id_serverrecordingrepeatconstructor_set',
-      '',
+      'server-url',
       removeServerLineBtn,
       e))
     removeServerLineBtn.addEventListener('click', e => remove_form(

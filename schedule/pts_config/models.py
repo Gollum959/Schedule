@@ -138,12 +138,22 @@ class ServerPlayerType(StrName):
         ServerRecordingRepeatType,
         on_delete=models.CASCADE,
     )
-
+    visible_to_user = models.BooleanField(
+        'Видят ли пользователи',
+        default=False
+    )
 
 
 class ServerRecordingRepeatBrend(StrName):
     """Server recording or repeat brend model."""
     name = models.CharField('Server brend', max_length=50)
+    type_pts = models.ForeignKey(
+        TypePtsForConfiguration,
+        on_delete=models.CASCADE,
+        help_text="If this brand can be used everywhere, choose nothing",
+        blank=True,
+        null=True
+    )
 
 
 class ServerRecordingRepeatModelBrend(StrNameQuantity):

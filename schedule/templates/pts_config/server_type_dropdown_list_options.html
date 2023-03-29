@@ -1,0 +1,4 @@
+<option value="">Выберете конфигурацию</option>
+{% for server_type_player in server_type_players %}
+    <option value="{{ server_type_player.pk }}">{{ server_type_player.name }}</option>
+{% endfor %}

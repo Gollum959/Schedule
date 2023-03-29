@@ -46,20 +46,19 @@ function add_new_form(
 
 
     if (brend_url!==''){
-      var brendId = `${elementPrefix}-${addedFormCount}-brend`
-      var modelId = `${elementPrefix}-${addedFormCount}-model`
-
-      var idOfSelect = $(`#${brendId}`)
+      var typeId = `${elementPrefix}-${addedFormCount}-type`
+      var confId = `${elementPrefix}-${addedFormCount}-type_player`
+      var idOfSelect = $(`#${typeId}`)
       idOfSelect.change(function () {
         var url = $("#cfgForm").attr(brend_url);
-        var camId = $(this).val();
+        var recId = $(this).val();
         $.ajax({
           url: url,
           data: {
-            'id': camId
+            'id': recId
           },
           success: function (data) {
-            $(`#${modelId}`).html(data);
+            $(`#${confId}`).html(data);
           }
         });
       });
