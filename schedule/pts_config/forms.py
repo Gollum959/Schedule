@@ -16,6 +16,9 @@ from pts_config.models import (PtsConstructor,
                                ServerRecordingRepeatBrend,
                                ServerRecordingRepeatModelBrend,
                                GfxPtsConstructor,
+                               MicrophonePtsConstructor,
+                               MicrophoneBrend,
+                               MicrophoneModelBrend,
                                Optic)
 from pts_requests.models import PtsRequest
 
@@ -215,7 +218,7 @@ GfxFormset = forms.inlineformset_factory(
 
 class ModerateCamera(forms.ModelForm):
 
-    quantity = forms.IntegerField(min_value=0, max_value=30)
+    quantity = forms.IntegerField(min_value=0, max_value=30, required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -266,7 +269,7 @@ CameraModerateFormset = forms.inlineformset_factory(
 
 class ModerateOptic(forms.ModelForm):
 
-    quantity = forms.IntegerField(min_value=0, max_value=30)
+    quantity = forms.IntegerField(min_value=0, max_value=30, required=False)
     user_magnification = forms.ModelChoiceField(
         queryset=Optic.objects.all(),
     )
@@ -330,6 +333,7 @@ OpticModerateFormset = forms.inlineformset_factory(
 
 class ModerateServer(forms.ModelForm):
 
+    quantity = forms.IntegerField(min_value=0, max_value=5, required=False)
     user_type_player = forms.ModelChoiceField(
         queryset=ServerPlayerType.objects.all(),
     )
@@ -342,20 +346,21 @@ class ModerateServer(forms.ModelForm):
         pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
         self.fields['type_player'].queryset = ServerPlayerType.objects.filter(
             visible_to_user=False)
-        self.fields['brend'].queryset = ServerRecordingRepeatBrend.objects.filter(
-            type_pts=pts_request.pts_name.type)
-        self.fields['model'].queryset = ServerRecordingRepeatModelBrend.objects.none()
+        self.fields['brend'].queryset = ServerRecordingRepeatBrend.objects.\
+            filter(type_pts=pts_request.pts_name.type)
+        self.fields['model'].queryset = ServerRecordingRepeatModelBrend.\
+            objects.none()
 
         if 'serverrecordingrepeatconstructor_set-0-model' in self.data:
             try:
                 # if some validation appears, will be needed to change queryset
-                self.fields['model'].queryset = ServerRecordingRepeatModelBrend.objects.all()\
-                    .order_by('name')
+                self.fields['model'].queryset = ServerRecordingRepeatModelBrend.\
+                    objects.all().order_by('name')
             except (ValueError, TypeError):
                 pass
         elif self.instance.pk and self.instance.model:
-            self.fields['model'].queryset = ServerRecordingRepeatModelBrend.objects.filter(
-                    brend=self.instance.brend_id).order_by('name')
+            self.fields['model'].queryset = ServerRecordingRepeatModelBrend.\
+                objects.filter(brend=self.instance.brend_id).order_by('name')
 
     def __make_disable_readonly(self, field_name):
         self.fields[field_name].disabled = True
@@ -403,6 +408,59 @@ class ModerateGfx(forms.ModelForm):
 GfxModerateFormset = forms.inlineformset_factory(
     PtsConstructor, GfxPtsConstructor,
     form=ModerateGfx,
+    extra=0,
+    can_delete=True
+)
+
+
+class ModerateMicrophones(forms.ModelForm):
+
+    quantity = forms.IntegerField(min_value=0, max_value=15, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
+        self.fields['brend'].queryset = MicrophoneBrend.objects.filter(
+                microphonemodelbrend__type_pts=pts_request.pts_name.type,
+                microphonemodelbrend__type_micro=self.instance.type
+            ).distinct()
+        self.fields['model'].queryset = MicrophoneModelBrend.objects.none()
+
+        if 'microphoneptsconstructor_set-0-brend' in self.data:
+            try:
+                # if some validation appears, will be needed to change queryset
+                self.fields['model'].queryset = MicrophoneModelBrend.\
+                    objects.all().order_by('name')
+            except (ValueError, TypeError):
+                pass
+        elif self.instance.pk:
+            self.fields['model'].queryset = MicrophoneModelBrend.\
+                objects.filter(
+                    brend=self.instance.brend_id,
+                    type_micro=self.instance.type,
+                    type_pts=pts_request.pts_name.type
+                ).order_by('name')
+
+    class Meta:
+        model = MicrophonePtsConstructor
+        fields = ['type', 'brend',
+                  'model', 'quantity']
+        widgets = {
+            'quantity': forms.TextInput(attrs={'style': 'width:80px'})
+        }
+
+
+MicrophonesModerateFormset = forms.inlineformset_factory(
+    PtsConstructor, MicrophonePtsConstructor,
+    form=ModerateMicrophones,
+    extra=5,
+    can_delete=True
+)
+
+
+MicrophonesUpdateFormset = forms.inlineformset_factory(
+    PtsConstructor, MicrophonePtsConstructor,
+    form=ModerateMicrophones,
     extra=0,
     can_delete=True
 )

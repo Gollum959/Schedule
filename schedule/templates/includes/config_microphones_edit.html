@@ -1,0 +1,89 @@
+  {% load crispy_forms_tags %}
+
+  <div class="row">
+    <section class="intro">
+        <div class="mask d-flex align-items-center h-100">
+          <div class="container">
+            <div class="card mb-3">
+              <div class="card-body p-0 ms-2 me-2 mb-2">
+                <form id="microphone_form" 
+                  microphone-url="{% url 'config:ajax_load_micro_model' ptsrequest.pk %}"
+                  hx-post="{% url 'pts_requests:config_microphones_edit' ptsrequest.pk %}" 
+                  hx-target="#config-microphones-edit"
+                >
+                  {% csrf_token %}
+                  <div class="row justify-content-center">
+                    <div class="col-12">
+                      <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок звукового обеспечения</p>
+                      <table class="table table-striped mb-0 ps-2 pe-2 ">
+                        <thead style="background-color: lightskyblue;">
+                          <tr class="d-flex">
+                            <th class="col-3 text-center">Тип</th>
+                            <th class="col-3 text-center">Бренд</th>
+                            <th class="col-3 text-center">Модель</th>
+                            <th class="col-3 text-center">Количество</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {{ microphones_forms.management_form }}
+                          {% for microphone in microphones_forms %}
+
+                            {% for hidden in microphone.hidden_fields %}
+                              {{ hidden }}
+                            {% endfor %}
+
+                            <tr class="d-flex">
+                              <td class="col-3 pt-2 ps-3">{{ microphone.type }}</td>
+                              <td class="col-3 text-center">{{ microphone.brend }}</td>
+                              <td class="col-3 text-center">{{ microphone.model }}</td>
+                              <td class="col-3 text-center">{{ microphone.quantity }}</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="row pt-3">
+                    <div class="col d-flex justify-content-end">
+                      <button class="btn btn-secondary btn-sm me-3" 
+                        hx-get="{% url 'pts_requests:config_microphones_edit' ptsrequest.pk %}?step=back"
+                        hx-target="#config-microphones-edit"
+                      >
+                        Назад
+                      </button>
+                      <button class="btn btn-secondary btn-sm" type="submit">
+                        Изменить
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+  </div>
+
+  <script>
+    var countForm = $("#id_microphoneptsconstructor_set-TOTAL_FORMS").val()
+    for (let i = 0; i < countForm; i++) {
+      
+      $(`#id_microphoneptsconstructor_set-${i}-brend`).change(function () {
+        const url = $("#microphone_form").attr("microphone-url");  
+        const typeId = $(`#id_microphoneptsconstructor_set-${i}-type`).val()
+        const brendId = $(`#id_microphoneptsconstructor_set-${i}-brend`).val(); 
+
+        $.ajax({                       
+          url: url,                   
+          data: {
+            'brend': brendId,
+            'micro_type': typeId        
+          },
+          success: function (data) {  
+            $(`#id_microphoneptsconstructor_set-${i}-model`).html(data);  
+          }
+        });
+
+      });
+    }
+  </script>

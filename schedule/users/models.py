@@ -9,9 +9,11 @@ class User(AbstractUser):
     MAIN_DIRECTOR = 'main_director'
     MODERATOR = 'moderator'
     ADMIN = 'admin'
+    SOUNDMAN = 'soundman'
     ROLES = [
         (USER, 'Режиссёр'),
         (MAIN_DIRECTOR, 'Главный режисёр'),
+        (SOUNDMAN, 'Звукорежиссёр'),
         (MODERATOR, 'Модератор'),
         (ADMIN, 'Администратор'),
     ]
@@ -71,11 +73,19 @@ class User(AbstractUser):
 
     @property
     def is_main_director_or_admin(self):
-        """Return True if user is Admin."""
+        """Return True if user is main director or admin."""
         return (
             self.role == self.ADMIN or
             self.is_superuser or
             self.role == self.MAIN_DIRECTOR
+        )
+
+    @property
+    def is_soundman_or_admin(self):
+        """Return True if user is soundman or admin."""
+        return (
+            self.role == self.ADMIN or
+            self.role == self.SOUNDMAN
         )
 
     @property

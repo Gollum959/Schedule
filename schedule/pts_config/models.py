@@ -207,6 +207,17 @@ class MicrophoneModelBrend(StrNameQuantity):
         MicrophoneBrend,
         on_delete=models.CASCADE,
     )
+    type_micro = models.ForeignKey(
+        MicrophoneType,
+        on_delete=models.CASCADE,
+    )
+    type_pts = models.ForeignKey(
+        TypePtsForConfiguration,
+        on_delete=models.CASCADE,
+        help_text="If this brand can be used everywhere, choose nothing",
+        blank=True,
+        null=True
+    )
 
 
 class MicrophonePtsConstructor(ConstrQuantity):
@@ -219,10 +230,14 @@ class MicrophonePtsConstructor(ConstrQuantity):
     brend = models.ForeignKey(
         'MicrophoneBrend',
         on_delete=models.CASCADE,
+        blank=True,
+        null=True
     )
     model = models.ForeignKey(
         'MicrophoneModelBrend',
         on_delete=models.CASCADE,
+        blank=True,
+        null=True
     )
 
 

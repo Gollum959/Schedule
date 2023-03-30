@@ -56,11 +56,10 @@ class AddRequestFrom(ModelForm):
                     placeconstructor__pk=place_id,
                     direction=self.user.direction
                 )
-                self.fields['pts_cfg'].queryset = PtsConstructor.objects.filter(
-                    place=place_id,
-                    event_type=event_id).filter(
-                    Q(Q(clone_conf=False) | Q(pk=cfg_id))
-                )
+                self.fields['pts_cfg'].queryset = PtsConstructor.objects.\
+                    filter(place=place_id, event_type=event_id).filter(
+                        Q(Q(clone_conf=False) | Q(pk=cfg_id))
+                    )
             except (ValueError, TypeError):
                 pass
 
@@ -174,7 +173,7 @@ class UpdateTravelTime(ModelForm):
 
     class Meta:
         model = PtsRequest
-        fields = ['start_date', 'end_date',]
+        fields = ['start_date', 'end_date', ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

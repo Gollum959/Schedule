@@ -399,10 +399,17 @@ def load_server_brend(request):
     )
 
 
-def load_micro_brend(request):
-    micro_brend_id = request.GET.get('id')
-    micro_models = MicrophoneModelBrend.objects.filter(
-        brend=micro_brend_id).order_by('name')
+def load_micro_brend(request, pk):
+    micro_brend_id = request.GET.get('brend')
+    micro_type = request.GET.get('micro_type')
+    base_object = get_object_or_404(PtsRequest, pk=pk)
+    micro_models = []
+    if micro_brend_id:
+        micro_models = MicrophoneModelBrend.objects.filter(
+                brend=micro_brend_id,
+                type_micro=micro_type,
+                type_pts=base_object.pts_name.type
+            ).order_by('name')
     return render(
         request,
         'pts_config/micro_model_dropdown_list_options.html',

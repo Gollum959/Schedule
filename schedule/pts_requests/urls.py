@@ -68,6 +68,11 @@ htmx_urlpatterns = [
         views.config_servers_edit_form,
         name='config_servers_edit'
     ),
+    path(
+        'request/<int:pk>/config-microphones/',
+        views.config_microphones_edit_form,
+        name='config_microphones_edit'
+    ),
 ]
 
 urlpatterns += htmx_urlpatterns

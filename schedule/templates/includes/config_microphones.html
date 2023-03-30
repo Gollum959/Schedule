@@ -9,8 +9,59 @@
                   <div class="col-12">
                     <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок звукового обеспечения</p>
                     <p class="fs-5">Количество микрофонов {{ ptsrequest.pts_cfg.microphone_quantity }}</p>
+
+                    {% if message %}<p class="fs-5 text-danger ms-2 me-2">{{ message }}</p>{% endif %}
+                    {% if ptsrequest.pts_cfg.microphoneptsconstructor_set.all|length > 0 %}
+                    <table class="table table-striped mb-0 ps-2 pe-2 ">
+                      <thead style="background-color: lightskyblue;">
+                        <tr class="d-flex">
+                          <th class="col-3 text-center">Тип</th>
+                          <th class="col-3 text-center">Бренд</th>
+                          <th class="col-3 text-center">Модель</th>
+                          <th class="col-3 text-center">Количество</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for microphone in ptsrequest.pts_cfg.microphoneptsconstructor_set.all %}
+                          <tr class="d-flex">
+                            <td class="col-3 pt-2 ps-5">{{ microphone.type }}</td>
+                            {% if microphone.brend %}
+                              <td class="col-3 text-center">{{ microphone.brend }}</td>
+                            {% else %}
+                              <td class="col-3 text-center">&mdash;</td>
+                            {% endif %}
+                            {% if microphone.model %}
+                              <td class="col-3 text-center">{{ microphone.model }}</td>
+                            {% else %}
+                              <td class="col-3 text-center">&mdash;</td>
+                            {% endif %}
+                            {% if microphone.quantity %}
+                              <td class="col-3 text-center">{{ microphone.quantity }}</td>
+                            {% else %}
+                              <td class="col-3 text-center">&mdash;</td>
+                            {% endif %}
+                          </tr>
+                        {% endfor %}
+
+                      </tbody>
+                    </table>
+                    {% else %}
+                      <p class="fs-5 ms-2 me-2">Информация отсутсвует в конфигурации ПТС</p>
+                    {% endif %}
                   </div>
                 </div>
+                {% if user.is_soundman_or_admin and ptsrequest.is_draft != True %}
+                  <div class="row pt-3">
+                    <div class="col d-flex justify-content-end">
+                      <button class="btn btn-secondary btn-sm"
+                        hx-get="{% url 'pts_requests:config_microphones_edit' ptsrequest.pk %}"
+                        hx-target="#config-microphones-edit"
+                      >
+                        Изменить
+                      </button>
+                    </div>
+                  </div>
+                {% endif %}
               </div>
             </div>
           </div>

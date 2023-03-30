@@ -69,7 +69,7 @@ urlpatterns = [
         name='ajax_load_server_model'
     ),
     path(
-        'ajax/load-micro-model/',
+        'ajax/<int:pk>/load-micro-model/',
         load_micro_brend,
         name='ajax_load_micro_model'
     ),

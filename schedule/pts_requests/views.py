@@ -12,7 +12,7 @@ from django.http import HttpResponseRedirect
 
 from place_broadcast.models import PlaceConstructor, EventType
 from pts_requests.models import PtsRequest
-from pts_config.models import PtsConstructor
+from pts_config.models import PtsConstructor, MicrophoneType
 from pts_requests.forms import (AddRequestFrom,
                                 UpdateTraktTime,
                                 UpdateTravelTime,
@@ -22,7 +22,9 @@ from pts_requests.forms import (AddRequestFrom,
                                 InternetLineFormset)
 from pts_config.forms import (CameraModerateFormset,
                               OpticModerateFormset,
-                              ServerModerateFormset)
+                              ServerModerateFormset,
+                              MicrophonesModerateFormset,
+                              MicrophonesUpdateFormset)
 #   GfxModerateFormset)
 from core.custom_view import (DetalInformationMixin,
                               UserToFormMixin,
@@ -456,3 +458,54 @@ def config_servers_edit_form(request, pk):
     server_forms = ServerModerateFormset(instance=ptsrequest.pts_cfg)
     context = {'ptsrequest': ptsrequest, 'server_forms': server_forms}
     return render(request, 'includes/config_servers_edit.html', context)
+
+
+@login_required
+def config_microphones_edit_form(request, pk):
+
+    ptsrequest = get_object_or_404(PtsRequest, pk=pk)
+
+    if not ptsrequest.pts_name:
+        return render(
+            request,
+            'includes/config_microphones.html',
+            {'ptsrequest': ptsrequest,
+             'message': 'Выберете ПТС'}
+        )
+
+    if request.GET.get('step') == 'back':
+        return render(
+            request,
+            'includes/config_microphones.html',
+            {'ptsrequest': ptsrequest}
+        )
+
+    if request.method == 'POST':
+        form = MicrophonesModerateFormset(request.POST, instance=ptsrequest.pts_cfg)
+        context = {'ptsrequest': ptsrequest}
+        print(form)
+        if form.is_valid():
+            form.save()
+            return render(request, 'includes/config_microphones.html',
+                          context)
+
+        context['microphones_forms'] = form
+        return render(request, 'includes/config_microphones_edit.html', context)
+
+    if not ptsrequest.pts_cfg.microphoneptsconstructor_set.count():
+        microphones_forms = MicrophonesModerateFormset(instance=ptsrequest.pts_cfg)
+        type_microphone = []
+        for microphone in MicrophoneType.objects.all().order_by('name'):
+            type_microphone.append({'type': microphone})
+
+        for subform, data in zip(microphones_forms.forms, type_microphone):
+            subform.initial = data
+    else:
+        microphones_forms = MicrophonesUpdateFormset(instance=ptsrequest.pts_cfg)
+
+
+    context = {
+        'ptsrequest': ptsrequest,
+        'microphones_forms': microphones_forms
+    }
+    return render(request, 'includes/config_microphones_edit.html', context)
