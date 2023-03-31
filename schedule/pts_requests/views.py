@@ -1,4 +1,5 @@
 from datetime import date, timedelta, datetime
+from django import forms
 from django.http import QueryDict
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
@@ -29,6 +30,8 @@ from pts_config.forms import (CameraModerateFormset,
 from core.custom_view import (DetalInformationMixin,
                               UserToFormMixin,
                               EditOnlyAuthorMixin)
+from pts_config.forms import ModerateMicrophones
+from pts_config.models import MicrophonePtsConstructor
 #   EditOnlyAdminOrModeratorMixin)
 
 
@@ -481,9 +484,8 @@ def config_microphones_edit_form(request, pk):
         )
 
     if request.method == 'POST':
-        form = MicrophonesModerateFormset(request.POST, instance=ptsrequest.pts_cfg)
+        form = MicrophonesModerateFormset(request.POST, instance=ptsrequest.pts_cfg, form_kwargs={'request_pk': pk})
         context = {'ptsrequest': ptsrequest}
-        print(form)
         if form.is_valid():
             form.save()
             return render(request, 'includes/config_microphones.html',
@@ -493,11 +495,10 @@ def config_microphones_edit_form(request, pk):
         return render(request, 'includes/config_microphones_edit.html', context)
 
     if not ptsrequest.pts_cfg.microphoneptsconstructor_set.count():
-        microphones_forms = MicrophonesModerateFormset(instance=ptsrequest.pts_cfg)
+        microphones_forms = MicrophonesModerateFormset(instance=ptsrequest.pts_cfg, form_kwargs={'request_pk': pk})
         type_microphone = []
         for microphone in MicrophoneType.objects.all().order_by('name'):
             type_microphone.append({'type': microphone})
-
         for subform, data in zip(microphones_forms.forms, type_microphone):
             subform.initial = data
     else:

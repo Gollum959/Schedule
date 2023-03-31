@@ -418,12 +418,24 @@ class ModerateMicrophones(forms.ModelForm):
     quantity = forms.IntegerField(min_value=0, max_value=15, required=False)
 
     def __init__(self, *args, **kwargs):
+        self.pts_request_id = kwargs.pop('request_pk', None)
+
         super().__init__(*args, **kwargs)
-        pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
-        self.fields['brend'].queryset = MicrophoneBrend.objects.filter(
-                microphonemodelbrend__type_pts=pts_request.pts_name.type,
-                microphonemodelbrend__type_micro=self.instance.type
-            ).distinct()
+        if not self.pts_request_id:
+            pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
+        else:
+            pts_request = PtsRequest.objects.get(pk=self.pts_request_id)
+            
+        if self.instance.constructor_id:
+            self.fields['brend'].queryset = MicrophoneBrend.objects.filter(
+                    microphonemodelbrend__type_pts=pts_request.pts_name.type,
+                    microphonemodelbrend__type_micro=self.instance.type
+                ).distinct()
+        else:
+            self.fields['brend'].queryset = MicrophoneBrend.objects.filter(
+                    microphonemodelbrend__type_pts=pts_request.pts_name.type,
+                ).distinct()
+            
         self.fields['model'].queryset = MicrophoneModelBrend.objects.none()
 
         if 'microphoneptsconstructor_set-0-brend' in self.data:
