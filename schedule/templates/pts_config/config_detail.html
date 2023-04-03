@@ -153,17 +153,15 @@
                         <table class="table table-striped mb-0 ps-2 pe-2 ">
                           <thead style="background-color: lightskyblue;">
                             <tr class="d-flex">
-                              <th class="col-4">Тип сервера</th>
-                              <th class="col-4">Конфигурация</th>
-                              <th class="col-4">Количество</th>
+                              <th class="col-6">Тип сервера</th>
+                              <th class="col-6">Конфигурация</th>
                             </tr>
                           </thead>
                           <tbody>
                             {% for server in ptsconstructor.serverrecordingrepeatconstructor_set.all %}
                             <tr class="d-flex">
-                              <td class="col-4 pt-2">{{ server.type }}</td>
-                              <td class="col-4">{{ server.type_player }}</td>
-                              <td class="col-4">{{ server.quantity }}</td>
+                              <td class="col-6 pt-2">{{ server.type }}</td>
+                              <td class="col-6">{{ server.type_player }}</td>
                             </tr>
                             {% endfor %}
                           </tbody>

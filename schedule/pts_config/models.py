@@ -351,7 +351,7 @@ class PtsConstructor(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['name', 'author'],
-                condition=Q(clone_conf=False),
+                condition=Q(clone_conf=False, base_conf=False),
                 name='unique_name_for_not_clone'
             ),
             models.UniqueConstraint(

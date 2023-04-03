@@ -31,7 +31,7 @@ from core.custom_view import (DetalInformationMixin,
                               UserToFormMixin,
                               EditOnlyAuthorMixin)
 from pts_config.forms import ModerateMicrophones
-from pts_config.models import MicrophonePtsConstructor
+from pts_config.models import MicrophonePtsConstructor, MicrophoneBrend
 #   EditOnlyAdminOrModeratorMixin)
 
 
@@ -447,9 +447,8 @@ def config_servers_edit_form(request, pk):
         )
 
     if request.method == 'POST':
-        form = ServerModerateFormset(request.POST, instance=ptsrequest.pts_cfg)
+        form = ServerModerateFormset(request.POST, instance=ptsrequest.pts_cfg, form_kwargs={'request_pk': pk})
         context = {'ptsrequest': ptsrequest}
-
         if form.is_valid():
             form.save()
             return render(request, 'includes/config_servers.html',
@@ -458,7 +457,7 @@ def config_servers_edit_form(request, pk):
         context['server_forms'] = form
         return render(request, 'includes/config_servers_edit.html', context)
 
-    server_forms = ServerModerateFormset(instance=ptsrequest.pts_cfg)
+    server_forms = ServerModerateFormset(instance=ptsrequest.pts_cfg, form_kwargs={'request_pk': pk})
     context = {'ptsrequest': ptsrequest, 'server_forms': server_forms}
     return render(request, 'includes/config_servers_edit.html', context)
 
@@ -500,9 +499,14 @@ def config_microphones_edit_form(request, pk):
         for microphone in MicrophoneType.objects.all().order_by('name'):
             type_microphone.append({'type': microphone})
         for subform, data in zip(microphones_forms.forms, type_microphone):
+            print(data)
+            subform.fields.get('brend').queryset = MicrophoneBrend.objects.filter(
+                    microphonemodelbrend__type_pts=ptsrequest.pts_name.type,
+                    microphonemodelbrend__type_micro=data.get('type')
+                ).distinct()
             subform.initial = data
     else:
-        microphones_forms = MicrophonesUpdateFormset(instance=ptsrequest.pts_cfg)
+        microphones_forms = MicrophonesUpdateFormset(instance=ptsrequest.pts_cfg, form_kwargs={'request_pk': pk})
 
 
     context = {

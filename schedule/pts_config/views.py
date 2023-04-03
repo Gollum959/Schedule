@@ -28,6 +28,7 @@ from pts_config.models import (PtsConstructor,
                                ServerRecordingRepeatConstructor,
                                ServerPlayerType,
                                GfxPtsConstructor,
+                               MicrophoneBrend,
                                MicrophoneModelBrend)
 from pts_config.forms import (AddPtsConfigFrom,
                               AddPtsConfigOnBaseFrom,
@@ -143,6 +144,7 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
 
         form.instance.author = self.request.user
         form.instance.base_conf = self.BASE_CFG
+        print(form.instance.base_conf)
         context = self.get_context_data()
         pts_cfg_forms = [context['camera'], context['optic'],
                          context['server'], context['gfx']]
@@ -399,7 +401,7 @@ def load_server_brend(request):
     )
 
 
-def load_micro_brend(request, pk):
+def load_micro_model(request, pk):
     micro_brend_id = request.GET.get('brend')
     micro_type = request.GET.get('micro_type')
     base_object = get_object_or_404(PtsRequest, pk=pk)
@@ -414,4 +416,20 @@ def load_micro_brend(request, pk):
         request,
         'pts_config/micro_model_dropdown_list_options.html',
         {'micro_models': micro_models}
+    )
+
+
+def load_micro_brend(request, pk):
+    micro_type_id = request.GET.get('micro_type')
+    base_object = get_object_or_404(PtsRequest, pk=pk)
+    micro_brends = []
+    if micro_type_id:
+        micro_brends = MicrophoneBrend.objects.filter(
+                microphonemodelbrend__type_micro=micro_type_id,
+                microphonemodelbrend__type_pts=base_object.pts_name.type
+            ).distinct().order_by('name')
+    return render(
+        request,
+        'pts_config/micro_brend_dropdown_list_options.html',
+        {'micro_brends': micro_brends}
     )

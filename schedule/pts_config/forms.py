@@ -335,19 +335,26 @@ class ModerateServer(forms.ModelForm):
 
     quantity = forms.IntegerField(min_value=0, max_value=5, required=False)
     user_type_player = forms.ModelChoiceField(
-        queryset=ServerPlayerType.objects.all(),
+        queryset=ServerPlayerType.objects.all(), required=False
     )
 
     def __init__(self, *args, **kwargs):
+        self.pts_request_id = kwargs.pop('request_pk', None)
+
         super().__init__(*args, **kwargs)
-        self.fields['user_type_player'].initial = self.instance.type_player
-        self.__make_disable_readonly('type')
-        self.__make_disable_readonly('user_type_player')
-        pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
-        self.fields['type_player'].queryset = ServerPlayerType.objects.filter(
-            visible_to_user=False)
+        pts_request = PtsRequest.objects.get(pk=self.pts_request_id)
         self.fields['brend'].queryset = ServerRecordingRepeatBrend.objects.\
             filter(type_pts=pts_request.pts_name.type)
+        if hasattr(self.instance, 'type_player'):
+            self.fields['user_type_player'].initial = self.instance.type_player
+            # pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
+
+            self.__make_disable_readonly('type')
+    
+        self.__make_disable_readonly('user_type_player')
+        self.fields['type_player'].queryset = ServerPlayerType.objects.filter(
+            visible_to_user=False)
+
         self.fields['model'].queryset = ServerRecordingRepeatModelBrend.\
             objects.none()
 
@@ -381,7 +388,7 @@ class ModerateServer(forms.ModelForm):
 ServerModerateFormset = forms.inlineformset_factory(
     PtsConstructor, ServerRecordingRepeatConstructor,
     form=ModerateServer,
-    extra=0,
+    extra=2,
     can_delete=True
 )
 
@@ -421,11 +428,8 @@ class ModerateMicrophones(forms.ModelForm):
         self.pts_request_id = kwargs.pop('request_pk', None)
 
         super().__init__(*args, **kwargs)
-        if not self.pts_request_id:
-            pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
-        else:
-            pts_request = PtsRequest.objects.get(pk=self.pts_request_id)
-            
+        pts_request = PtsRequest.objects.get(pk=self.pts_request_id)
+
         if self.instance.constructor_id:
             self.fields['brend'].queryset = MicrophoneBrend.objects.filter(
                     microphonemodelbrend__type_pts=pts_request.pts_name.type,

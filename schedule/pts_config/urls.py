@@ -11,6 +11,7 @@ from pts_config.views import (
                               load_optic_brend,
                               load_server_brend,
                               load_micro_brend,
+                              load_micro_model,
                               load_optic_model,
                               load_server_config)
 
@@ -70,8 +71,13 @@ urlpatterns = [
     ),
     path(
         'ajax/<int:pk>/load-micro-model/',
-        load_micro_brend,
+        load_micro_model,
         name='ajax_load_micro_model'
+    ),
+    path(
+        'ajax/<int:pk>/load-micro-brend/',
+        load_micro_brend,
+        name='ajax_load_micro_brend'
     ),
     path(
         'ajax/load-place_cfg/',

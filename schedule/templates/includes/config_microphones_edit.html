@@ -8,6 +8,7 @@
               <div class="card-body p-0 ms-2 me-2 mb-2">
                 <form id="microphone_form" 
                   microphone-url="{% url 'config:ajax_load_micro_model' ptsrequest.pk %}"
+                  microphone-brend-url="{% url 'config:ajax_load_micro_brend' ptsrequest.pk %}"
                   hx-post="{% url 'pts_requests:config_microphones_edit' ptsrequest.pk %}" 
                   hx-target="#config-microphones-edit"
                 >
@@ -15,6 +16,8 @@
                   <div class="row justify-content-center">
                     <div class="col-12">
                       <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок звукового обеспечения</p>
+                      <p class="fs-5">Количество микрофонов {{ ptsrequest.pts_cfg.microphone_quantity }}</p>
+
                       <table class="table table-striped mb-0 ps-2 pe-2 ">
                         <thead style="background-color: lightskyblue;">
                           <tr class="d-flex">
@@ -85,5 +88,23 @@
         });
 
       });
+
+      $(`#id_microphoneptsconstructor_set-${i}-type`).change(function () {
+        const url = $("#microphone_form").attr("microphone-brend-url");  
+        const typeId = $(`#id_microphoneptsconstructor_set-${i}-type`).val()
+
+        $.ajax({                       
+          url: url,                   
+          data: {
+            'micro_type': typeId        
+          },
+          success: function (data) {  
+            $(`#id_microphoneptsconstructor_set-${i}-brend`).html(data);  
+            $(`#id_microphoneptsconstructor_set-${i}-model`).html('<option value="">---------</option>');
+          }
+        });
+
+      });
+
     }
   </script>
