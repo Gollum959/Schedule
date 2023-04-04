@@ -25,13 +25,13 @@ from pts_requests.models import PtsRequest
 
 class CreatePtsConfigurationMixin(forms.ModelForm):
     """Mixin to creat configuration with 2 fields(image, name)
-     and mclean_image method"""
+     and clean_image method"""
 
     image = forms.FileField()
     name = forms.CharField(
         label='Название конфигурации ПТС',
         validators=[RegexValidator(
-            '^[-()\".,!?a-zA-Z0-9_А-я\\s]*$',
+            '^[«»-()\".,!?a-zA-Z0-9_А-я\\s]*$',
             message='Только буквы и цифры'
         )],
         widget=forms.TextInput(
@@ -213,14 +213,17 @@ GfxFormset = forms.inlineformset_factory(
     can_delete=True
 )
 
-# Try to create 4 module for cfg in request detail
+# 4 modules for moderate cfg in request detail
 
 
 class ModerateCamera(forms.ModelForm):
+    """Form for moderate CameraPtsConstructor model."""
 
     quantity = forms.IntegerField(min_value=0, max_value=30, required=False)
 
     def __init__(self, *args, **kwargs):
+        """Method allows creating a matrix of equipment"""
+
         super().__init__(*args, **kwargs)
         self.fields['cameras'].disabled = True
         self.fields['cameras'].widget.attrs['readonly'] = True
@@ -268,6 +271,7 @@ CameraModerateFormset = forms.inlineformset_factory(
 
 
 class ModerateOptic(forms.ModelForm):
+    """Form for moderate OpticPtsConstructor model."""
 
     quantity = forms.IntegerField(min_value=0, max_value=30, required=False)
     user_magnification = forms.ModelChoiceField(
@@ -275,6 +279,8 @@ class ModerateOptic(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
+        """Method allows creating a matrix of equipment"""
+
         super().__init__(*args, **kwargs)
         self.fields['user_magnification'].initial = self.instance.optics
         self.__make_disable_readonly('user_magnification')
@@ -332,6 +338,7 @@ OpticModerateFormset = forms.inlineformset_factory(
 
 
 class ModerateServer(forms.ModelForm):
+    """Form for moderate ServerRecordingRepeatConstructor model."""
 
     quantity = forms.IntegerField(min_value=0, max_value=5, required=False)
     user_type_player = forms.ModelChoiceField(
@@ -339,30 +346,31 @@ class ModerateServer(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
-        self.pts_request_id = kwargs.pop('request_pk', None)
+        """Method allows creating a matrix of equipment.
+        Allows add new line in inlineformset_factory."""
 
+        self.pts_request_id = kwargs.pop('request_pk', None)
         super().__init__(*args, **kwargs)
         pts_request = PtsRequest.objects.get(pk=self.pts_request_id)
         self.fields['brend'].queryset = ServerRecordingRepeatBrend.objects.\
             filter(type_pts=pts_request.pts_name.type)
         if hasattr(self.instance, 'type_player'):
             self.fields['user_type_player'].initial = self.instance.type_player
-            # pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
-
             self.__make_disable_readonly('type')
-    
+
         self.__make_disable_readonly('user_type_player')
         self.fields['type_player'].queryset = ServerPlayerType.objects.filter(
             visible_to_user=False)
-
         self.fields['model'].queryset = ServerRecordingRepeatModelBrend.\
             objects.none()
 
         if 'serverrecordingrepeatconstructor_set-0-model' in self.data:
             try:
                 # if some validation appears, will be needed to change queryset
-                self.fields['model'].queryset = ServerRecordingRepeatModelBrend.\
-                    objects.all().order_by('name')
+                self.fields['model'].queryset =\
+                    ServerRecordingRepeatModelBrend.objects.all().order_by(
+                        'name'
+                    )
             except (ValueError, TypeError):
                 pass
         elif self.instance.pk and self.instance.model:
@@ -370,6 +378,7 @@ class ModerateServer(forms.ModelForm):
                 objects.filter(brend=self.instance.brend_id).order_by('name')
 
     def __make_disable_readonly(self, field_name):
+        """Makes fields disable and readonly."""
         self.fields[field_name].disabled = True
         self.fields[field_name].widget.attrs['readonly'] = True
 
@@ -393,38 +402,14 @@ ServerModerateFormset = forms.inlineformset_factory(
 )
 
 
-class ModerateGfx(forms.ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['gfx'].disabled = True
-        self.fields['license_type'].disabled = True
-        self.fields['gfx'].required = False
-        self.fields['quantity'].disabled = True
-
-    class Meta:
-        model = GfxPtsConstructor
-        fields = ['gfx', 'judicial_system',
-                  'license_type', 'quantity']
-        widgets = {
-            'gfx': forms.Select(attrs={'style': 'width:160px; height:30px'}),
-            'quantity': forms.TextInput(attrs={'style': 'width:80px'})
-        }
-
-
-GfxModerateFormset = forms.inlineformset_factory(
-    PtsConstructor, GfxPtsConstructor,
-    form=ModerateGfx,
-    extra=0,
-    can_delete=True
-)
-
-
 class ModerateMicrophones(forms.ModelForm):
+    """Form for moderate MicrophonePtsConstructor model."""
 
     quantity = forms.IntegerField(min_value=0, max_value=15, required=False)
 
     def __init__(self, *args, **kwargs):
+        """Method allows creating a matrix of equipment."""
+
         self.pts_request_id = kwargs.pop('request_pk', None)
 
         super().__init__(*args, **kwargs)
@@ -439,7 +424,7 @@ class ModerateMicrophones(forms.ModelForm):
             self.fields['brend'].queryset = MicrophoneBrend.objects.filter(
                     microphonemodelbrend__type_pts=pts_request.pts_name.type,
                 ).distinct()
-            
+
         self.fields['model'].queryset = MicrophoneModelBrend.objects.none()
 
         if 'microphoneptsconstructor_set-0-brend' in self.data:
@@ -480,3 +465,31 @@ MicrophonesUpdateFormset = forms.inlineformset_factory(
     extra=0,
     can_delete=True
 )
+
+# At this moment moderation of GFX is not nedeed
+
+# class ModerateGfx(forms.ModelForm):
+
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.fields['gfx'].disabled = True
+#         self.fields['license_type'].disabled = True
+#         self.fields['gfx'].required = False
+#         self.fields['quantity'].disabled = True
+
+#     class Meta:
+#         model = GfxPtsConstructor
+#         fields = ['gfx', 'judicial_system',
+#                   'license_type', 'quantity']
+#         widgets = {
+#             'gfx': forms.Select(attrs={'style': 'width:160px; height:30px'}),
+#             'quantity': forms.TextInput(attrs={'style': 'width:80px'})
+#         }
+
+
+# GfxModerateFormset = forms.inlineformset_factory(
+#     PtsConstructor, GfxPtsConstructor,
+#     form=ModerateGfx,
+#     extra=0,
+#     can_delete=True
+# )

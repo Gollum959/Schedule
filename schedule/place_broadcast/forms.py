@@ -16,7 +16,7 @@ class AddBroadcastPlace(forms.ModelForm):
     name = forms.CharField(
         label='Название Объекта',
         validators=[RegexValidator(
-            '^[-()\".,!?a-zA-Z0-9_А-я\\s]*$',
+            '^[-«»()\".,!?a-zA-Z0-9_А-я\\s]*$',
             message='Только буквы и цифры'
         )],
         widget=forms.TextInput(
