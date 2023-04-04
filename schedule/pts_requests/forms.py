@@ -1,5 +1,4 @@
 from django.forms import ModelForm, ModelChoiceField, inlineformset_factory
-from django import forms
 from django.db.models import Q
 
 
@@ -12,6 +11,8 @@ from pts_config.models import PtsConstructor
 
 
 class AddRequestFrom(ModelForm):
+    """Form for creating and updating PTS request."""
+
     city_name = ModelChoiceField(
         queryset=PlaceCity.objects.all(),
         label='Город',
@@ -29,6 +30,9 @@ class AddRequestFrom(ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
+        """Method allows creating a link between
+         the place and the configuration"""
+
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
 
@@ -87,30 +91,8 @@ class AddRequestFrom(ModelForm):
         ]
 
 
-class ModerateRequestFrom(ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['pts_name'].empty_label = 'Название ПТС'
-        self.fields['status'].empty_label = 'Изменить статус заявки'
-
-    class Meta:
-        model = PtsRequest
-        fields = [
-            'start_date', 'end_date', 'trakt_start_date',
-            'trakt_end_date', 'pts_name', 'status', 'comment'
-        ]
-        widgets = {
-            'start_date': forms.DateTimeInput(
-                attrs={'placeholder': 'Выберите дату и время'}
-            ),
-            'end_date': forms.DateTimeInput(
-                attrs={'placeholder': 'Выберите дату и время'}
-            ),
-        }
-
-
 class AddCommLine(ModelForm):
+    """Form for the communication line."""
 
     class Meta:
         model = CommLineConstructor
@@ -126,6 +108,7 @@ CommLineFormset = inlineformset_factory(
 
 
 class AddTechCommLine(ModelForm):
+    """Form for the technical communication line."""
 
     class Meta:
         model = TechCommLineConstructor
@@ -141,6 +124,7 @@ TechCommLineFormset = inlineformset_factory(
 
 
 class AddInternetLine(ModelForm):
+    """Form for the internet communication line."""
 
     class Meta:
         model = InternetLineConstructor
@@ -158,6 +142,7 @@ InternetLineFormset = inlineformset_factory(
 
 
 class UpdateTraktTime(ModelForm):
+    """Form for moderating trakt time"""
 
     class Meta:
         model = PtsRequest
@@ -170,6 +155,7 @@ class UpdateTraktTime(ModelForm):
 
 
 class UpdateTravelTime(ModelForm):
+    """Form for moderating travel time"""
 
     class Meta:
         model = PtsRequest
@@ -184,6 +170,7 @@ class UpdateTravelTime(ModelForm):
 
 
 class UpdatePTS(ModelForm):
+    """Form for moderating type PTS"""
 
     class Meta:
         model = PtsRequest

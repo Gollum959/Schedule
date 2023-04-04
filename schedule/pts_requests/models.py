@@ -13,6 +13,7 @@ class BroadCastType(NameModel):
 
 class PtsName(NameModel):
     """Names and teams of PTS"""
+
     head_fullname = models.CharField(
         'ФИО Начальника смены ПТС',
         max_length=70
@@ -123,6 +124,7 @@ class InternetLineConstructor(LineConstructor):
 
 class PtsRequest(models.Model):
     """Broadcast request model."""
+
     ONE_HEADSEAT = 'one'
     TWO_HEADSEAT = 'two'
     HEADSEAT = [
@@ -246,6 +248,7 @@ class PtsRequest(models.Model):
 
     @staticmethod
     def crete_clone(obj):
+        """Creats a clone of PTS config."""
         related_fields = [obj.cameraptsconstructor_set.all(),
                           obj.opticptsconstructor_set.all(),
                           obj.serverrecordingrepeatconstructor_set.all(),
@@ -264,17 +267,17 @@ class PtsRequest(models.Model):
 
         return clone
 
-    # @staticmethod
-    # def delete_clone(id_request):
-    #     old_request = PtsRequest.objects.get(pk=id_request)
-    #     if old_request.pts_cfg.clone_conf:
-    #         old_request.pts_cfg.delete()
-
     def save(self, *args, **kwargs):
+        """When saving the request,
+         a clone of the PTS configuration is created."""
         old_request = PtsRequest.objects.get(pk=self.pk) if self.pk else None
-        if ((not self.pk) or (old_request and old_request.pts_cfg != self.pts_cfg)):
+        if (
+            (not self.pk) or
+            (old_request and old_request.pts_cfg != self.pts_cfg)
+        ):
             self.pts_cfg = self.crete_clone(self.pts_cfg)
-        old_pts_cfg = old_request.pts_cfg if old_request and old_request.pts_cfg != self.pts_cfg else None
+        old_pts_cfg = old_request.pts_cfg if old_request\
+            and old_request.pts_cfg != self.pts_cfg else None
         super().save(*args, **kwargs)
         if old_pts_cfg:
             old_pts_cfg.delete()
@@ -298,7 +301,7 @@ class PtsRequest(models.Model):
 
     @property
     def is_draft_or_reject(self):
-        """Return True if status is ON APPROVAL."""
+        """Return True if status is DRAFT or REJECTED."""
         return (self.status == self.DRAFT or self.status == self.REJECTED)
 
     class Meta:

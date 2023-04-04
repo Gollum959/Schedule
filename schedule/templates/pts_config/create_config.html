@@ -95,6 +95,26 @@
 
   <script>
 
+    var countForm = $("#id_serverrecordingrepeatconstructor_set-TOTAL_FORMS").val()
+    for (let i = 0; i < countForm; i++) {
+      
+      $(`#id_serverrecordingrepeatconstructor_set-${i}-type`).change(function () {
+        const url = $("#cfgForm").attr("server-url");  
+        const serverId = $(`#id_serverrecordingrepeatconstructor_set-${i}-type`).val()
+
+        $.ajax({                       
+          url: url,                   
+          data: {
+            'id': serverId        
+          },
+          success: function (data) {  
+            $(`#id_serverrecordingrepeatconstructor_set-${i}-type_player`).html(data);  
+          }
+        });
+
+      });
+    }
+
     const addMoreCameraLineBtn = document.getElementById('add-more-camera')
     const removeCameraLineBtn = document.getElementById('remove-camera')
     const InitialCameralineFormCount = document.getElementsByClassName('camera-form').length

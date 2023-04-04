@@ -36,7 +36,7 @@ class EditOnlyAuthorMixin:
         if obj.author != self.request.user:
             raise Http404()
         return obj
-    
+
 
 class EditOnlyAdminOrModeratorMixin:
     """Edit only for for author"""
@@ -55,7 +55,8 @@ class EditOnlyAuthorAdminMainDirMixin:
 
     def get_object(self, queryset=None):
         """Check that only author and others can see detail information"""
-        obj = super(EditOnlyAuthorAdminMainDirMixin, self).get_object(queryset=queryset)
+        obj = super(EditOnlyAuthorAdminMainDirMixin, self).get_object(
+            queryset=queryset)
         if (obj.author == self.request.user or
             self.request.user.is_admin or
             (self.request.user.is_main_director and

@@ -95,14 +95,14 @@ class PtsConfigView(LoginRequiredMixin, ListView):
 
 
 class PtsConfigDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
-    """PTS config detail view"""
+    """PTS config detail view."""
     login_url = reverse_lazy('users:login')
     model = PtsConstructor
     template_name = 'pts_config/config_detail.html'
 
 
 class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
-    """CreateView class to create a basic configuration"""
+    """CreateView class to create a basic configuration."""
 
     BASE_CFG = True
     form_class = AddPtsConfigFrom
@@ -118,7 +118,7 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
         return kwargs
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        """Add to context inlineformset_factories"""
+        """Add to context inlineformset_factories."""
 
         data = super().get_context_data(**kwargs)
         pts_cfg = {
@@ -140,7 +140,7 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
         return data
 
     def form_valid(self, form):
-        """Saves the new object and all inlineformset_factories"""
+        """Saves the new object and all inlineformset_factories."""
 
         form.instance.author = self.request.user
         form.instance.base_conf = self.BASE_CFG
@@ -160,7 +160,7 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
 
 
 class PtsConfigCreateOnBase(LoginRequiredMixin, CreateView):
-    """CreateView class to create a configuration based on a base"""
+    """CreateView class to create a configuration based on a base."""
 
     BASE_CFG = False
     login_url = reverse_lazy('users:login')
@@ -169,7 +169,7 @@ class PtsConfigCreateOnBase(LoginRequiredMixin, CreateView):
     template_name = 'pts_config/create_config_onbase.html'
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        """Add to context cleared data from inlineformset_factories"""
+        """Add to context cleared data from inlineformset_factories."""
 
         data = super().get_context_data(**kwargs)
         pts_cfg = {
@@ -218,11 +218,19 @@ class PtsConfigCreateOnBase(LoginRequiredMixin, CreateView):
                     PtsConstructor, form['formset_model'],
                     form=form['formset_form'],
                     extra=len(cfg_objects_listofdict),
-                    can_delete=True
+                    can_delete=True,
                 )
                 data[context_key] = CfgObjectBaseFormset(
-                    instance=self.object, initial=cfg_objects_listofdict)
+                    instance=self.object,
+                    initial=cfg_objects_listofdict,
+                )
 
+            for server in data.get('server'):
+                server.fields.get('type_player').queryset = ServerPlayerType.\
+                    objects.filter(
+                        visible_to_user=True,
+                        rec_rep_type=server.initial.get('type')
+                    ).order_by('name')
             data['form'] = AddPtsConfigFrom(instance=self.object)
 
         data['cfg_info'] = base_object
@@ -236,7 +244,7 @@ class PtsConfigCreateOnBase(LoginRequiredMixin, CreateView):
         return kwargs
 
     def form_valid(self, form):
-        """Saves the new object and all inlineformset_factories"""
+        """Saves the new object and all inlineformset_factories."""
 
         context = self.get_context_data()
         if not form.cleaned_data.get('image'):
@@ -259,6 +267,7 @@ class PtsConfigCreateOnBase(LoginRequiredMixin, CreateView):
 
 
 class PtsConfigEdit(LoginRequiredMixin, UpdateView):
+    """UpdateView class to update the configuration."""
 
     login_url = reverse_lazy('users:login')
     form_class = AddPtsConfigFrom
@@ -266,7 +275,7 @@ class PtsConfigEdit(LoginRequiredMixin, UpdateView):
     template_name = 'pts_config/create_config.html'
 
     def get_object(self, *args, **kwargs):
-        """Only author or admin can edit the base configuration"""
+        """Only author or admin can edit the base configuration."""
 
         obj = super().get_object(*args, **kwargs)
         if obj.author != self.request.user and not self.request.user.is_admin:
@@ -274,7 +283,7 @@ class PtsConfigEdit(LoginRequiredMixin, UpdateView):
         return obj
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        """Add to context inlineformset_factories"""
+        """Add to context inlineformset_factories."""
 
         data = super().get_context_data(**kwargs)
         pts_cfg = {
@@ -321,15 +330,18 @@ class PtsConfigDelete(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('config:pts_configs')
 
     def get_object(self, *args, **kwargs):
-        """Only author or admin can delete the base configuration"""
+        """Only author or admin can delete the base configuration."""
         user = self.request.user
         obj = super().get_object(*args, **kwargs)
         if not (obj.author == user or user.is_admin):
             raise PermissionDenied
         return obj
 
+# multiple view functions to create equipment matrices
+
 
 def load_camera_brend(request):
+    """Type camera, brend -> Models"""
     camera_brend_id = request.GET.get('brend')
     camera_id = request.GET.get('camera')
     camera_models = []
@@ -344,6 +356,7 @@ def load_camera_brend(request):
 
 
 def load_optic_brend(request, pk):
+    """Type optic, type PTS -> Brends"""
     optic_id = request.GET.get('optic')
     base_object = get_object_or_404(PtsRequest, pk=pk)
     optic_brends = []
@@ -351,7 +364,6 @@ def load_optic_brend(request, pk):
         optic_brends = OpticBrend.objects.filter(
             type_pts=base_object.pts_name.type,
             opticmodelbrend__type__pk=optic_id).order_by('name')
-        print(optic_brends)
     return render(
         request,
         'pts_config/optic_brend_dropdown_list_options.html',
@@ -360,6 +372,8 @@ def load_optic_brend(request, pk):
 
 
 def load_optic_model(request):
+    """Type optic, brend -> Models"""
+
     optic_id = request.GET.get('optic')
     brend_id = request.GET.get('brend')
     optic_models = []
@@ -375,6 +389,7 @@ def load_optic_model(request):
 
 
 def load_server_config(request):
+    """Type server, visible to user -> ServerPlayerType"""
     server_type_id = request.GET.get('id')
     server_type_players = []
     if server_type_id:
@@ -389,6 +404,7 @@ def load_server_config(request):
 
 
 def load_server_brend(request):
+    """Server brend -> Models"""
     server_brend_id = request.GET.get('id')
     server_models = []
     if server_brend_id:
@@ -402,6 +418,8 @@ def load_server_brend(request):
 
 
 def load_micro_model(request, pk):
+    """Type microphone, brend -> Models"""
+
     micro_brend_id = request.GET.get('brend')
     micro_type = request.GET.get('micro_type')
     base_object = get_object_or_404(PtsRequest, pk=pk)
@@ -420,6 +438,8 @@ def load_micro_model(request, pk):
 
 
 def load_micro_brend(request, pk):
+    """Type microphone, type PTS -> Brends"""
+
     micro_type_id = request.GET.get('micro_type')
     base_object = get_object_or_404(PtsRequest, pk=pk)
     micro_brends = []

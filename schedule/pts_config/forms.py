@@ -31,7 +31,7 @@ class CreatePtsConfigurationMixin(forms.ModelForm):
     name = forms.CharField(
         label='Название конфигурации ПТС',
         validators=[RegexValidator(
-            '^[«»-()\".,!?a-zA-Z0-9_А-я\\s]*$',
+            '^[-()«»\".,!?a-zA-Z0-9_А-я\\s]*$',
             message='Только буквы и цифры'
         )],
         widget=forms.TextInput(
@@ -163,7 +163,6 @@ class AddServer(forms.ModelForm):
         self.fields['type'].label = 'Тип сервера'
         self.fields['type_player'].label = 'Конфигурация'
         self.fields['type_player'].queryset = ServerPlayerType.objects.none()
-
         if 'serverrecordingrepeatconstructor_set-0-type' in self.data:
             try:
                 # if validation fails, the queryset will not work correctly

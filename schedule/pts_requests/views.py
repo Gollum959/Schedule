@@ -1,5 +1,4 @@
 from datetime import date, timedelta, datetime
-from django import forms
 from django.http import QueryDict
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
@@ -26,22 +25,23 @@ from pts_config.forms import (CameraModerateFormset,
                               ServerModerateFormset,
                               MicrophonesModerateFormset,
                               MicrophonesUpdateFormset)
-#   GfxModerateFormset)
 from core.custom_view import (DetalInformationMixin,
                               UserToFormMixin,
                               EditOnlyAuthorMixin)
-from pts_config.forms import ModerateMicrophones
-from pts_config.models import MicrophonePtsConstructor, MicrophoneBrend
-#   EditOnlyAdminOrModeratorMixin)
+from pts_config.models import MicrophoneBrend
 
 
 class PtsRequestsView(LoginRequiredMixin, ListView):
-    """Requets list view"""
+    """Requets list view."""
+
     login_url = reverse_lazy('users:login')
     model = PtsRequest
     template_name = 'pts_requests/list_requests.html'
 
     def get_queryset(self):
+        """Different requests for different data and
+         different level permission."""
+
         requests = PtsRequest.objects.all()
         today = date.today()
         start_week = today - timedelta(days=today.weekday())
@@ -84,19 +84,24 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
 
 
 class PtsRequestDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
-    """Request detail view"""
+    """Request detail view."""
+
     login_url = reverse_lazy('users:login')
     model = PtsRequest
     template_name = 'pts_requests/request_detail.html'
 
 
 class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
+    """Create PTS request view class."""
+
     login_url = reverse_lazy('users:login')
     form_class = AddRequestFrom
     model = PtsRequest
     template_name = 'pts_requests/create_requests.html'
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        """Adds to context PTS request lines."""
+
         data = super().get_context_data(**kwargs)
 
         if self.request.POST:
@@ -111,6 +116,8 @@ class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
         return data
 
     def form_valid(self, form):
+        """Validation and save request and all related lines."""
+
         form.instance.author = self.request.user
         context = self.get_context_data()
         commlines = context['commline']
@@ -136,12 +143,16 @@ class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
 
 class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
                      LoginRequiredMixin, UpdateView):
+    """Update PTS request view class."""
+
     login_url = reverse_lazy('users:login')
     form_class = AddRequestFrom
     model = PtsRequest
     template_name = 'pts_requests/create_requests.html'
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        """Adds to context PTS request lines."""
+
         data = super().get_context_data(**kwargs)
 
         if self.request.POST:
@@ -162,6 +173,8 @@ class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
         return data
 
     def form_valid(self, form):
+        """Validation and save request and all related lines."""
+
         context = self.get_context_data()
         commlines = context['commline']
         techcommlines = context['techcommline']
@@ -187,6 +200,7 @@ class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
 @login_required
 def change_status_to_on_approval(request, pk):
     """Change PTS request status from draft to on approval."""
+
     pts_request = get_object_or_404(PtsRequest, pk=pk)
     if pts_request.author != request.user:
         raise Http404()
@@ -198,6 +212,7 @@ def change_status_to_on_approval(request, pk):
 @login_required
 def remove_draft_pts_request(request, pk):
     """Remove draft PTS request, only author."""
+
     pts_request = get_object_or_404(PtsRequest, pk=pk)
     if pts_request.author != request.user and not pts_request.is_draft:
         raise Http404()
@@ -207,11 +222,12 @@ def remove_draft_pts_request(request, pk):
 
 @login_required
 def load_places(request):
+    """Loading places by city."""
+
     city_id = request.GET.get('city_name')
     if city_id:
         places = PlaceConstructor.objects.filter(
             city_name=city_id, ).order_by('name')
-        # author__direction=request.user.direction).order_by('name')
     else:
         places = PlaceConstructor.objects.none()
     return render(
@@ -223,6 +239,8 @@ def load_places(request):
 
 @login_required
 def load_event_type(request):
+    """Loading event type by place."""
+
     place_id = request.GET.get('place_id')
     if place_id:
         event_types = EventType.objects.filter(
@@ -240,6 +258,8 @@ def load_event_type(request):
 
 @login_required
 def load_pts_cfg(request):
+    """Loading pts configuratins by place and event type."""
+
     event_id = request.GET.get('event_id')
     place_id = request.GET.get('place_id')
     if event_id:
@@ -259,6 +279,7 @@ def load_pts_cfg(request):
 
 @login_required
 def time_trakt_edit_form(request, pk):
+    """View function for moderating trakt time."""
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
 
@@ -295,6 +316,7 @@ def time_trakt_edit_form(request, pk):
 
 @login_required
 def time_travel_edit_form(request, pk):
+    """View function for moderating travel time."""
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
 
@@ -325,6 +347,7 @@ def time_travel_edit_form(request, pk):
 
 @login_required
 def config_choice_pts_edit_form(request, pk):
+    """View function for moderating type PTS."""
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
 
@@ -354,6 +377,7 @@ def config_choice_pts_edit_form(request, pk):
 
 @login_required
 def config_cameras_edit_form(request, pk):
+    """View function for moderation of block with cameras."""
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
 
@@ -391,6 +415,7 @@ def config_cameras_edit_form(request, pk):
 
 @login_required
 def config_optics_edit_form(request, pk):
+    """View function for moderation of block with optics."""
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
 
@@ -428,6 +453,7 @@ def config_optics_edit_form(request, pk):
 
 @login_required
 def config_servers_edit_form(request, pk):
+    """View function for moderation of block with servers."""
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
 
@@ -447,7 +473,11 @@ def config_servers_edit_form(request, pk):
         )
 
     if request.method == 'POST':
-        form = ServerModerateFormset(request.POST, instance=ptsrequest.pts_cfg, form_kwargs={'request_pk': pk})
+        form = ServerModerateFormset(
+            request.POST,
+            instance=ptsrequest.pts_cfg,
+            form_kwargs={'request_pk': pk}
+        )
         context = {'ptsrequest': ptsrequest}
         if form.is_valid():
             form.save()
@@ -457,13 +487,17 @@ def config_servers_edit_form(request, pk):
         context['server_forms'] = form
         return render(request, 'includes/config_servers_edit.html', context)
 
-    server_forms = ServerModerateFormset(instance=ptsrequest.pts_cfg, form_kwargs={'request_pk': pk})
+    server_forms = ServerModerateFormset(
+        instance=ptsrequest.pts_cfg,
+        form_kwargs={'request_pk': pk}
+    )
     context = {'ptsrequest': ptsrequest, 'server_forms': server_forms}
     return render(request, 'includes/config_servers_edit.html', context)
 
 
 @login_required
 def config_microphones_edit_form(request, pk):
+    """View function for moderation of block with microphones."""
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
 
@@ -483,7 +517,11 @@ def config_microphones_edit_form(request, pk):
         )
 
     if request.method == 'POST':
-        form = MicrophonesModerateFormset(request.POST, instance=ptsrequest.pts_cfg, form_kwargs={'request_pk': pk})
+        form = MicrophonesModerateFormset(
+            request.POST,
+            instance=ptsrequest.pts_cfg,
+            form_kwargs={'request_pk': pk}
+        )
         context = {'ptsrequest': ptsrequest}
         if form.is_valid():
             form.save()
@@ -491,23 +529,32 @@ def config_microphones_edit_form(request, pk):
                           context)
 
         context['microphones_forms'] = form
-        return render(request, 'includes/config_microphones_edit.html', context)
+        return render(
+            request,
+            'includes/config_microphones_edit.html',
+            context
+        )
 
     if not ptsrequest.pts_cfg.microphoneptsconstructor_set.count():
-        microphones_forms = MicrophonesModerateFormset(instance=ptsrequest.pts_cfg, form_kwargs={'request_pk': pk})
+        microphones_forms = MicrophonesModerateFormset(
+            instance=ptsrequest.pts_cfg,
+            form_kwargs={'request_pk': pk}
+        )
         type_microphone = []
         for microphone in MicrophoneType.objects.all().order_by('name'):
             type_microphone.append({'type': microphone})
         for subform, data in zip(microphones_forms.forms, type_microphone):
-            print(data)
-            subform.fields.get('brend').queryset = MicrophoneBrend.objects.filter(
+            subform.fields.get('brend').queryset = MicrophoneBrend.objects.\
+                filter(
                     microphonemodelbrend__type_pts=ptsrequest.pts_name.type,
                     microphonemodelbrend__type_micro=data.get('type')
                 ).distinct()
             subform.initial = data
     else:
-        microphones_forms = MicrophonesUpdateFormset(instance=ptsrequest.pts_cfg, form_kwargs={'request_pk': pk})
-
+        microphones_forms = MicrophonesUpdateFormset(
+            instance=ptsrequest.pts_cfg,
+            form_kwargs={'request_pk': pk}
+        )
 
     context = {
         'ptsrequest': ptsrequest,
