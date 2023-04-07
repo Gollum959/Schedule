@@ -71,6 +71,12 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
         if self.request.user.is_admin:
             return requests
 
+        if self.request.user.is_moderator:
+            return requests.filter(status__in=('approval', 'final'))
+
+        if self.request.user.is_soundman:
+            return requests.filter(status='soundman')
+
         requests = requests.filter(
             author__direction=self.request.user.direction
         )
@@ -207,6 +213,30 @@ def change_status_to_on_approval(request, pk):
     pts_request.status = 'approval'
     pts_request.save()
     return redirect('pts_requests:request_detail', pk=pts_request.pk)
+
+
+@login_required
+def change_status_to_on_soundman(request, pk):
+    """Change PTS request status from on approval to soundman."""
+
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    if not request.user.is_admin_or_moderator:
+        raise Http404()
+    pts_request.status = 'soundman'
+    pts_request.save()
+    return redirect('pts_requests:index')
+
+
+@login_required
+def change_status_to_final(request, pk):
+    """Change PTS request status from on soundman to final."""
+
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    if not request.user.is_soundman_or_admin:
+        raise Http404()
+    pts_request.status = 'final'
+    pts_request.save()
+    return redirect('pts_requests:index')
 
 
 @login_required

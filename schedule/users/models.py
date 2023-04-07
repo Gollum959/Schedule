@@ -65,6 +65,11 @@ class User(AbstractUser):
         return self.role == self.MODERATOR
 
     @property
+    def is_soundman(self):
+        """Return True if user is Moderator."""
+        return self.role == self.SOUNDMAN
+
+    @property
     def is_admin_or_moderator(self):
         """Return True if user is Moderator or Admin."""
         return (self.role == self.MODERATOR or

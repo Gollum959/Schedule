@@ -24,6 +24,16 @@ urlpatterns = [
         name='request_change_status'
     ),
     path(
+        'send_request_soundman/<int:pk>/',
+        views.change_status_to_on_soundman,
+        name='request_change_status_soundman'
+    ),
+    path(
+        'send_after_soundman/<int:pk>/',
+        views.change_status_to_final,
+        name='request_change_status_after_soundman'
+    ),
+    path(
         'remove_draft/<int:pk>/',
         views.remove_draft_pts_request,
         name='draft_request_remove'

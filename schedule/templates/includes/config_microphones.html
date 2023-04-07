@@ -50,7 +50,7 @@
                     {% endif %}
                   </div>
                 </div>
-                {% if user.is_soundman_or_admin and ptsrequest.is_draft != True %}
+                {% if user.is_soundman_or_admin and ptsrequest.is_soundman == True or user.is_admin %}
                   <div class="row pt-3">
                     <div class="col d-flex justify-content-end">
                       <button class="btn btn-secondary btn-sm"

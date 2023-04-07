@@ -135,12 +135,16 @@ class PtsRequest(models.Model):
     APPROVED = 'approved'
     REJECTED = 'rejected'
     ON_APPROVAL = 'approval'
+    ON_SOUNDMAN = 'soundman'
+    FINAL_VALIDATION = 'final'
     UNDER_REVISION = 'revision'
     STATUS = [
         (DRAFT, 'Черновик'),
         (APPROVED, 'Утверждено'),
         (REJECTED, 'Отклонено'),
         (ON_APPROVAL, 'На утверждении'),
+        (ON_SOUNDMAN, 'На утверждении звукорежиссером'),
+        (FINAL_VALIDATION, 'Утверждение после звукорежиссера'),
         (UNDER_REVISION, 'На доработке'),
     ]
 
@@ -300,6 +304,11 @@ class PtsRequest(models.Model):
     def is_approval(self):
         """Return True if status is ON APPROVAL."""
         return self.status == self.ON_APPROVAL
+
+    @property
+    def is_soundman(self):
+        """Return True if status is ON SOUNDMAN."""
+        return self.status == self.ON_SOUNDMAN
 
     @property
     def is_draft(self):

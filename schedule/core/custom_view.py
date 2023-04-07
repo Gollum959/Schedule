@@ -8,10 +8,12 @@ class DetalInformationMixin:
 
     def get_object(self, queryset=None):
         """Check that only author can see detail information"""
-        obj = super(DetalInformationMixin, self).get_object(queryset=queryset)
+        obj = super().get_object(queryset=queryset)
         if (
-            self.request.user.is_admin or
-            obj.author.direction == self.request.user.direction
+            (self.request.user.is_admin or
+                obj.author.direction == self.request.user.direction) or
+            (obj.status == 'soundman' and self.request.user.is_soundman) or
+            (obj.status != 'draft' and self.request.user.is_moderator)
         ):
             return obj
 
