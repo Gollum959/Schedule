@@ -245,6 +245,13 @@ class PtsRequest(models.Model):
         blank=True,
         null=True
     )
+    soundman = models.ForeignKey(
+        User,
+        on_delete=models.RESTRICT,
+        related_name="soundman",
+        blank=True,
+        null=True
+    )
 
     @staticmethod
     def crete_clone(obj):

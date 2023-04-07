@@ -36,7 +36,7 @@
       <h1>Создать конфигурацию в {{ cfg_info.place.city_name }}</h1>
       <h3>Название объекта: {{ cfg_info.place }}</h3>
       <h3>Вид события: {{ cfg_info.event_type }}</h3>
-      <div class="card">
+      <div class="card shadow-sm">
         <div class="card-body">        
           <form method="post" server-url="{% url 'config:ajax_load_server_config' %}" enctype="multipart/form-data" id="cfgForm">
             {% csrf_token %}

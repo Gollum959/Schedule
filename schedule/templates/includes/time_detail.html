@@ -1,11 +1,11 @@
-  <div class="card mt-3">
+  <div class="card shadow-sm mt-3">
     <div class="card-header">
       <h5 style="margin-bottom: 0px;">Временные рамки трансляции</h5>
     </div>
     <div class="card-body">
       <div class="row">
         <div class="col-sm-4">
-          <div class="card">
+          <div class="card shadow-sm">
             <div class="card-body">
               <h5 class="card-title">{{ ptsrequest.type }}</h5>
               <p class="card-text"><b>Начало:</b> {{ ptsrequest.broadcast_start_date|date:'H:i' }}</br>
@@ -15,7 +15,7 @@
         </div>
         {% if ptsrequest.is_draft %}
           <div class="col-sm-4">
-            <div class="card">
+            <div class="card shadow-sm">
               <div class="card-body">
                 <h5 class="card-title">Тракт</h5>
                 <p class="card-text">Информация появится после утверждения заявки</p>
@@ -23,7 +23,7 @@
             </div>
           </div>
           <div class="col-sm-4">
-            <div class="card">
+            <div class="card shadow-sm">
               <div class="card-body">
                 <h5 class="card-title">Время работы ПТС</h5>
                 <p class="card-text">Информация появится после утверждения заявки</p>

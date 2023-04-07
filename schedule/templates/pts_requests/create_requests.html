@@ -30,7 +30,7 @@
       {% else %}
         <h1>Создать заявку</h1>
       {% endif %}
-      <div class="card">
+      <div class="card shadow-sm">
         <div class="card-body">        
           <form method="post" enctype="multipart/form-data" id="requestForm" cfg-url="{% url 'pts_requests:ajax_load_cfg' %}" data-places-url="{% url 'pts_requests:ajax_load_places' %}" autocomplete="off">
             {% csrf_token %}

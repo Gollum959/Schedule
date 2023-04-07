@@ -1,5 +1,5 @@
   {% load crispy_forms_tags %}
-  <div class="card">
+  <div class="card shadow-sm">
     <div class="card-body">
       <h5 class="card-title">Тракт</h5>
       <form method="post" hx-put="{% url 'pts_requests:trakt_time_edit' ptsrequest.pk %}" hx-target="#time-trakt" autocomplete="off">

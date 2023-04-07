@@ -1,58 +1,65 @@
 {% extends 'base.html' %} 
 {% block content %}
-<div class="container py-5">
+<div class="container py-4">
   <h1>Заявки на работу ПТС</h1>
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th scope="col">Дата трансляции</th>
-        <th scope="col">Время трансляции</th>
-        <th scope="col">Название передачи</th>
-        <th scope="col">Статус</th>
-        <th scope="col">Должность автора {{request.user.position}}</th>
-        <th scope="col">Имя ПТС</th>
-        <th scope="col">Конфигурация ПТС</th>
-        <th scope="col">Место работы</th>
+  <table class="table shadow-sm table-striped mb-4 mt-4 ps-2 pe-2 align-middle">
+    <thead class="bg-light align-middle">
+      <tr class="flex">
+        <th class="col-1">Дата трансляции</th>
+        <th class="col-1">Время трансляции</th>
+        <th class="col-2">Название передачи</th>
+        <th class="col">Статус</th>
+        <th class="col">Автор</th>
+        <th class="col">Имя ПТС</th>
+        <th class="col-2">Конфигурация ПТС</th>
+        <th class="col-2">Место работы</th>
       </tr>
     </thead>
-    {% for request in ptsrequest_list %}
-      <tbody>
-        <tr>
-          <th scope="row">
-            {{ request.broadcast_start_date|date:'d E Y' }}
-          </th>
-          <td>{{ request.broadcast_start_date|date:'H:i' }} - {{ request.broadcast_end_date|date:'H:i' }}</td>
-          <td>
-            {% comment %}
-            {%if request.is_approval and user.is_admin %}
-            <a href="{% url 'pts_requests:request_moderate' request.pk %}">{{ request.name }} {{request.pk}} </a>  
-            {% else %}
-            {% endcomment %}
-            <a href="{% url 'pts_requests:request_detail' request.pk %}">{{ request.name }} {{request.pk}} </a>
-            {% comment %} {% endif %}  {% endcomment %}
+    <tbody>
+      {% for request in ptsrequest_list %}
+        <tr class="flex text-break">
+          <td class="col-1 pt-0 pb-0">
+            {{ request.broadcast_start_date|date:'d E' }}
           </td>
-          <td>{{ request.get_status_display }}</td>
-          <td>{{ request.author.get_full_name }}</td>
-          <td>{{ request.get_pts }}</td>
-          <td>{{ request.pts_cfg.name }}</td>
-          <td>{{ request.place.city_name}},<br><h6>{{request.place.name }}</h6> </td>
+          <td class="col-1 pt-0 pb-0">
+            {{ request.broadcast_start_date|date:'H:i' }} - {{ request.broadcast_end_date|date:'H:i' }}
+          </td>
+          <td class="col-2 pt-0 pb-0">
+            <a href="{% url 'pts_requests:request_detail' request.pk %}">{{ request.name }}, ID№ {{request.pk}}</a>
+          </td>
+          <td class="col pt-0 pb-0">{{ request.get_status_display }}</td>
+          <td class="col pt-0 pb-0">{{ request.author.get_full_name }}</td>
+          <td class="col pt-0 pb-0">{{ request.pts_name.name }}</td>
+          <td class="col-2 pt-0 pb-0">{{ request.pts_cfg.name }}</td>
+          <td class="col-2 pt-0 pb-0">{{ request.place.city_name}},<br><h6>{{request.place.name }}</h6> </td>
         </tr>
-      </tbody>
-      {% comment %} {% if not forloop.last %}
-      <hr />
-      {% endif %} {% endcomment %} 
-    {% endfor %}
+      {% endfor %}
+    </tbody>
   </table>
-  {% if request.GET.week or request.GET.date %}
-    <a class="btn btn-primary" href="{% url 'pts_requests:index' %}" role="button">Показать трансляции на текущей неделе</a>
-  {% else %}
-    <a class="btn btn-primary" href="{% url 'pts_requests:index'%}?week=next" role="button">Показать трансляции на следующей неделе</a>
-  {% endif %}
-  <form method="get" action="{% url 'pts_requests:index' %}">
-    {% csrf_token %}
-    <label for="id_date">Choose a date:</label>
-    <input type="date" id="id_date" name="date">
-    <button type="submit">Search</button>
-  </form>
+  <div class="row align-items-center">
+    <div class="col">
+      {% if request.GET.week or request.GET.date %}
+        <a class="btn shadow-sm btn-secondary" href="{% url 'pts_requests:index' %}" role="button">Показать трансляции на текущей неделе</a>
+      {% else %}
+        <a class="btn shadow-sm btn-secondary" href="{% url 'pts_requests:index'%}?week=next" role="button">Показать трансляции на следующей неделе</a>
+      {% endif %}
+    </div>
+    <div class="col d-flex justify-content-end">
+      <form method="get" action="{% url 'pts_requests:index' %}">
+        {% csrf_token %}
+        <div class="row g-3 align-items-center">
+          <div class="col-auto">
+            <label for="id_date" class="col-form-label">Выбирите дату:</label>
+          </div>
+          <div class="col-auto">
+            <input class="form-control" type="date" id="id_date" name="date" placeholder="dd-mm-yyyy" value="">
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-secondary" type="submit">Искать</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

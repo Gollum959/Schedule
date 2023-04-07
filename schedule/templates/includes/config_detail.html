@@ -1,4 +1,4 @@
-<div class="card mt-3">
+<div class="card shadow-sm mt-3">
   <div class="card-header align-items-center p-0">
       <button class="accordion-button collapsed pt-2 pb-2" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-config" aria-expanded="false" aria-controls="panelsStayOpen-config">
         <h5 style="margin-bottom: 0px; color: black">Конфигурация ПТС</h5>
@@ -14,13 +14,6 @@
       {% include 'includes/config_servers.html' %}
       {% include 'includes/config_gfx.html' %}
       {% include 'includes/config_microphones.html' %}
-
-
-
-      {% comment %} <div class="row">
-        <div id="cfg_micro" micro-url="{% url 'pts_requests:ajax_load_cfg_micro' %}"></div>
-      </div> 
-      {% endcomment %}
 
     </div>
   </div>

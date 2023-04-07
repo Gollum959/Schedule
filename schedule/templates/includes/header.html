@@ -1,44 +1,46 @@
 {% load static %}
-<nav class="navbar navbar-light" style="background-color: lightskyblue">
+<nav class="navbar shadow-sm navbar-expand-lg navbar-light bg-light p-0">
   <div class="container">
-    <a class="navbar-brand" href="{% url 'pts_requests:index' %}">
-      <img src="{% static 'img/logo.png' %}" height="30" class="d-inline-block align-top" alt="">
-      <span style="color:red">BT</span>schedule</a>
+    <a class="navbar-brand" style="font-size: x-large;" href="{% url 'pts_requests:index' %}">
+      <img src="{% static 'img/logo.png' %}" class="d-inline-block align-top" alt="">
     </a>
-    {% with request.resolver_match.view_name as view_name %} 
-    <ul class="nav nav-pills">
-      {% if user.is_authenticated %}
-        <li class="nav-item"> 
-          <a class="nav-link {% if view_name  == 'pts_requests:request_create' %}active{% endif %}" href="{% url 'pts_requests:request_create' %}">
-            Create request
-          </a>
-        </li>
-        <li class="nav-item"> 
-          <a class="nav-link {% if view_name  == 'place:places' %}active{% endif %}" href="{% url 'place:places' %}">
-            Places
-          </a>
-        </li>
-        <li class="nav-item"> 
-          <a class="nav-link {% if view_name  == 'config:pts_configs' %}active{% endif %}" href="{% url 'config:pts_configs' %}">
-            Configurations
-          </a>
-        </li>
-        <li class="nav-item"> 
-          <a class="nav-link link-light" href="{% url 'users:logout' %}">
-            Выйти
-          </a>
-        </li>
-        <li class="navbar-brand">
-          Пользователь: {{ user.username }}
-        </li>
-      {% else %}
-        <li class="nav-item"> 
-          <a class="nav-link link-light {% if view_name  == 'users:login' %}active{% endif %}" href="{% url 'users:login' %}">
-            Войти
-          </a>
-        </li>
-      {% endif %}
-    </ul>
-    {% endwith %} 
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        {% if user.is_authenticated %}
+          <li class="nav-item"> 
+            <a class="nav-link" href="{% url 'pts_requests:request_create' %}">
+              Создать заявку
+            </a>
+          </li>
+          <li class="nav-item"> 
+            <a class="nav-link" href="{% url 'place:places' %}">
+              Площадки
+            </a>
+          </li>
+          <li class="nav-item"> 
+            <a class="nav-link" href="{% url 'config:pts_configs' %}">
+              Конфигурации
+            </a>
+          </li>
+          <li class="nav-item"> 
+            <a class="nav-link link-light" href="{% url 'users:logout' %}">
+              Выйти
+            </a>
+          </li>
+          <li class="navbar">
+            Пользователь: {{ user.username }}
+          </li>
+        {% else %}
+          <li class="nav-item"> 
+            <a class="nav-link link-light" href="{% url 'users:login' %}">
+              Войти
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
   </div>
-</nav>  
+</nav>

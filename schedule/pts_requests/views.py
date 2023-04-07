@@ -303,6 +303,7 @@ def time_trakt_edit_form(request, pk):
         form = UpdateTraktTime(data, instance=ptsrequest)
         context = {'ptsrequest': ptsrequest}
         if form.is_valid():
+            form.instance.moderator = request.user
             form.save()
             return render(request, 'includes/time_trakt.html', context)
 
@@ -332,6 +333,7 @@ def time_travel_edit_form(request, pk):
         form = UpdateTravelTime(data, instance=ptsrequest)
         context = {'ptsrequest': ptsrequest}
         if form.is_valid():
+            form.instance.moderator = request.user
             form.save()
             return render(request, 'includes/time_travel.html', context)
 
@@ -364,6 +366,7 @@ def config_choice_pts_edit_form(request, pk):
         context = {'ptsrequest': ptsrequest}
         if form.is_valid():
             form.save()
+            form.instance.moderator = request.user
             return render(request, 'includes/config_choice_pts.html',
                           context)
 
@@ -400,7 +403,8 @@ def config_cameras_edit_form(request, pk):
         form = CameraModerateFormset(request.POST, instance=ptsrequest.pts_cfg)
         context = {'ptsrequest': ptsrequest}
         if form.is_valid():
-
+            ptsrequest.moderator = request.user
+            ptsrequest.save()
             form.save()
             return render(request, 'includes/config_cameras.html',
                           context)
@@ -439,6 +443,8 @@ def config_optics_edit_form(request, pk):
         context = {'ptsrequest': ptsrequest}
 
         if form.is_valid():
+            ptsrequest.moderator = request.user
+            ptsrequest.save()
             form.save()
             return render(request, 'includes/config_optics.html',
                           context)
@@ -480,6 +486,8 @@ def config_servers_edit_form(request, pk):
         )
         context = {'ptsrequest': ptsrequest}
         if form.is_valid():
+            ptsrequest.moderator = request.user
+            ptsrequest.save()
             form.save()
             return render(request, 'includes/config_servers.html',
                           context)
@@ -524,6 +532,8 @@ def config_microphones_edit_form(request, pk):
         )
         context = {'ptsrequest': ptsrequest}
         if form.is_valid():
+            ptsrequest.soundman = request.user
+            ptsrequest.save()
             form.save()
             return render(request, 'includes/config_microphones.html',
                           context)
