@@ -89,7 +89,7 @@
 
       </div>
     {% endif %}
-    {% if ptsrequest.is_approval %}
+    {% if ptsrequest.is_approval and user.is_admin_or_moderator %}
     <div class="col d-flex justify-content-end">
       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chage-statusModal">
         Отправить заявку на утверждение звукорежиссером

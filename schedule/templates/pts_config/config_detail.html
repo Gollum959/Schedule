@@ -5,6 +5,7 @@
   <h3>Конфигурация: {{ ptsconstructor.name }}</h3>
   <div class="card shadow-sm">
     <div class="card-body">
+      <p class="fs-6 ms-4 mb-2"><b>Город: </b>{{ ptsconstructor.place.city_name.name }}</p>
       <p class="fs-6 ms-4 mb-2"><b>Площадка: </b>{{ ptsconstructor.place.name }}</p>
       <p class="fs-6 ms-4 mb-2"><b>Вид события: </b>{{ ptsconstructor.event_type.name }}</p>
       <p class="fs-6 ms-4 mb-2"><b>Автор: </b>{{ ptsconstructor.author.get_full_name }}</p>

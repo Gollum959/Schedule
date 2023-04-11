@@ -45,6 +45,11 @@ urlpatterns = [
         views.load_event_type,
         name='ajax_load_event_types'
     ),
+    path(
+        'ajax/load-cfg-detail/',
+        views.load_cfg_detail,
+        name='ajax_load_cfg_detail'
+    ),
 ]
 
 htmx_urlpatterns = [

@@ -1,0 +1,157 @@
+{% if cfg %}
+  <div class="modal fade" id="cfgModal" tabindex="-1" aria-labelledby="cfgModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered  modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header ps-5">
+          <h5 class="modal-title" id="cfgModalLabel">{{ cfg.name }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <div class="card shadow-sm mb-3">
+              <div class="card-body p-0 ms-2 me-2 mb-2">
+                <div class="row justify-content-center">
+                  <div class="col-12">
+                    <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок камер </p>
+                    {% if cfg.cameraptsconstructor_set.all|length > 0 %}
+                    <table class="table table-striped mb-0 ps-2 pe-2 ">
+                      <thead style="background-color: lightskyblue;">
+                        <tr class="d-flex">
+                          <th class="col-6 text-center">Тип Камеры</th>
+                          <th class="col-6 text-center">Количество</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for camera in cfg.cameraptsconstructor_set.all %}
+                          <tr class="d-flex">
+                            <td class="col-6 pt-2 ps-3">{{ camera.cameras }}</td>
+                            <td class="col-6 text-center">{{ camera.quantity }}</td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                    {% else %}
+                      <p class="fs-5 ms-2 me-2">Информация отсутсвует в конфигурации ПТС</p>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="card shadow-sm mb-3">
+              <div class="card-body p-0 ms-2 me-2 mb-2">
+                <div class="row justify-content-center">
+                  <div class="col-12">
+                    <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок оптики</p>
+                    {% if cfg.opticptsconstructor_set.all|length > 0 %}
+                    <table class="table table-striped mb-0 ps-2 pe-2 ">
+                      <thead style="background-color: lightskyblue;">
+                        <tr class="d-flex">
+                          <th class="col-6 text-center">Кратность Оптики</th>
+                          <th class="col-6 text-center">Количество</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for optic in cfg.opticptsconstructor_set.all %}
+                          <tr class="d-flex">
+                            <td class="col-6 pt-2 ps-3">{{ optic.optics }}</td>
+                            <td class="col-6 text-center">{{ optic.quantity }}</td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                    {% else %}
+                      <p class="fs-5 ms-2 me-2">Информация отсутсвует в конфигурации ПТС</p>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="card shadow-sm mb-3">
+              <div class="card-body p-0 ms-2 me-2 mb-2">
+                <div class="row justify-content-center">
+                  <div class="col-12">
+                    <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок системы записи и повторов</p>
+                    {% if cfg.serverrecordingrepeatconstructor_set.all|length > 0 %}
+                    <table class="table table-striped mb-0 ps-2 pe-2 ">
+                      <thead style="background-color: lightskyblue;">
+                        <tr class="d-flex">
+                          <th class="col-6 text-center">Тип сервера</th>
+                          <th class="col-6 text-center">Конфигурация</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for server in cfg.serverrecordingrepeatconstructor_set.all %}
+                          <tr class="d-flex">
+                            <td class="col-6 pt-2 ps-3">{{ server.type }}</td>
+                            <td class="col-6 text-center">{{ server.type_player }}</td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                    {% else %}
+                      <p class="fs-5 ms-2 me-2">Информация отсутсвует в конфигурации ПТС</p>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="card shadow-sm mb-3">
+              <div class="card-body p-0 ms-2 me-2 mb-2">
+                <div class="row justify-content-center">
+                  <div class="col-12">
+                    <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок графической системы</p>
+                    {% if cfg.gfxptsconstructor_set.all|length > 0 %}
+                    <table class="table table-striped mb-0 ps-2 pe-2 ">
+                      <thead style="background-color: lightskyblue;">
+                        <tr class="d-flex">
+                          <th class="col-3 text-center">Сервер графики</th>
+                          <th class="col-3 text-center">Тип лицензии</th>
+                          <th class="col-2 text-center">Количество</th>
+                          <th class="col-4 text-center">Подключение к судейской системе</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for gfx in cfg.gfxptsconstructor_set.all %}
+                          <tr class="d-flex">
+                            <td class="col-3 pt-2 text-center">{{ gfx.gfx }}</td>
+                            <td class="col-3 text-center">{{ gfx.get_license_type }}</td>
+                            <td class="col-2 text-center">{{ gfx.quantity }}</td>
+                            <td class="col-4 text-center">{% if gfx.judicial_system %}Да{% else %}Нет{% endif %}</td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                    {% else %}
+                      <p class="fs-5 ms-2 me-2">Информация отсутсвует в конфигурации ПТС</p>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="card shadow-sm mb-3">
+              <div class="card-body p-0 ms-2 me-2 mb-2">
+                <div class="row justify-content-center">
+                  <div class="col-12">
+                    <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок звукового обеспечения</p>
+                    <p class="fs-5">Количество микрофонов {{ cfg.microphone_quantity }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}

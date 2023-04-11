@@ -304,6 +304,19 @@ def load_pts_cfg(request):
         {'cfgs': cfgs}
     )
 
+
+@login_required
+def load_cfg_detail(request):
+    """Loading pts configuratin by id."""
+
+    cfg_id = request.GET.get('id')
+    cfg = get_object_or_404(PtsConstructor, pk=cfg_id) if cfg_id else None
+    return render(
+        request,
+        'pts_requests/cfg_short_detail.html',
+        {'cfg': cfg}
+    )
+
 # View functions for time block
 
 

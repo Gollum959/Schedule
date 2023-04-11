@@ -25,7 +25,11 @@
                           <tr class="d-flex">
                             <td class="col-2 pt-2 ps-4">{{ server.type }}</td>
                             <td class="col-3 ps-4">{{ server.type_player }}</td>
-                            <td class="col-2 text-center">{{ server.quantity }}</td>
+                            {% if server.quantity == 0 %}
+                              <td class="col-2 text-center">&mdash;</td>
+                            {% else %}
+                              <td class="col-2 text-center">{{ server.quantity }}</td>
+                            {% endif %}
                             {% if server.brend %}
                               <td class="col-2 ps-4">{{ server.brend }}</td>
                             {% else %}

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}<title></title>{% endblock %}
 {% block content %}   
   {% load crispy_forms_tags %}
@@ -46,7 +47,20 @@
             <div class="row">
               <div class="col-3">{{ form.broadcast_start_date|as_crispy_field }}</div>
               <div class="col-3">{{ form.broadcast_end_date|as_crispy_field }}</div>
-              <div class="col-6">{{ form.pts_cfg|as_crispy_field }}</div>
+              <div class="col-6">
+                <div class="row align-items-end">
+                  <div class="col-11">
+                    {{ form.pts_cfg|as_crispy_field }}
+                  </div>
+                  <div class="col-1 ps-0 pe-0 mb-3">
+                    <button id="cfg-detail" cfg-detail-url="{% url 'pts_requests:ajax_load_cfg_detail' %}" type="button" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#cfgModal">
+                      <img src="{% static 'img/diagnostics.png' %}" style="width: 38px;" alt="Подробная информация">
+                    </button>
+                  </div>
+                  
+                  <div id="modal-cfg-detail"></div> 
+
+              </div>
             </div>
             <hr style="border: 1px;">
             <div class="form-group row my-3 p-3">
@@ -165,6 +179,21 @@
         },
         success: function (data) {
           $("#id_pts_cfg").html(data);
+        }
+      });
+    });
+
+    $("#id_pts_cfg").change(function () {
+      var url = $("#cfg-detail").attr("cfg-detail-url");
+      var cfgId = $(this).val();
+
+      $.ajax({
+        url: url,
+        data: {
+          'id': cfgId
+        },
+        success: function (data) {
+          $("#modal-cfg-detail").html(data);
         }
       });
     });
