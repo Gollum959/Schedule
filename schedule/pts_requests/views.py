@@ -79,7 +79,8 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
 
         requests = requests.filter(
             author__direction=self.request.user.direction
-        )
+        ).exclude(~Q(author=self.request.user), status='cancel')
+
         if self.request.user.is_main_director:
             return requests
 
@@ -213,6 +214,18 @@ def change_status_to_on_approval(request, pk):
     pts_request.status = 'approval'
     pts_request.save()
     return redirect('pts_requests:request_detail', pk=pts_request.pk)
+
+
+@login_required
+def change_status_to_cancel(request, pk):
+    """Change PTS request status to cancel."""
+
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    if request.user != pts_request.author:
+        raise Http404()
+    pts_request.status = 'cancel'
+    pts_request.save()
+    return redirect('pts_requests:index')
 
 
 @login_required

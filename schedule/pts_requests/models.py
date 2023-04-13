@@ -132,6 +132,7 @@ class PtsRequest(models.Model):
         (TWO_HEADSEAT, 'Две гарнитуры'),
     ]
     DRAFT = 'draft'
+    CANCEL = 'cancel'
     APPROVED = 'approved'
     REJECTED = 'rejected'
     ON_APPROVAL = 'approval'
@@ -140,8 +141,9 @@ class PtsRequest(models.Model):
     UNDER_REVISION = 'revision'
     STATUS = [
         (DRAFT, 'Черновик'),
-        (APPROVED, 'Утверждено'),
-        (REJECTED, 'Отклонено'),
+        (CANCEL, 'Отменена'),
+        (APPROVED, 'Утверждена'),
+        (REJECTED, 'Отклонена'),
         (ON_APPROVAL, 'На утверждении'),
         (ON_SOUNDMAN, 'На утверждении звукорежиссером'),
         (FINAL_VALIDATION, 'Утверждение после звукорежиссера'),

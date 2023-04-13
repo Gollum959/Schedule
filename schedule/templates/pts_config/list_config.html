@@ -19,15 +19,12 @@
         </h2>
         <div id="flush-collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="flush-heading{{ forloop.counter }}" data-bs-parent="#accordionFlush">
           <div class="accordion-body pe-3">
-            <p class="card-text mb-1"><b>Адрес:</b> г. JOPA</p>
+            {% include "includes/config_detail_short.html" with ptsconstructor=conf %}
             <div class="row">
               <div class="col d-flex justify-content-end pe-0">
                 {% if user.is_main_director_or_admin %}
-                  {% comment %} <div class="col d-flex justify-content-end"> {% endcomment %}
                     <a type="button" class="btn btn-primary me-3" href="{% url 'config:config_edit' conf.pk %}">Изменить базовую кофигурацию</a> 
-                  {% comment %} </div> {% endcomment %}
                 {% endif %}
-                {% comment %} <div class="col-md-auto d-flex justify-content-end"> {% endcomment %}
                 <a type="button" class="btn btn-primary" href="{% url 'config:config_create_onbase' conf.pk %}">Создать конфигурацию на основе базовой</a>
               </div>
             </div>
@@ -43,41 +40,40 @@
       <div class="accordion accordion-flush" id="myaccordionFlush">
     {% endif %}
   {% else %}
-      <div id="place_{{ conf.pk }}" class="accordion-item">
-
-        <h2 class="accordion-header" id="flush-heading{{ forloop.counter }}">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
-            <h5 class="p-0 m-0">{{ conf.name }}</h5>
-          </button>
-        </h2>
-
-        <div id="flush-collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="flush-heading{{ forloop.counter }}" data-bs-parent="#myaccordionFlush">
-          <div class="accordion-body pe-3">
-            <p class="card-text mb-1"><b>Адрес:</b> г. JOPA</p>
-            <div class="row ms-1 align-items-center">
-              <div class="col d-flex justify-content-end pe-0">
-                <a type="button" id="new-city" class="btn btn-primary" href="{% url 'config:config_edit' conf.pk %}">Изменить кофигурацию</a>
-              </div>
-              <div class="col-md-auto d-flex justify-content-end pe-0">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                  Удалить
-                </button>
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Удалить конфигурацию</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        <b>Вы точно хотите удалить конфигурацию {{ conf.name }}</b>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-                        <form action="{% url 'config:config_remove' conf.pk %}" method="POST">
-                          {% csrf_token %}
-                          <button type="submit" class="btn btn-primary">Да</button>
-                        </form>
+        <div id="place_{{ conf.pk }}" class="accordion-item">
+          <h2 class="accordion-header" id="flush-heading{{ forloop.counter }}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+              <h5 class="p-0 m-0">{{ conf.name }}</h5>
+            </button>
+          </h2>
+          <div id="flush-collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="flush-heading{{ forloop.counter }}" data-bs-parent="#myaccordionFlush">
+            <div class="accordion-body pe-3">
+              {% include "includes/config_detail_short.html" with ptsconstructor=conf %}
+              <div class="row ms-1 align-items-center">
+                <div class="col d-flex justify-content-end pe-0">
+                  <a type="button" id="new-city" class="btn btn-primary" href="{% url 'config:config_edit' conf.pk %}">Изменить кофигурацию</a>
+                </div>
+                <div class="col-md-auto d-flex justify-content-end pe-0">
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Удалить
+                  </button>
+                  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Удалить конфигурацию</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <b>Вы точно хотите удалить конфигурацию {{ conf.name }}</b>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+                          <form action="{% url 'config:config_remove' conf.pk %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Да</button>
+                          </form>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -86,94 +82,11 @@
             </div>
           </div>
         </div>
-
-      </div>
   {% endif %}
 {% endfor %}
-</div>
-
-
-{% if not ptsconstructor_list and user.is_main_director_or_admin %}
-    <div class="col d-flex justify-content-end">
+      </div>
+{% if not ptsconstructor_list and user.is_main_director_or_admin and event_type_id %}
+    <div id="add-cfg-button" class="col d-flex justify-content-end">
       <a type="button" id="new-city" class="btn btn-primary" href="{% url 'config:config_create' %}?place={{place_id}}&event={{event_type_id}}">Добавить базовую кофигурацию</a>
     </div>
 {% endif %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{% comment %} {% for conf in ptsconstructor_list %}
-  {% if conf.base_conf %}
-    <h3>Базовая конфигурации ПТС</h3>
-    <hr style="border: 1px;">
-    <div class="row ms-1 align-items-center">
-      <div class="col">
-        {{ conf.name }}
-      </div>
-      {% if user.is_main_director_or_admin %}
-        <div class="col d-flex justify-content-end">
-          <a type="button" id="new-city" class="btn btn-primary" href="{% url 'config:config_edit' conf.pk %}">Изменить базовую кофигурацию</a>
-        </div>
-      {% endif %}
-      <div class="col-md-auto d-flex justify-content-end">
-        <a type="button" id="new-city" class="btn btn-primary" href="{% url 'config:config_create_onbase' conf.pk %}">Создать конфигурацию на основе базовой</a>
-      </div>
-    </div>
-    <hr style="border: 1px; margin-top: 15px">
-
-    {% if not forloop.last %}
-      <h3>Мои конфигурации ПТС</h3>
-    {% endif %}
-  {% else %}
-    <hr style="border: 1px; margin-top: 15px">
-    <div class="row ms-1 align-items-center">
-      <div class="col">{{ conf.name }}</div>
-      <div class="col d-flex justify-content-end">
-        <a type="button" id="new-city" class="btn btn-primary" href="{% url 'config:config_edit' conf.pk %}">Изменить кофигурацию</a>
-      </div>
-      <div class="col-md-auto d-flex justify-content-end">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-          Удалить
-        </button>
-        
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Удалить конфигурацию</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <b>Вы точно хотите удалить конфигурацию {{ conf.name }}</b>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-                <form action="{% url 'config:config_remove' conf.pk %}" method="POST">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-primary">Да</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  {% endif %}
-{% endfor %} {% endcomment %}

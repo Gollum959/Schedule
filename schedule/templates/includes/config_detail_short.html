@@ -1,0 +1,169 @@
+<div class="container p-3">
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <div class="row">
+        <div class="col-5">
+          <section class="intro">
+            <div class="mask d-flex align-items-center h-100">
+              <div class="container ps-2 pe-2">
+                <div class="row justify-content-center">
+                  <div class="col-12">
+                    <div class="card mb-3">
+                      <div class="card-body p-0 ms-2 me-2 mb-2">
+                        <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок камер</p>
+                        {% if ptsconstructor.cameraptsconstructor_set.all|length > 0 %}
+                        <table class="table table-striped mb-0 ps-2 pe-2 ">
+                          <thead style="background-color: lightskyblue;">
+                            <tr class="d-flex">
+                              <th class="col-6">Тип Камеры</th>
+                              <th class="col-6">Количество</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for camera in ptsconstructor.cameraptsconstructor_set.all %}
+                              <tr class="d-flex">
+                                <td class="col-6 pt-2">{{ camera.cameras }}</td>
+                                <td class="col-6">{{ camera.quantity }}</td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                        {% else %}
+                          Информация отсутсвует в конфигурации ПТС
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="col-7">
+          <section class="intro">
+            <div class="mask d-flex align-items-center h-100">
+              <div class="container  ps-2 pe-2">
+                <div class="row justify-content-center">
+                  <div class="col-12">
+                    <div class="card mb-3">
+                      <div class="card-body p-0 ms-2 me-2 mb-2">
+                        <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок графической системы</p>
+                        {% if ptsconstructor.gfxptsconstructor_set.all|length > 0 %}
+                        <table class="table table-striped mb-0 ps-2 pe-2 ">
+                          <thead style="background-color: lightskyblue;">
+                            <tr class="d-flex">
+                              <th class="col-3">Сервер графики</th>
+                              <th class="col-3">Тип лицензии</th>
+                              <th class="col-2">Количество</th>
+                              <th class="col-4 ">Подключение к судейской системе</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for gfx in ptsconstructor.gfxptsconstructor_set.all %}
+                              <tr class="d-flex">
+                                <td class="col-3 pt-2">{{ gfx.gfx }}</td>
+                                <td class="col-3">{{ gfx.get_license_type }}</td>
+                                <td class="col-2">{{ gfx.quantity }}</td>
+                                <td class="col-4">{% if gfx.judicial_system %}Да{% else %}Нет{% endif %}</td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                        {% else %}
+                          Информация отсутсвует в конфигурации ПТС
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-5">
+          <section class="intro">
+            <div class="mask d-flex align-items-center h-100">
+              <div class="container  ps-2 pe-2">
+                <div class="row justify-content-center">
+                  <div class="col-12">
+                    <div class="card mb-3">
+                      <div class="card-body p-0 ms-2 me-2 mb-2">
+                        <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок оптики</p>
+                        {% if ptsconstructor.opticptsconstructor_set.all|length > 0 %}
+                        <table class="table table-striped mb-0 ps-2 pe-2 ">
+                          <thead style="background-color: lightskyblue;">
+                            <tr class="d-flex">
+                              <th class="col-6">Тип Камеры</th>
+                              <th class="col-6">Количество</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for optic in ptsconstructor.opticptsconstructor_set.all %}
+                              <tr class="d-flex">
+                                <td class="col-6 pt-2">{{ optic.optics }}</td>
+                                <td class="col-6">{{ optic.quantity }}</td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                        {% else %}
+                          Информация отсутсвует в конфигурации ПТС
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="col-7">
+          <section class="intro">
+            <div class="mask d-flex align-items-center h-100">
+              <div class="container ps-2 pe-2">
+                <div class="row justify-content-center">
+                  <div class="col-12">
+                    <div class="card mb-3">
+                      <div class="card-body p-0 ms-2 me-2 mb-2">
+                        <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок системы записи и повторов</p>
+                        {% if ptsconstructor.serverrecordingrepeatconstructor_set.all|length > 0 %}
+                        <table class="table table-striped mb-0 ps-2 pe-2 ">
+                          <thead style="background-color: lightskyblue;">
+                            <tr class="d-flex">
+                              <th class="col-6">Тип сервера</th>
+                              <th class="col-6">Конфигурация</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for server in ptsconstructor.serverrecordingrepeatconstructor_set.all %}
+                            <tr class="d-flex">
+                              <td class="col-6 pt-2">{{ server.type }}</td>
+                              <td class="col-6">{{ server.type_player }}</td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                        {% else %}
+                          Информация отсутсвует в конфигурации ПТС
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <p class="fs-6 ms-4 mb-2"><b>Количество микрофонов: </b>{{ ptsconstructor.microphone_quantity }}</p>
+    </div>
+  </div>
+</div>
+

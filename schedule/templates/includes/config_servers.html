@@ -50,7 +50,7 @@
                     {% endif %}
                   </div>
                 </div>
-                {% if user.is_admin_or_moderator and ptsrequest.is_approval and ptsrequest.pts_cfg.serverrecordingrepeatconstructor_set.all|length > 0 %}
+                {% if user.is_admin_or_moderator and ptsrequest.is_approval and ptsrequest.pts_cfg.serverrecordingrepeatconstructor_set.all|length > 0 or user.is_admin %}
                   <div class="row pt-3">
                     <div class="col d-flex justify-content-end">
                       <button class="btn btn-secondary btn-sm"

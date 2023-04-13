@@ -44,7 +44,7 @@
                     {% endif %}
                   </div>
                 </div>
-                {% if user.is_admin_or_moderator and ptsrequest.is_approval %}
+                {% if user.is_admin_or_moderator and ptsrequest.is_approval or user.is_admin %}
                   <div class="row pt-3">
                     <div class="col d-flex justify-content-end">
                       <button class="btn btn-secondary btn-sm"

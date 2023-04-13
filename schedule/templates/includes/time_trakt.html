@@ -17,7 +17,7 @@
             &mdash;
           {% endif %}
         </p>
-        {% if user.is_admin_or_moderator and ptsrequest.is_approval %}
+        {% if user.is_admin_or_moderator and ptsrequest.is_approval or user.is_admin%}
           <button class="btn btn-secondary btn-sm"
             hx-get="{% url 'pts_requests:trakt_time_edit' ptsrequest.pk %}"
             hx-target="#time-trakt"

@@ -19,9 +19,27 @@ urlpatterns = [
         name='request_edit'
     ),
     path(
-        'send_request/<int:pk>/',
+        'remove_draft/<int:pk>/',
+        views.remove_draft_pts_request,
+        name='draft_request_remove'
+    ),
+]
+
+status_request_change_urlpatterns = [
+    path(
+        'request/<int:pk>/',
         views.change_status_to_on_approval,
         name='request_change_status'
+    ),
+    path(
+        'send_request_cancel/<int:pk>/',
+        views.change_status_to_cancel,
+        name='request_change_status_cancel'
+    ),
+    path(
+        'send_request_reject/<int:pk>/',
+        views.change_status_to_reject,
+        name='request_change_status_reject'
     ),
     path(
         'send_request_soundman/<int:pk>/',
@@ -33,24 +51,9 @@ urlpatterns = [
         views.change_status_to_final,
         name='request_change_status_after_soundman'
     ),
-    path(
-        'remove_draft/<int:pk>/',
-        views.remove_draft_pts_request,
-        name='draft_request_remove'
-    ),
-    path('ajax/load-places/', views.load_places, name='ajax_load_places'),
-    path('ajax/load-cfg/', views.load_pts_cfg, name='ajax_load_cfg'),
-    path(
-        'ajax/load-event-types/',
-        views.load_event_type,
-        name='ajax_load_event_types'
-    ),
-    path(
-        'ajax/load-cfg-detail/',
-        views.load_cfg_detail,
-        name='ajax_load_cfg_detail'
-    ),
 ]
+
+urlpatterns += status_request_change_urlpatterns
 
 htmx_urlpatterns = [
     path(
@@ -91,3 +94,20 @@ htmx_urlpatterns = [
 ]
 
 urlpatterns += htmx_urlpatterns
+
+ajax_dropdown_urlpatterns = [
+    path('ajax/load-places/', views.load_places, name='ajax_load_places'),
+    path('ajax/load-cfg/', views.load_pts_cfg, name='ajax_load_cfg'),
+    path(
+        'ajax/load-event-types/',
+        views.load_event_type,
+        name='ajax_load_event_types'
+    ),
+    path(
+        'ajax/load-cfg-detail/',
+        views.load_cfg_detail,
+        name='ajax_load_cfg_detail'
+    ),
+]
+
+urlpatterns += ajax_dropdown_urlpatterns
