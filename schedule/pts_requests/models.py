@@ -139,6 +139,7 @@ class PtsRequest(models.Model):
     ON_SOUNDMAN = 'soundman'
     FINAL_VALIDATION = 'final'
     UNDER_REVISION = 'revision'
+    DPTR = 'dptr'
     STATUS = [
         (DRAFT, 'Черновик'),
         (CANCEL, 'Отменена'),
@@ -148,6 +149,7 @@ class PtsRequest(models.Model):
         (ON_SOUNDMAN, 'На утверждении звукорежиссером'),
         (FINAL_VALIDATION, 'Утверждение после звукорежиссера'),
         (UNDER_REVISION, 'На доработке'),
+        (DPTR, 'Согласование ДПТР'),
     ]
 
     name = models.CharField(
@@ -321,6 +323,16 @@ class PtsRequest(models.Model):
     def is_draft_or_reject(self):
         """Return True if status is DRAFT or REJECTED."""
         return (self.status == self.DRAFT or self.status == self.REJECTED)
+
+    @property
+    def is_reject(self):
+        """Return True if status is REJECTED."""
+        return self.status == self.REJECTED
+
+    @property
+    def is_final(self):
+        """Return True if status is FINAL."""
+        return self.status == self.FINAL_VALIDATION
 
     class Meta:
         verbose_name = 'Заявка ПТС'

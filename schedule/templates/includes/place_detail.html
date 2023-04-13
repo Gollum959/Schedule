@@ -17,9 +17,9 @@
           {% if ptsrequest.place.judge_system %}
             <p class="card-text mb-1"><b>Судейская система:</b> {{ ptsrequest.place.judge_system }}</p>
           {% endif %} 
-          <a href="{% url 'place:place_detail' ptsrequest.place.pk %}" target="_blank" rel="noopener noreferrer">
+          {% comment %} <a href="{% url 'place:place_detail' ptsrequest.place.pk %}" target="_blank" rel="noopener noreferrer">
             Детальная информация по объекту
-          </a> 
+          </a>  {% endcomment %}
       </div>
     </div>
   </div>

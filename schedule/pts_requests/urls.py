@@ -27,29 +27,34 @@ urlpatterns = [
 
 status_request_change_urlpatterns = [
     path(
-        'request/<int:pk>/',
+        'request/on-approval/<int:pk>/',
         views.change_status_to_on_approval,
         name='request_change_status'
     ),
     path(
-        'send_request_cancel/<int:pk>/',
+        'request/cancel/<int:pk>/',
         views.change_status_to_cancel,
         name='request_change_status_cancel'
     ),
     path(
-        'send_request_reject/<int:pk>/',
+        'request/reject/<int:pk>/',
         views.change_status_to_reject,
         name='request_change_status_reject'
     ),
     path(
-        'send_request_soundman/<int:pk>/',
+        'request/soundman/<int:pk>/',
         views.change_status_to_on_soundman,
         name='request_change_status_soundman'
     ),
     path(
-        'send_after_soundman/<int:pk>/',
+        'request/after-soundman/<int:pk>/',
         views.change_status_to_final,
         name='request_change_status_after_soundman'
+    ),
+    path(
+        'request/approved/<int:pk>/',
+        views.change_status_to_dptr,
+        name='request_change_status_dptr'
     ),
 ]
 

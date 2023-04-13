@@ -205,54 +205,6 @@ class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
 
 
 @login_required
-def change_status_to_on_approval(request, pk):
-    """Change PTS request status from draft to on approval."""
-
-    pts_request = get_object_or_404(PtsRequest, pk=pk)
-    if pts_request.author != request.user:
-        raise Http404()
-    pts_request.status = 'approval'
-    pts_request.save()
-    return redirect('pts_requests:request_detail', pk=pts_request.pk)
-
-
-@login_required
-def change_status_to_cancel(request, pk):
-    """Change PTS request status to cancel."""
-
-    pts_request = get_object_or_404(PtsRequest, pk=pk)
-    if request.user != pts_request.author:
-        raise Http404()
-    pts_request.status = 'cancel'
-    pts_request.save()
-    return redirect('pts_requests:index')
-
-
-@login_required
-def change_status_to_on_soundman(request, pk):
-    """Change PTS request status from on approval to soundman."""
-
-    pts_request = get_object_or_404(PtsRequest, pk=pk)
-    if not request.user.is_admin_or_moderator:
-        raise Http404()
-    pts_request.status = 'soundman'
-    pts_request.save()
-    return redirect('pts_requests:index')
-
-
-@login_required
-def change_status_to_final(request, pk):
-    """Change PTS request status from on soundman to final."""
-
-    pts_request = get_object_or_404(PtsRequest, pk=pk)
-    if not request.user.is_soundman_or_admin:
-        raise Http404()
-    pts_request.status = 'final'
-    pts_request.save()
-    return redirect('pts_requests:index')
-
-
-@login_required
 def remove_draft_pts_request(request, pk):
     """Remove draft PTS request, only author."""
 
@@ -627,3 +579,88 @@ def config_microphones_edit_form(request, pk):
         'microphones_forms': microphones_forms
     }
     return render(request, 'includes/config_microphones_edit.html', context)
+
+
+# view functions to change request status
+
+@login_required
+def change_status_to_reject(request, pk):
+    """Change PTS request status to reject."""
+
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    comment = request.POST.get('comment', '')
+    step = request.POST.get('step')
+    if (
+        (
+            not request.user.is_admin_or_moderator
+            and pts_request.status != "soundman"
+        ) or (
+            not request.user.is_soundman_or_admin
+            and pts_request.status == "soundman"
+        )
+    ):
+        raise Http404()
+    pts_request.status = step if step == 'soundman' else 'rejected'
+    pts_request.comment = comment
+    pts_request.save()
+    return redirect('pts_requests:index')
+
+
+@login_required
+def change_status_to_on_approval(request, pk):
+    """Change PTS request status from draft to on approval."""
+
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    if pts_request.author != request.user:
+        raise Http404()
+    pts_request.status = 'approval'
+    pts_request.save()
+    return redirect('pts_requests:request_detail', pk=pts_request.pk)
+
+
+@login_required
+def change_status_to_cancel(request, pk):
+    """Change PTS request status to cancel."""
+
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    if request.user != pts_request.author:
+        raise Http404()
+    pts_request.status = 'cancel'
+    pts_request.save()
+    return redirect('pts_requests:index')
+
+
+@login_required
+def change_status_to_on_soundman(request, pk):
+    """Change PTS request status from on approval to soundman."""
+
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    if not request.user.is_admin_or_moderator:
+        raise Http404()
+    pts_request.status = 'soundman'
+    pts_request.save()
+    return redirect('pts_requests:index')
+
+
+@login_required
+def change_status_to_final(request, pk):
+    """Change PTS request status from on soundman to final."""
+
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    if not request.user.is_soundman_or_admin:
+        raise Http404()
+    pts_request.status = 'final'
+    pts_request.save()
+    return redirect('pts_requests:index')
+
+
+@login_required
+def change_status_to_dptr(request, pk):
+    """Change PTS request status from on soundman to final."""
+
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    if not request.user.is_admin:
+        raise Http404()
+    pts_request.status = 'dptr'
+    pts_request.save()
+    return redirect('pts_requests:index')

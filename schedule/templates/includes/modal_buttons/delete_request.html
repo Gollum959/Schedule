@@ -1,0 +1,26 @@
+  <div class="col-md-auto d-flex justify-content-end">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#remove-draftModal">
+      Удалить
+    </button>
+    
+    <div class="modal fade" id="remove-draftModal" tabindex="-1" aria-labelledby="remove-draftModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="remove-draftModalLabel">Удалить черновик</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <b>Вы точно хотите удалить черновик заявки {{ ptsrequest.name }}</b>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+            <form action="{% url 'pts_requests:draft_request_remove' ptsrequest.pk %}" method="POST">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary">Да</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

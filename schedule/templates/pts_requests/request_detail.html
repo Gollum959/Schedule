@@ -1,210 +1,68 @@
 {% extends 'base.html' %}
 {% block title %}<title>Заявка на {{ ptsrequest.name }} </title>{% endblock %}
 {% block content %}
-<style>
-  .accordion-button:not(.collapsed) {
-    color: #0c63e4;
-    background-color: rgba(0,0,0,.03);
-  }
-</style>
-<div class="container p-3">
-  <h3>Заявка: {{ ptsrequest.name }}</h3>
-  <div class="card shadow-sm">
-    <div class="card-header align-items-center">
-      <h5 style="margin-bottom: 0px;">Основная информация</h5>
+  <style>
+    .accordion-button:not(.collapsed) {
+      color: #0c63e4;
+      background-color: rgba(0,0,0,.03);
+    }
+  </style>
+  <div class="container p-3">
+    <h3>Заявка: {{ ptsrequest.name }}</h3>
+    <div class="card shadow-sm">
+      <div class="card-header align-items-center">
+        <h5 style="margin-bottom: 0px;">Основная информация</h5>
+      </div>
+      <div class="card-body">
+          <p class="card-text mb-1"><b>Дата проведения:</b> {{ ptsrequest.broadcast_start_date|date:'d E Y' }}</p>
+          <p class="card-text mb-1"><b>Статус заявки:</b> {{ ptsrequest.get_status_display }}</p>
+          {% if pts_requests.comment != "" %}
+            <p class="card-text mb-1 text-danger"><b>Комментарий:</b> {{ ptsrequest.comment }}</p>
+          {% endif %}
+          <p class="card-text mb-1"><b>Ответственное лицо:</b> {{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.position}}, {{ptsrequest.author.direction}}</p>
+      </div>
     </div>
-    <div class="card-body">
-        <p class="card-text mb-1"><b>Дата проведения:</b> {{ ptsrequest.broadcast_start_date|date:'d E Y' }}</p>
-        <p class="card-text mb-1"><b>Статус заявки:</b> {{ ptsrequest.get_status_display }}</p>
-        <p class="card-text mb-1"><b>Ответственное лицо:</b> {{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.position}}, {{ptsrequest.author.direction}}</p>
+    {% include 'includes/place_detail.html' %} 
+    {% include 'includes/time_detail.html' %}
+    {% include 'includes/config_detail.html' %} 
+    {% include 'includes/lines_detail.html' %}
+
+    <div class="row ms-1 align-items-center pt-3">
+      <div class="col ps-0 d-flex justify-content-start">
+        <a type="button" class="btn btn-primary" href="{% url 'pts_requests:index'%}">
+          Вернуться домой
+        </a>
+      </div>
+
+      {% if ptsrequest.is_draft_or_reject and ptsrequest.author == user %}
+        {% include 'includes/modal_buttons/change_status_draft_approval.html' %}
+        <div class="col-md-auto d-flex justify-content-end">
+          <a type="button" id="new-city" class="btn btn-primary" href="{% url 'pts_requests:request_edit' ptsrequest.pk %}">Изменить заявку</a>
+        </div>
+        {% if ptsrequest.is_draft %}
+          {% include 'includes/modal_buttons/delete_request.html' %}
+        {% endif %}
+      {% endif %}
+
+      {% if ptsrequest.is_approval and user.is_admin_or_moderator %}
+        {% include 'includes/modal_buttons/change_status_reject.html' %}
+        {% include 'includes/modal_buttons/change_status_approval_soundman.html' %}
+      {% endif %}
+
+      {% if ptsrequest.is_soundman and user.is_soundman_or_admin %}
+        {% include 'includes/modal_buttons/change_status_reject.html' %}
+        {% include 'includes/modal_buttons/change_status_soundman_final.html' %}
+      {% endif %}
+
+      {% if ptsrequest.is_final and user.is_admin_or_moderator %}
+        {% include 'includes/modal_buttons/change_status_reject.html' with final=True %}
+        {% include 'includes/modal_buttons/change_status_final_dptr.html' %}
+      {% endif %}
+
+      {% if ptsrequest.author == user and ptsrequest.status != "draft" and ptsrequest.status != "cancel"%}
+        {% include 'includes/modal_buttons/cancel_request.html' %}
+      {% endif %}
+
     </div>
   </div>
-  {% include 'includes/place_detail.html' %} 
-  {% include 'includes/time_detail.html' %}
-  {% include 'includes/config_detail.html' %} 
-  {% include 'includes/lines_detail.html' %}
-
-  <div class="row ms-1 align-items-center pt-3">
-    <div class="col ps-0 d-flex justify-content-start">
-      <a type="button" class="btn btn-primary" href="{% url 'pts_requests:index'%}">
-        Вернуться домой
-      </a>
-    </div>
-    {% if ptsrequest.is_draft %}
-      <div class="col d-flex justify-content-end">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chage-statusModal">
-          Отправить заявку на утверждение
-        </button>
-      </div>
-
-      <div class="modal fade" id="chage-statusModal" tabindex="-1" aria-labelledby="chage-statusModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="chage-statusModalLabel">Рассмотрение заявки</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <b>Вы точно хотите направить заявку {{ ptsrequest.name }} на рассмотрение?</b>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-              <form action="{% url 'pts_requests:request_change_status' ptsrequest.pk %}" method="POST">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary">Да</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-auto d-flex justify-content-end">
-        <a type="button" id="new-city" class="btn btn-primary" href="{% url 'pts_requests:request_edit' ptsrequest.pk %}">Изменить заявку</a>
-      </div>
-      <div class="col-md-auto d-flex justify-content-end">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#remove-draftModal">
-          Удалить
-        </button>
-        
-        <div class="modal fade" id="remove-draftModal" tabindex="-1" aria-labelledby="remove-draftModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="remove-draftModalLabel">Удалить черновик</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <b>Вы точно хотите удалить черновик заявки {{ ptsrequest.name }}</b>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-                <form action="{% url 'pts_requests:draft_request_remove' ptsrequest.pk %}" method="POST">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-primary">Да</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    {% endif %}
-    {% if ptsrequest.is_approval and user.is_admin_or_moderator %}
-    <div class="col d-flex justify-content-end">
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chage-statusModal">
-        Отправить заявку на доработку 
-      </button>
-    </div>
-
-    <div class="modal fade" id="chage-statusModal" tabindex="-1" aria-labelledby="chage-statusModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="chage-statusModalLabel">Рассмотрение заявки</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <form action="{% url 'pts_requests:request_change_status' ptsrequest.pk %}" method="POST">
-            {% csrf_token %}
-            <div class="modal-body">
-              <b>Вы точно хотите направить заявку: {{ ptsrequest.name }}, на доработку?</b>
-              <div class="mb-3">
-                <label for="commentId" class="form-label">Замечания</label>
-                <textarea name="comment" class="form-control" id="commentId" rows="3"></textarea>
-              </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-                <button type="submit" class="btn btn-primary">Да</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-auto d-flex justify-content-end">
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chage-statusModal">
-        Отправить заявку на утверждение звукорежиссером
-      </button>
-    </div>
-
-    <div class="modal fade" id="chage-statusModal" tabindex="-1" aria-labelledby="chage-statusModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="chage-statusModalLabel">Рассмотрение заявки</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <b>Вы точно хотите направить заявку {{ ptsrequest.name }} на рассмотрение звукорежиссером?</b>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-            <form action="{% url 'pts_requests:request_change_status_soundman' ptsrequest.pk %}" method="POST">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-primary">Да</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  {% endif %}
-  {% if ptsrequest.is_soundman %}
-    <div class="col d-flex justify-content-end">
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chage-statusModal">
-        Подтвердить звуковое оборудование
-      </button>
-    </div>
-
-    <div class="modal fade" id="chage-statusModal" tabindex="-1" aria-labelledby="chage-statusModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="chage-statusModalLabel">Рассмотрение заявки</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <b>Вы точно хотите подтвердить звуковое оборудование в заявке {{ ptsrequest.name }}?</b>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-            <form action="{% url 'pts_requests:request_change_status_after_soundman' ptsrequest.pk %}" method="POST">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-primary">Да</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  {% endif %}
-  {% if ptsrequest.author == user and ptsrequest.status != "draft" and ptsrequest.status != "cancel"%}
-    <div class="col d-flex justify-content-end">
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chage-statusModal">
-        Отменить заявку
-      </button>
-    </div>
-
-    <div class="modal fade" id="chage-statusModal" tabindex="-1" aria-labelledby="chage-statusModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="chage-statusModalLabel">Отмена заявки</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <b>Вы точно хотите отменить заявку {{ ptsrequest.name }}?</b>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-            <form action="{% url 'pts_requests:request_change_status_cancel' ptsrequest.pk %}" method="POST">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-primary">Да</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  {% endif %}
-  </div>
-</div>
 {% endblock %} 

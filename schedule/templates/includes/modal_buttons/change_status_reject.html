@@ -1,0 +1,39 @@
+  <div class="col d-flex justify-content-end">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chage-status-rejectModal">
+      Отправить заявку на доработку 
+    </button>
+  </div>
+
+  <div class="modal fade" id="chage-status-rejectModal" tabindex="-1" aria-labelledby="chage-status-rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="chage-status-rejectModalLabel">Рассмотрение заявки</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{% url 'pts_requests:request_change_status_reject' ptsrequest.pk %}" method="POST">
+          {% csrf_token %}
+          <div class="modal-body">
+            <b>Вы точно хотите направить заявку: {{ ptsrequest.name }}, на доработку?</b>
+            {% if final %}
+              <div class="mb-3">
+                <label for="stepId" class="col-form-label">Выберите шаг:</label>
+                <select name="step" class="form-select" id="stepId">
+                  <option value="rejected">Режиссер(заявитель)</option>
+                  <option selected value="soundman">Звукорежиссер</option>
+                </select>
+              </div>
+            {% endif %}
+            <div class="mb-3">
+              <label for="commentId" class="form-label">Замечания</label>
+              <textarea name="comment" class="form-control" id="commentId" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+              <button type="submit" class="btn btn-primary">Да</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
