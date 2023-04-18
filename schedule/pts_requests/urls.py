@@ -52,9 +52,19 @@ status_request_change_urlpatterns = [
         name='request_change_status_after_soundman'
     ),
     path(
+        'request/gdpt/<int:pk>/',
+        views.change_status_to_gdpt,
+        name='request_change_status_gdpt'
+    ),
+    path(
+        'request/dtov/<int:pk>/',
+        views.change_status_to_dtov,
+        name='request_change_status_dtov'
+    ),
+    path(
         'request/approved/<int:pk>/',
-        views.change_status_to_dptr,
-        name='request_change_status_dptr'
+        views.change_status_to_approved,
+        name='request_change_status_approved'
     ),
 ]
 

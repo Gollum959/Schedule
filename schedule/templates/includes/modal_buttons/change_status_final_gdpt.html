@@ -1,0 +1,26 @@
+<div class="col-auto d-flex justify-content-end">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chage-statusModal">
+      Отправить заявку в  ГДПТ
+    </button>
+  </div>
+
+  <div class="modal fade" id="chage-statusModal" tabindex="-1" aria-labelledby="chage-statusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="chage-statusModalLabel">Рассмотрение заявки</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <b>Вы точно хотите утвердить заявку {{ ptsrequest.name }}?</b>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+          <form action="{% url 'pts_requests:request_change_status_gdpt' ptsrequest.pk %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Да</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

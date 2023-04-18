@@ -11,7 +11,7 @@ from typing import Any, Dict
 from django.http import HttpResponseRedirect
 
 from place_broadcast.models import PlaceConstructor, EventType
-from pts_requests.models import PtsRequest
+from pts_requests.models import PtsRequest, PtsRequestApprovalStages
 from pts_config.models import PtsConstructor, MicrophoneType
 from pts_requests.forms import (AddRequestFrom,
                                 UpdateTraktTime,
@@ -77,6 +77,12 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
         if self.request.user.is_soundman:
             return requests.filter(status='soundman')
 
+        if self.request.user.is_gdpt:
+            return requests.filter(status='gdpt')
+
+        if self.request.user.is_dtov_headmaster:
+            return requests.filter(status='dtov')
+
         requests = requests.filter(
             author__direction=self.request.user.direction
         ).exclude(~Q(author=self.request.user), status='cancel')
@@ -136,6 +142,12 @@ class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
             internetlines.is_valid()
         ):
             self.object = form.save()
+            step = PtsRequestApprovalStages(
+                pts_request=self.object,
+                steps=1,
+                author=self.request.user
+            )
+            step.save()
             commlines.instance = self.object
             commlines.save()
             techcommlines.instance = self.object
@@ -584,6 +596,24 @@ def config_microphones_edit_form(request, pk):
 # view functions to change request status
 
 @login_required
+def change_status_to_on_approval(request, pk):
+    """Change PTS request status from draft to on approval."""
+
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    if pts_request.author != request.user:
+        raise Http404()
+    step = PtsRequestApprovalStages(
+                pts_request=pts_request,
+                steps=3,
+                author=request.user
+            )
+    step.save()
+    pts_request.status = 'approval'
+    pts_request.save()
+    return redirect('pts_requests:request_detail', pk=pts_request.pk)
+
+
+@login_required
 def change_status_to_reject(request, pk):
     """Change PTS request status to reject."""
 
@@ -601,21 +631,16 @@ def change_status_to_reject(request, pk):
     ):
         raise Http404()
     pts_request.status = step if step == 'soundman' else 'rejected'
-    pts_request.comment = comment
+    history_step = 2 if pts_request.status == 'rejected' else 4
+    step = PtsRequestApprovalStages(
+                pts_request=pts_request,
+                steps=history_step,
+                author=request.user,
+                comment=comment
+            )
+    step.save()
     pts_request.save()
     return redirect('pts_requests:index')
-
-
-@login_required
-def change_status_to_on_approval(request, pk):
-    """Change PTS request status from draft to on approval."""
-
-    pts_request = get_object_or_404(PtsRequest, pk=pk)
-    if pts_request.author != request.user:
-        raise Http404()
-    pts_request.status = 'approval'
-    pts_request.save()
-    return redirect('pts_requests:request_detail', pk=pts_request.pk)
 
 
 @login_required
@@ -637,6 +662,12 @@ def change_status_to_on_soundman(request, pk):
     pts_request = get_object_or_404(PtsRequest, pk=pk)
     if not request.user.is_admin_or_moderator:
         raise Http404()
+    step = PtsRequestApprovalStages(
+                pts_request=pts_request,
+                steps=4,
+                author=request.user,
+            )
+    step.save()
     pts_request.status = 'soundman'
     pts_request.save()
     return redirect('pts_requests:index')
@@ -649,18 +680,66 @@ def change_status_to_final(request, pk):
     pts_request = get_object_or_404(PtsRequest, pk=pk)
     if not request.user.is_soundman_or_admin:
         raise Http404()
+    step = PtsRequestApprovalStages(
+                pts_request=pts_request,
+                steps=5,
+                author=request.user,
+            )
+    step.save()
     pts_request.status = 'final'
     pts_request.save()
     return redirect('pts_requests:index')
 
 
 @login_required
-def change_status_to_dptr(request, pk):
-    """Change PTS request status from on soundman to final."""
+def change_status_to_gdpt(request, pk):
+    """Change PTS request status from final to gdpt."""
 
     pts_request = get_object_or_404(PtsRequest, pk=pk)
-    if not request.user.is_admin:
+    if not request.user.is_admin_or_moderator:
         raise Http404()
-    pts_request.status = 'dptr'
+    step = PtsRequestApprovalStages(
+                pts_request=pts_request,
+                steps=6,
+                author=request.user,
+            )
+    step.save()
+    pts_request.status = 'gdpt'
+    pts_request.save()
+    return redirect('pts_requests:index')
+
+
+@login_required
+def change_status_to_dtov(request, pk):
+    """Change PTS request status from gdpt to dtov."""
+
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    if not request.user.is_gdpt_or_admin:
+        raise Http404()
+    step = PtsRequestApprovalStages(
+                pts_request=pts_request,
+                steps=7,
+                author=request.user,
+            )
+    step.save()
+    pts_request.status = 'dtov'
+    pts_request.save()
+    return redirect('pts_requests:index')
+
+
+@login_required
+def change_status_to_approved(request, pk):
+    """Change PTS request status from gdpt to dtov."""
+
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    if not request.user.is_dtov_headmaster_or_admin:
+        raise Http404()
+    step = PtsRequestApprovalStages(
+                pts_request=pts_request,
+                steps=8,
+                author=request.user,
+            )
+    step.save()
+    pts_request.status = 'approved'
     pts_request.save()
     return redirect('pts_requests:index')

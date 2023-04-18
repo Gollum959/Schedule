@@ -10,21 +10,28 @@ class User(AbstractUser):
     MODERATOR = 'moderator'
     ADMIN = 'admin'
     SOUNDMAN = 'soundman'
+    GDPT = 'gdpt'
+    DTOV_HEADMASTER = 'headmaster'
     ROLES = [
         (USER, 'Режиссёр'),
         (MAIN_DIRECTOR, 'Главный режисёр'),
         (SOUNDMAN, 'Звукорежиссёр'),
         (MODERATOR, 'Модератор'),
         (ADMIN, 'Администратор'),
+        (GDPT, 'ГДПТ'),
+        (DTOV_HEADMASTER, 'Директор ДТОВ'),
     ]
 
     GPC = 'gpc'
     ATN = 'atn'
     BEL5 = 'bel5'
+    DTOV = 'dtov'
     DIRECTIONS = [
         (GPC, 'ГПЦ'),
         (ATN, 'АТН'),
         (BEL5, 'Беларусь 5'),
+        (DTOV, 'ДТОВ'),
+        (GDPT, 'ГДПТ'),
     ]
 
     email = models.EmailField(unique=True)
@@ -70,6 +77,16 @@ class User(AbstractUser):
         return self.role == self.SOUNDMAN
 
     @property
+    def is_gdpt(self):
+        """Return True if user is GDPT."""
+        return self.role == self.GDPT
+
+    @property
+    def is_dtov_headmaster(self):
+        """Return True if user is DTOV_HEADMASTER."""
+        return self.role == self.DTOV_HEADMASTER
+
+    @property
     def is_admin_or_moderator(self):
         """Return True if user is Moderator or Admin."""
         return (self.role == self.MODERATOR or
@@ -83,6 +100,24 @@ class User(AbstractUser):
             self.role == self.ADMIN or
             self.is_superuser or
             self.role == self.MAIN_DIRECTOR
+        )
+
+    @property
+    def is_gdpt_or_admin(self):
+        """Return True if user is gdpt or admin."""
+        return (
+            self.role == self.ADMIN or
+            self.is_superuser or
+            self.role == self.GDPT
+        )
+
+    @property
+    def is_dtov_headmaster_or_admin(self):
+        """Return True if user is gdpt or admin."""
+        return (
+            self.role == self.ADMIN or
+            self.is_superuser or
+            self.role == self.DTOV_HEADMASTER
         )
 
     @property

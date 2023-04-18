@@ -5,7 +5,8 @@ from pts_config.models import PtsConstructor
 from pts_requests.models import (PtsName, BroadCastType,
                                  PtsRequest, CommLineConstructor,
                                  TechCommLineConstructor, PlaceInsideBT,
-                                 InternetLineConstructor)
+                                 InternetLineConstructor,
+                                 PtsRequestApprovalStages)
 
 
 @admin.register(PtsName)
@@ -64,6 +65,13 @@ class InternetLineConstructor(admin.TabularInline):
     model = InternetLineConstructor
     fields = ('speed', 'quantity', 'start', 'end')
     extra = 1
+
+
+@admin.register(PtsRequestApprovalStages)
+class PtsRequestApprovalStagesAdmin(admin.ModelAdmin):
+    """Displaying the PtsRequestApprovalStages model in the admin panel."""
+    list_display = ('pts_request', 'steps', 'author',
+                    'comment', 'create_date')
 
 
 @admin.register(PtsRequest)

@@ -1,4 +1,4 @@
-<div class="container p-3">
+<div class="container ps-0 pe-0 pb-3 pt-3">
   <div class="card shadow-sm">
     <div class="card-body">
 
@@ -54,18 +54,18 @@
                         <table class="table table-striped mb-0 ps-2 pe-2 ">
                           <thead style="background-color: lightskyblue;">
                             <tr class="d-flex">
-                              <th class="col-3">Сервер графики</th>
+                              <th class="col-2">Сервер графики</th>
                               <th class="col-3">Тип лицензии</th>
-                              <th class="col-2">Количество</th>
+                              <th class="col-3">Количество</th>
                               <th class="col-4 ">Подключение к судейской системе</th>
                             </tr>
                           </thead>
                           <tbody>
                             {% for gfx in ptsconstructor.gfxptsconstructor_set.all %}
                               <tr class="d-flex">
-                                <td class="col-3 pt-2">{{ gfx.gfx }}</td>
+                                <td class="col-2 pt-2">{{ gfx.gfx }}</td>
                                 <td class="col-3">{{ gfx.get_license_type }}</td>
-                                <td class="col-2">{{ gfx.quantity }}</td>
+                                <td class="col-3">{{ gfx.quantity }}</td>
                                 <td class="col-4">{% if gfx.judicial_system %}Да{% else %}Нет{% endif %}</td>
                               </tr>
                             {% endfor %}

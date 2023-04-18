@@ -6,6 +6,10 @@
       color: #0c63e4;
       background-color: rgba(0,0,0,.03);
     }
+    .btn:focus {
+      box-shadow: none;
+      border-color: rgba(0,0,0,.125);
+  }
   </style>
   <div class="container p-3">
     <h3>Заявка: {{ ptsrequest.name }}</h3>
@@ -16,8 +20,35 @@
       <div class="card-body">
           <p class="card-text mb-1"><b>Дата проведения:</b> {{ ptsrequest.broadcast_start_date|date:'d E Y' }}</p>
           <p class="card-text mb-1"><b>Статус заявки:</b> {{ ptsrequest.get_status_display }}</p>
-          {% if pts_requests.comment != "" %}
-            <p class="card-text mb-1 text-danger"><b>Комментарий:</b> {{ ptsrequest.comment }}</p>
+          {% if ptsrequest.ptsrequestapprovalstages_set.last.comment != "" %}
+            <p class="card-text mb-1 text-danger"><b>Комментарий:</b> {{ ptsrequest.ptsrequestapprovalstages_set.last.comment }}</p>
+          {% endif %}
+          {% if ptsrequest.ptsrequestapprovalstages_set.last.is_draft != True %}
+            <div class="accordion-item" style="border: 0px;">
+              <h2 class="accordion-header" id="agreement-history-heading">
+                <button class="btn btn-link collapsed ps-0" style="border: 0px" type="button" data-bs-toggle="collapse" data-bs-target="#agreement-history" aria-expanded="false" aria-controls="agreement-history">
+                  История согласования:
+                </button>
+              </h2>
+              <div id="agreement-history" class="accordion-collapse collapse" aria-labelledby="agreement-history-heading">
+                <div class="accordion-body">
+                  {% for agreement in ptsrequest.ptsrequestapprovalstages_set.all %}
+                    <div class="row mb-1">
+                      <div class="col-2 bg-light">
+                        {{ agreement.create_date|date:'d E H:i' }}<br>
+                        {{ agreement.author.get_full_name}}
+                      </div>
+                      <div class="col-6">
+                        <strong>Статус:</strong> {{ agreement.get_steps_display }}.
+                        {% if agreement.comment != "" %}
+                          <strong>Комментарий:</strong> {{ agreement.comment }}
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
           {% endif %}
           <p class="card-text mb-1"><b>Ответственное лицо:</b> {{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.position}}, {{ptsrequest.author.direction}}</p>
       </div>
@@ -56,7 +87,17 @@
 
       {% if ptsrequest.is_final and user.is_admin_or_moderator %}
         {% include 'includes/modal_buttons/change_status_reject.html' with final=True %}
-        {% include 'includes/modal_buttons/change_status_final_dptr.html' %}
+        {% include 'includes/modal_buttons/change_status_final_gdpt.html' %}
+      {% endif %}
+
+      {% if ptsrequest.is_gdpt and user.is_gdpt_or_admin %}
+        {% include 'includes/modal_buttons/change_status_reject.html' %}
+        {% include 'includes/modal_buttons/change_status_gdpt_dtov.html' %}
+      {% endif %}
+
+      {% if ptsrequest.is_dtov and user.is_dtov_headmaster_or_admin %}
+        {% include 'includes/modal_buttons/change_status_reject.html' %}
+        {% include 'includes/modal_buttons/change_status_approved.html' %}
       {% endif %}
 
       {% if ptsrequest.author == user and ptsrequest.status != "draft" and ptsrequest.status != "cancel"%}

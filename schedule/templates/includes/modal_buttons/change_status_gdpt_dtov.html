@@ -1,6 +1,6 @@
 <div class="col-auto d-flex justify-content-end">
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chage-statusModal">
-      Отправить заявку в ДПТР
+      Отправить заявку директору ДТОВ
     </button>
   </div>
 
@@ -12,11 +12,11 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <b>Вы точно хотите утвердить заявку {{ ptsrequest.name }}?</b>
+          <b>Вы точно хотите отправить заявку {{ ptsrequest.name }} директору ДТОВ?</b>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-          <form action="{% url 'pts_requests:request_change_status_dptr' ptsrequest.pk %}" method="POST">
+          <form action="{% url 'pts_requests:request_change_status_dtov' ptsrequest.pk %}" method="POST">
             {% csrf_token %}
             <button type="submit" class="btn btn-primary">Да</button>
           </form>
