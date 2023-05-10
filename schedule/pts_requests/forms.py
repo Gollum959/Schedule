@@ -98,6 +98,10 @@ class AddCommLine(ModelForm):
         model = CommLineConstructor
         fields = ['direction', 'custom', 'quantity', 'start', 'end', ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['direction'].initial = 'from_pts'
+
 
 CommLineFormset = inlineformset_factory(
     PtsRequest, CommLineConstructor,

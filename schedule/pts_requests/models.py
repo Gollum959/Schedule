@@ -310,13 +310,13 @@ class PtsRequest(models.Model):
         User,
         on_delete=models.CASCADE,
     )
-    # moderator = models.ForeignKey(
-    #     User,
-    #     on_delete=models.RESTRICT,
-    #     related_name="moderator",
-    #     blank=True,
-    #     null=True
-    # )
+    moderator = models.ForeignKey(
+        User,
+        on_delete=models.RESTRICT,
+        related_name="moderator",
+        blank=True,
+        null=True
+    )
     # soundman = models.ForeignKey(
     #     User,
     #     on_delete=models.RESTRICT,
@@ -407,6 +407,11 @@ class PtsRequest(models.Model):
     def is_final(self):
         """Return True if status is FINAL."""
         return self.status == self.FINAL_VALIDATION
+
+    @property
+    def is_approved(self):
+        """Return True if status is APPROVED."""
+        return self.status == self.APPROVED
 
     def __str__(self) -> str:
         return f'{self.name}'

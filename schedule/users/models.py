@@ -16,9 +16,9 @@ class User(AbstractUser):
         (USER, 'Режиссёр'),
         (MAIN_DIRECTOR, 'Главный режисёр'),
         (SOUNDMAN, 'Звукорежиссёр'),
-        (MODERATOR, 'Модератор'),
+        (MODERATOR, 'Начальник цеха ПТС'),
         (ADMIN, 'Администратор'),
-        (GDPT, 'ГДПТ'),
+        (GDPT, 'Директор ГДПТ'),
         (DTOV_HEADMASTER, 'Директор ДТОВ'),
     ]
 
@@ -36,7 +36,18 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=30)
+    surname = models.CharField(
+        max_length=30,
+        blank=True,
+        null=True
+    )
+
+    phone_number = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True
+    )
 
     direction = models.CharField(
         verbose_name='User direction',
@@ -141,3 +152,10 @@ class User(AbstractUser):
         return (
             self.role == self.USER
         )
+
+    @property
+    def get_fio(self):
+        """Return FIO."""
+        short_surname = f'{self.surname[0]}.' if self.surname else ''
+
+        return f'{self.first_name} {self.first_name[0]}. {short_surname}'

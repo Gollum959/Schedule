@@ -100,9 +100,15 @@
         {% include 'includes/modal_buttons/change_status_approved.html' %}
       {% endif %}
 
+      {% if ptsrequest.is_approved and user.is_admin_or_moderator %}
+        {% include 'includes/modal_buttons/download_letter.html' %}
+      {% endif %}
+
       {% if ptsrequest.author == user and ptsrequest.status != "draft" and ptsrequest.status != "cancel"%}
         {% include 'includes/modal_buttons/cancel_request.html' %}
       {% endif %}
+
+      
 
     </div>
   </div>

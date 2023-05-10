@@ -282,6 +282,14 @@ class GfxPtsConstructor(ConstrQuantity):
         'GfxLicenseType',
         blank=True,
     )
+    quantity = models.PositiveSmallIntegerField(
+        'Количество',
+        validators=(
+            MinValueValidator(1),
+            MaxValueValidator(50),
+        ),
+        default=1,
+    )
 
     @property
     def get_license_type(self):

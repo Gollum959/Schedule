@@ -23,6 +23,11 @@ urlpatterns = [
         views.remove_draft_pts_request,
         name='draft_request_remove'
     ),
+    path(
+        'request/<int:pk>/letter',
+        views.download_letter,
+        name='download_letter'
+    ),
 ]
 
 status_request_change_urlpatterns = [

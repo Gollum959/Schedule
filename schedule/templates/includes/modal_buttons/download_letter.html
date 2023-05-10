@@ -1,0 +1,6 @@
+  <div class="col-auto d-flex justify-content-end">
+    <form action="{% url 'pts_requests:download_letter' ptsrequest.pk %}" method="POST">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary">Скачать письмо в Белтелеком</button>
+    </form>
+  </div>

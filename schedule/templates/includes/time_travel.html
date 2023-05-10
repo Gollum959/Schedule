@@ -5,14 +5,14 @@
         <p class="card-text">
           <b>Начало:</b> 
           {% if ptsrequest.start_date %}
-            {{ ptsrequest.start_date|date:'H:i' }}
+            {{ ptsrequest.start_date|date:'d E Y H:i' }}
           {% else %}
             &mdash;
           {% endif %}
           </br>
           <b>Конец:</b> 
           {% if ptsrequest.end_date %}
-            {{ ptsrequest.end_date|date:'H:i' }}
+            {{ ptsrequest.end_date|date:'d E Y H:i' }}
           {% else %}
             &mdash;
           {% endif %}

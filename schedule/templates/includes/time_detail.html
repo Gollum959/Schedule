@@ -8,8 +8,8 @@
           <div class="card shadow-sm">
             <div class="card-body">
               <h5 class="card-title">{{ ptsrequest.type }}</h5>
-              <p class="card-text"><b>Начало:</b> {{ ptsrequest.broadcast_start_date|date:'H:i' }}</br>
-              <b>Конец:</b> {{ ptsrequest.broadcast_end_date|date:'H:i' }}</p>
+              <p class="card-text"><b>Начало:</b> {{ ptsrequest.broadcast_start_date|date:'d E Y H:i' }}</br>
+              <b>Конец:</b> {{ ptsrequest.broadcast_end_date|date:'d E Y H:i' }}</p>
             </div>
           </div>
         </div>

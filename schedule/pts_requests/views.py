@@ -1,5 +1,7 @@
 from datetime import date, timedelta, datetime
-from django.http import QueryDict
+import os
+# import locale
+from django.http import QueryDict, FileResponse
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -9,6 +11,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.urls import reverse_lazy
 from typing import Any, Dict
 from django.http import HttpResponseRedirect
+from docxtpl import DocxTemplate
 
 from place_broadcast.models import PlaceConstructor, EventType
 from pts_requests.models import PtsRequest, PtsRequestApprovalStages
@@ -29,6 +32,7 @@ from core.custom_view import (DetalInformationMixin,
                               UserToFormMixin,
                               EditOnlyAuthorMixin)
 from pts_config.models import MicrophoneBrend
+from schedule.settings import MEDIA_ROOT
 
 
 class PtsRequestsView(LoginRequiredMixin, ListView):
@@ -72,7 +76,8 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
             return requests
 
         if self.request.user.is_moderator:
-            return requests.filter(status__in=('approval', 'final'))
+            return requests.filter(
+                status__in=('approval', 'final', 'approved'))
 
         if self.request.user.is_soundman:
             return requests.filter(status='soundman')
@@ -225,6 +230,90 @@ def remove_draft_pts_request(request, pk):
         raise Http404()
     pts_request.delete()
     return redirect('pts_requests:index')
+
+
+@login_required
+def download_letter(request, pk):
+    pts_request = get_object_or_404(PtsRequest, pk=pk)
+    # locale.setlocale(locale.LC_ALL, 'ru_RU')
+    month_names = {
+        1: ' января ',
+        2: ' февраля ',
+        3: ' марта ',
+        4: ' апреля ',
+        5: ' мая ',
+        6: ' июня ',
+        7: ' июля ',
+        8: ' августа ',
+        9: ' сентября ',
+        10: ' октября ',
+        11: ' ноября ',
+        12: ' декабря ',
+    }
+    speeds = {
+        '1': '20/20 Мбит/c',
+        '2': '80/40 Мбит/c',
+        '3': '200/200 Мбит/c',
+    }
+    doc = DocxTemplate(f'{MEDIA_ROOT}\\letters\\template.docx')
+    start_date_time = pts_request.broadcast_start_date
+    end_date_time = pts_request.broadcast_end_date
+    start_trakt_time = pts_request.trakt_start_date
+    end_trakt_time = pts_request.trakt_end_date
+    start_date = start_date_time.strftime('%d %#m %Y')
+    start_mounth = start_date_time.month
+    start_date = start_date.replace(f' {start_mounth} ', month_names[start_mounth])
+    comm_line = pts_request.commlineconstructor_set.all()
+    internet_lines = pts_request.internetlineconstructor_set.all()
+    tech_comm_line = pts_request.techcommlineconstructor_set.all()
+    city_phone = [line.phone for line in internet_lines].count(True)
+    tech_lines_start_date = ''
+    tech_lines_end_time = ''
+    if len(tech_comm_line) > 0:
+        tech_lines_start_date = tech_comm_line[0].start.strftime('%d %#m %Y')
+        start_mounth = tech_comm_line[0].start.month
+        tech_lines_start_date = tech_lines_start_date.replace(f' {start_mounth} ', month_names[start_mounth])
+        tech_lines_start_time = tech_comm_line[0].start.strftime('%H:%M')
+        tech_lines_end_time = tech_comm_line[0].end.strftime('%H:%M')
+    context = {
+        'name': pts_request.name,
+        'request_date': start_date,
+        'start_time': start_date_time.strftime('%H:%M'),
+        'end_time': end_date_time.strftime('%H:%M'),
+        'place_name': pts_request.place.name,
+        'place_city': pts_request.place.city_name.name,
+        'place_adress': pts_request.place.address,
+        'comm_line': comm_line,
+        'trakt_date': start_date,
+        'trakt_start_time': start_trakt_time.strftime('%H:%M'),
+        'trakt_end_time': end_trakt_time.strftime('%H:%M'),
+        'tech_comm_line': tech_comm_line,
+        'internet_comm_line': internet_lines,
+        'city_phone': city_phone,
+        'speeds': speeds,
+        'tech_lines_start_date': tech_lines_start_date,
+        'tech_lines_start_time': tech_lines_start_time,
+        'tech_lines_end_date': tech_lines_end_time,
+        'moderator_name': pts_request.moderator.get_fio,
+        'moderator_job_title': pts_request.moderator.position,
+        'moderator_phone': pts_request.moderator.phone_number,
+        'pts_head_name': pts_request.pts_name.head_fullname,
+        'pts_name': pts_request.pts_name,
+        'pts_phone': pts_request.pts_name.head_contact,
+        'director_name': pts_request.author.get_fio,
+        'director_job_title': pts_request.author.position,
+        'director_phone': pts_request.author.phone_number,
+    }
+    doc.render(context)
+    letter_root = f'{MEDIA_ROOT}\\letters\\{pts_request.broadcast_start_date.date()}\\'
+    letter_name = f'letterID-{pts_request.pk}.docx'
+    os.makedirs(letter_root, exist_ok=True)
+    doc.save(letter_root+letter_name)
+    file_contents = open(letter_root+letter_name, 'rb')
+    response = FileResponse(file_contents)
+    response['Content-Type'] = 'application/msword'
+    response['Content-Disposition'] = f'attachment; filename=letter-{pts_request.pk}.docx'
+    return response
 
 
 @login_required
@@ -705,6 +794,7 @@ def change_status_to_gdpt(request, pk):
             )
     step.save()
     pts_request.status = 'gdpt'
+    pts_request.moderator = request.user
     pts_request.save()
     return redirect('pts_requests:index')
 
