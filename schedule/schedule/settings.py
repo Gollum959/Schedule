@@ -94,12 +94,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'schedule',
-        'USER': 'postgres',
-        'PASSWORD': 'fktrcfylh80',
-        'HOST': 'localhost',
+        'USER': 'bt_admin',
+        'PASSWORD': 'Snezhinka158',
+        'HOST': 'schedule.postgres.database.azure.com',
         'PORT': '5432',
     }
 }
+# host=schedule.postgres.database.azure.com port=5432 dbname={your_database} user=bt_admin password={your_password} sslmode=require
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
