@@ -5,3 +5,4 @@ djangorestframework-simplejwt==4.8.0
 PyJWT==2.1.0
 pillow==9.4.0
 sorl-thumbnail==12.9.0
+psycopg2
