@@ -103,7 +103,7 @@
             </div>
             <hr style="border: 1px;">
             <div class="d-flex justify-content-end">
-              <button type="submit" class="btn btn-primary">
+              <button type="submit" class="btn btn-primary" onclick="this.form.submit(); this.disabled = true;">
                 {% if object %}
                   Изменить заявку
                 {% else %}

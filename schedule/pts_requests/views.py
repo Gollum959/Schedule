@@ -255,14 +255,18 @@ def download_letter(request, pk):
         '2': '80/40 Мбит/c',
         '3': '200/200 Мбит/c',
     }
-    doc = DocxTemplate(f'{MEDIA_ROOT}\\letters\\template.docx')
+    doc_template_path = os.path.join(MEDIA_ROOT, 'letters', 'template.docx')
+    doc = DocxTemplate(doc_template_path)
     start_date_time = pts_request.broadcast_start_date
     end_date_time = pts_request.broadcast_end_date
     start_trakt_time = pts_request.trakt_start_date
     end_trakt_time = pts_request.trakt_end_date
     start_date = start_date_time.strftime('%d %#m %Y')
     start_mounth = start_date_time.month
-    start_date = start_date.replace(f' {start_mounth} ', month_names[start_mounth])
+    start_date = start_date.replace(
+        f' {start_mounth} ',
+        month_names[start_mounth]
+    )
     comm_line = pts_request.commlineconstructor_set.all()
     internet_lines = pts_request.internetlineconstructor_set.all()
     tech_comm_line = pts_request.techcommlineconstructor_set.all()
@@ -272,7 +276,10 @@ def download_letter(request, pk):
     if len(tech_comm_line) > 0:
         tech_lines_start_date = tech_comm_line[0].start.strftime('%d %#m %Y')
         start_mounth = tech_comm_line[0].start.month
-        tech_lines_start_date = tech_lines_start_date.replace(f' {start_mounth} ', month_names[start_mounth])
+        tech_lines_start_date = tech_lines_start_date.replace(
+            f' {start_mounth} ',
+            month_names[start_mounth]
+        )
         tech_lines_start_time = tech_comm_line[0].start.strftime('%H:%M')
         tech_lines_end_time = tech_comm_line[0].end.strftime('%H:%M')
     context = {
@@ -305,14 +312,18 @@ def download_letter(request, pk):
         'director_phone': pts_request.author.phone_number,
     }
     doc.render(context)
-    letter_root = f'{MEDIA_ROOT}\\letters\\{pts_request.broadcast_start_date.date()}\\'
     letter_name = f'letterID-{pts_request.pk}.docx'
-    os.makedirs(letter_root, exist_ok=True)
-    doc.save(letter_root+letter_name)
-    file_contents = open(letter_root+letter_name, 'rb')
+    letter_directory = os.path.join(
+        os.path.join(MEDIA_ROOT, 'letters'),
+        str(pts_request.broadcast_start_date.date())
+    )
+    letter_full_path = os.path.join(letter_directory, letter_name)
+    os.makedirs(letter_directory, exist_ok=True)
+    doc.save(letter_full_path)
+    file_contents = open(letter_full_path, 'rb')
     response = FileResponse(file_contents)
     response['Content-Type'] = 'application/msword'
-    response['Content-Disposition'] = f'attachment; filename=letter-{pts_request.pk}.docx'
+    response['Content-Disposition'] = f'attachment; filename={letter_name}'
     return response
 
 
