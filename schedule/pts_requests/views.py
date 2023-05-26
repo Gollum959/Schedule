@@ -259,29 +259,63 @@ def download_letter(request, pk):
     doc = DocxTemplate(doc_template_path)
     start_date_time = pts_request.broadcast_start_date
     end_date_time = pts_request.broadcast_end_date
-    start_trakt_time = pts_request.trakt_start_date
-    end_trakt_time = pts_request.trakt_end_date
+    # start_trakt_time = pts_request.trakt_start_date
+    # end_trakt_time = pts_request.trakt_end_date
     start_date = start_date_time.strftime('%d %#m %Y')
     start_mounth = start_date_time.month
     start_date = start_date.replace(
         f' {start_mounth} ',
         month_names[start_mounth]
     )
+
     comm_line = pts_request.commlineconstructor_set.all()
     internet_lines = pts_request.internetlineconstructor_set.all()
     tech_comm_line = pts_request.techcommlineconstructor_set.all()
     city_phone = [line.phone for line in internet_lines].count(True)
-    tech_lines_start_date = ''
-    tech_lines_end_time = ''
-    if len(tech_comm_line) > 0:
-        tech_lines_start_date = tech_comm_line[0].start.strftime('%d %#m %Y')
-        start_mounth = tech_comm_line[0].start.month
-        tech_lines_start_date = tech_lines_start_date.replace(
+
+    comm_start_times = [line.start for line in comm_line]
+    comm_end_times = [line.end for line in comm_line]
+    comm_start_datetime = min(comm_start_times)
+    if comm_start_datetime:
+        comm_start_date = comm_start_datetime.strftime('%d %#m %Y')
+        start_mounth = comm_start_datetime.month
+        comm_start_date = comm_start_date.replace(
             f' {start_mounth} ',
             month_names[start_mounth]
         )
-        tech_lines_start_time = tech_comm_line[0].start.strftime('%H:%M')
-        tech_lines_end_time = tech_comm_line[0].end.strftime('%H:%M')
+        comm_start_time = comm_start_datetime.strftime('%H:%M')
+        comm_end_time = max(comm_end_times).strftime('%H:%M')
+
+    tech_start_times = [line.start for line in internet_lines]
+    tech_start_times.extend([line.start for line in tech_comm_line])
+    tech_end_times = [line.end for line in internet_lines]
+    tech_end_times.extend([line.end for line in tech_comm_line])
+    tech_start_datetime = min(tech_start_times)
+    if tech_start_datetime:
+        tech_start_date = tech_start_datetime.strftime('%d %#m %Y')
+        start_mounth = tech_start_datetime.month
+        tech_start_date = tech_start_date.replace(
+            f' {start_mounth} ',
+            month_names[start_mounth]
+        )
+        tech_start_time = tech_start_datetime.strftime('%H:%M')
+        tech_end_time = max(tech_end_times).strftime('%H:%M')
+
+    arrive_time = (
+        tech_start_datetime - timedelta(minutes=30)).strftime('%H:%M')
+
+    # tech_lines_start_date = ''
+    # tech_lines_end_time = ''
+    # if len(tech_comm_line) > 0:
+    #     tech_lines_start_date = tech_comm_line[0].start.strftime('%d %#m %Y')
+    #     start_mounth = tech_comm_line[0].start.month
+    #     tech_lines_start_date = tech_lines_start_date.replace(
+    #         f' {start_mounth} ',
+    #         month_names[start_mounth]
+    #     )
+    #     tech_lines_start_time = tech_comm_line[0].start.strftime('%H:%M')
+    #     tech_lines_end_time = tech_comm_line[0].end.strftime('%H:%M')
+
     context = {
         'name': pts_request.name,
         'request_date': start_date,
@@ -291,16 +325,20 @@ def download_letter(request, pk):
         'place_city': pts_request.place.city_name.name,
         'place_adress': pts_request.place.address,
         'comm_line': comm_line,
-        'trakt_date': start_date,
-        'trakt_start_time': start_trakt_time.strftime('%H:%M'),
-        'trakt_end_time': end_trakt_time.strftime('%H:%M'),
+        # 'trakt_date': start_date,
+        # 'trakt_start_time': start_trakt_time.strftime('%H:%M'),
+        # 'trakt_end_time': end_trakt_time.strftime('%H:%M'),
         'tech_comm_line': tech_comm_line,
         'internet_comm_line': internet_lines,
         'city_phone': city_phone,
         'speeds': speeds,
-        'tech_lines_start_date': tech_lines_start_date,
-        'tech_lines_start_time': tech_lines_start_time,
-        'tech_lines_end_date': tech_lines_end_time,
+        'comm_lines_start_date': comm_start_date,
+        'comm_lines_start_time': comm_start_time,
+        'comm_lines_end_time': comm_end_time,
+        'tech_lines_start_date': tech_start_date,
+        'tech_lines_start_time': tech_start_time,
+        'tech_lines_end_date': tech_end_time,
+        'arrive_time': arrive_time,
         'moderator_name': pts_request.moderator.get_fio,
         'moderator_job_title': pts_request.moderator.position,
         'moderator_phone': pts_request.moderator.phone_number,
