@@ -158,4 +158,4 @@ class User(AbstractUser):
         """Return FIO."""
         short_surname = f'{self.surname[0]}.' if self.surname else ''
 
-        return f'{self.last_name} {self.first_name[0]}. {short_surname}'
+        return f'{self.last_name} {self.first_name} {short_surname}'
