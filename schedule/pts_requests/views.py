@@ -448,13 +448,13 @@ def time_trakt_edit_form(request, pk):
             {'ptsrequest': ptsrequest}
         )
 
-    initial_dict = {}
-    if not ptsrequest.trakt_start_date:
-        initial_dict['trakt_start_date'] = (
-            ptsrequest.broadcast_start_date - timedelta(hours=1))
-    if not ptsrequest.trakt_end_date:
-        initial_dict['trakt_end_date'] = (
-            ptsrequest.broadcast_start_date - timedelta(minutes=10))
+    # initial_dict = {}
+    # if not ptsrequest.trakt_start_date:
+    #     initial_dict['trakt_start_date'] = (
+    #         ptsrequest.broadcast_start_date - timedelta(hours=1))
+    # if not ptsrequest.trakt_end_date:
+    #     initial_dict['trakt_end_date'] = (
+    #         ptsrequest.broadcast_start_date - timedelta(minutes=10))
 
     if request.method == 'PUT':
         data = QueryDict(request.body).dict()
@@ -468,7 +468,8 @@ def time_trakt_edit_form(request, pk):
         context['form'] = form
         return render(request, 'includes/time_trakt_edit.html', context)
 
-    form = UpdateTraktTime(instance=ptsrequest, initial=initial_dict)
+    # form = UpdateTraktTime(instance=ptsrequest, initial=initial_dict)
+    form = UpdateTraktTime(instance=ptsrequest)
     context = {'ptsrequest': ptsrequest, 'form': form}
     return render(request, 'includes/time_trakt_edit.html', context)
 
@@ -486,6 +487,14 @@ def time_travel_edit_form(request, pk):
             {'ptsrequest': ptsrequest}
         )
 
+    initial_dict = {}
+    if not ptsrequest.start_date:
+        initial_dict['start_date'] = ptsrequest.trakt_start_date.strftime(
+            '%Y-%m-%d %H:%M')
+    if not ptsrequest.end_date:
+        initial_dict['end_date'] = ptsrequest.broadcast_end_date.strftime(
+            '%Y-%m-%d %H:%M')
+
     if request.method == 'PUT':
         data = QueryDict(request.body).dict()
         form = UpdateTravelTime(data, instance=ptsrequest)
@@ -498,7 +507,7 @@ def time_travel_edit_form(request, pk):
         context['form'] = form
         return render(request, 'includes/time_travel_edit.html', context)
 
-    form = UpdateTravelTime(instance=ptsrequest)
+    form = UpdateTravelTime(instance=ptsrequest, initial=initial_dict)
     context = {'ptsrequest': ptsrequest, 'form': form}
     return render(request, 'includes/time_travel_edit.html', context)
 
@@ -746,6 +755,12 @@ def change_status_to_on_approval(request, pk):
                 author=request.user
             )
     step.save()
+    pts_request.trakt_start_date = (
+        pts_request.broadcast_start_date - timedelta(hours=1)
+    )
+    pts_request.trakt_end_date = (
+        pts_request.broadcast_start_date - timedelta(minutes=10)
+    )
     pts_request.status = 'approval'
     pts_request.save()
     return redirect('pts_requests:request_detail', pk=pts_request.pk)

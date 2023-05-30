@@ -105,7 +105,7 @@
             <div class="d-flex justify-content-end">
               <button type="submit" class="btn btn-primary" onclick="this.form.submit(); this.disabled = true;">
                 {% if object %}
-                  Изменить заявку
+                  Сохранить изменения
                 {% else %}
                   Создать заявку
                 {% endif %}
@@ -118,7 +118,35 @@
   </div>
 
   <script>
-
+    
+    const addCalendar = (idForm) => {
+      const formsQuantity = $(`#id_${idForm}_set-TOTAL_FORMS`).val()
+      for (let i = 1; i <= formsQuantity; i++) {
+        const startTimeId = `#id_${idForm}_set-${i-1}-start`
+        const endTimeId = `#id_${idForm}_set-${i-1}-end`
+        $(startTimeId).datetimepicker({
+          format:'Y-m-d H:i',
+          minDate : 0,
+          step: 5,
+          onShow:function(){
+            this.setOptions({
+              maxDate:$(endTimeId).val()?$(endTimeId).val():false
+            })
+          },
+        });
+        $(endTimeId).datetimepicker({
+          format:'Y-m-d H:i',
+          step: 5,
+          onShow:function(){
+            this.setOptions({
+              minDate:$(startTimeId).val()?$(startTimeId).val():0,
+              value: $(endTimeId).val()?$(endTimeId).val():
+              ($(startTimeId).val()?$(startTimeId).val():0)
+            })
+          },
+        });
+      }
+    };
     $(document).ready(function(){
       $('#id_broadcast_start_date').datetimepicker({
         format:'Y-m-d H:i',
@@ -141,6 +169,9 @@
         })
        },
       });
+      addCalendar('commlineconstructor')
+      addCalendar('internetlineconstructor')
+      addCalendar('techcommlineconstructor')
      });
 
     $("#id_city_name").change(function () {

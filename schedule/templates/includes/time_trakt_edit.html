@@ -19,21 +19,32 @@
       </form>
     </div>
   </div>
-  
+
 <script>
-  $(document).ready(function() 
-  {
-     $('#id_trakt_start_date').datetimepicker
-     ({
+    $(document).ready(function(){
+      $('#id_trakt_start_date').datetimepicker({
         format:'Y-m-d H:i',
-        step: 5
-     });
-     $('#id_trakt_end_date').datetimepicker
-     ({
-          format:'Y-m-d H:i',
-          step: 5
-     });
-  });
-</script>
+        minDate : 0,
+        step: 5,
+        onShow:function(){
+          this.setOptions({
+            maxDate:$('#id_trakt_end_date').val()?$('#id_trakt_end_date').val():false
+          })
+        },
+      });
+      $('#id_trakt_end_date').datetimepicker({
+       format:'Y-m-d H:i',
+       step: 5,
+       onShow:function(){
+        this.setOptions({
+          minDate:$('#id_trakt_start_date').val()?$('#id_trakt_start_date').val():0,
+          value: $('#id_trakt_end_date').val()?$('#id_trakt_end_date').val():
+          ($('#id_trakt_start_date').val()?$('#id_trakt_start_date').val():0)
+        })
+       },
+      });
+    });
+  </script>  
+
 
 

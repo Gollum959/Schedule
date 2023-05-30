@@ -77,7 +77,10 @@ class AddPtsConfigFrom(CreatePtsConfigurationMixin):
     class Meta:
         model = PtsConstructor
         fields = ('place', 'event_type',
-                  'name', 'microphone_quantity', 'image')
+                  'name', 'microphone_quantity', 'microphone_comment', 'image')
+        widgets = {
+            'microphone_comment': forms.Textarea(attrs={'rows': 5}),
+        }
 
 
 class AddPtsConfigOnBaseFrom(CreatePtsConfigurationMixin):
@@ -105,7 +108,10 @@ class AddPtsConfigOnBaseFrom(CreatePtsConfigurationMixin):
 
     class Meta:
         model = PtsConstructor
-        fields = ('name', 'microphone_quantity', 'image')
+        fields = ('name', 'microphone_quantity', 'microphone_comment', 'image')
+        widgets = {
+            'microphone_comment': forms.Textarea(attrs={'rows': 5}),
+        }
 
 
 class AddCamera(forms.ModelForm):

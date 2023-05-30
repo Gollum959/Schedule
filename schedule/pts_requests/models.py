@@ -220,7 +220,6 @@ class PtsRequest(models.Model):
         'Название Трансляции',
         max_length=200,
     )
-
     broadcast_start_date = models.DateTimeField(
         verbose_name='Дата и время начала трансляции',
         help_text='Дата и время начала трансляции(YYYY-MM-DD hh:mm)',

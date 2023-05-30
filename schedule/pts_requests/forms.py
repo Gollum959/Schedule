@@ -1,4 +1,8 @@
-from django.forms import ModelForm, ModelChoiceField, inlineformset_factory
+from django.forms import (ModelForm,
+                          ModelChoiceField,
+                          inlineformset_factory,
+                          DateTimeInput,
+                          DateTimeField,)
 from django.db.models import Q
 
 
@@ -28,6 +32,12 @@ class AddRequestFrom(ModelForm):
         label='Конфигурация ПТС',
         empty_label='Выберите конфигурацию ПТС'
     )
+    broadcast_start_date = DateTimeField(
+        widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
+        input_formats=['%Y-%m-%d %H:%M'])
+    broadcast_end_date = DateTimeField(
+        widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
+        input_formats=['%Y-%m-%d %H:%M'])
 
     def __init__(self, *args, **kwargs):
         """Method allows creating a link between
@@ -91,7 +101,17 @@ class AddRequestFrom(ModelForm):
         ]
 
 
-class AddCommLine(ModelForm):
+class TimeStartEnd(ModelForm):
+    """Form for special widget DateTime."""
+    start = DateTimeField(
+        widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
+        input_formats=['%Y-%m-%d %H:%M'])
+    end = DateTimeField(
+        widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
+        input_formats=['%Y-%m-%d %H:%M'])
+
+
+class AddCommLine(TimeStartEnd):
     """Form for the communication line."""
 
     class Meta:
@@ -101,6 +121,7 @@ class AddCommLine(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['direction'].initial = 'from_pts'
+        self.fields['quantity'].initial = 1
 
 
 CommLineFormset = inlineformset_factory(
@@ -111,12 +132,18 @@ CommLineFormset = inlineformset_factory(
 )
 
 
-class AddTechCommLine(ModelForm):
+class AddTechCommLine(TimeStartEnd):
     """Form for the technical communication line."""
 
     class Meta:
         model = TechCommLineConstructor
         fields = ['type', 'place', 'quantity', 'start', 'end', ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['type'].initial = 'four'
+        self.fields['place'].initial = 1
+        self.fields['quantity'].initial = 1
 
 
 TechCommLineFormset = inlineformset_factory(
@@ -127,7 +154,7 @@ TechCommLineFormset = inlineformset_factory(
 )
 
 
-class AddInternetLine(ModelForm):
+class AddInternetLine(TimeStartEnd):
     """Form for the internet communication line."""
 
     class Meta:
@@ -147,6 +174,12 @@ InternetLineFormset = inlineformset_factory(
 
 class UpdateTraktTime(ModelForm):
     """Form for moderating trakt time"""
+    trakt_start_date = DateTimeField(
+        widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
+        input_formats=['%Y-%m-%d %H:%M'])
+    trakt_end_date = DateTimeField(
+        widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
+        input_formats=['%Y-%m-%d %H:%M'])
 
     class Meta:
         model = PtsRequest
@@ -160,6 +193,12 @@ class UpdateTraktTime(ModelForm):
 
 class UpdateTravelTime(ModelForm):
     """Form for moderating travel time"""
+    start_date = DateTimeField(
+        widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
+        input_formats=['%Y-%m-%d %H:%M'])
+    end_date = DateTimeField(
+        widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
+        input_formats=['%Y-%m-%d %H:%M'])
 
     class Meta:
         model = PtsRequest

@@ -1,7 +1,7 @@
   {% load crispy_forms_tags %}
   <div class="card shadow-sm">
     <div class="card-body">
-      <h5 class="card-title">Тракт</h5>
+      <h5 class="card-title">Время работы ПТС</h5>
       <form hx-put="{% url 'pts_requests:travel_time_edit' ptsrequest.pk %}" hx-target="#time-travel" autocomplete="off">
         {% csrf_token %}
     
@@ -21,17 +21,27 @@
   </div>
 
   <script>
-    $(document).ready(function() 
-    {
-       $('#id_start_date').datetimepicker
-       ({
-          format:'Y-m-d H:i',
-          step: 5
-       });
-       $('#id_end_date').datetimepicker
-       ({
-            format:'Y-m-d H:i',
-            step: 5
-       });
+    $(document).ready(function(){
+      $('#id_start_date').datetimepicker({
+        format:'Y-m-d H:i',
+        minDate : 0,
+        step: 5,
+        onShow:function(){
+          this.setOptions({
+            maxDate:$('#id_end_date').val()?$('#id_end_date').val():false
+          })
+        },
+      });
+      $('#id_end_date').datetimepicker({
+       format:'Y-m-d H:i',
+       step: 5,
+       onShow:function(){
+        this.setOptions({
+          minDate:$('#id_start_date').val()?$('#id_start_date').val():0,
+          value: $('#id_end_date').val()?$('#id_end_date').val():
+          ($('#id_start_date').val()?$('#id_start_date').val():0)
+        })
+       },
+      });
     });
   </script>
