@@ -1,6 +1,15 @@
 from django.contrib import admin
 from django.urls import include, path
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title='API Documentation',
+        default_version='v1',
+    ),
+    public=True,
+)
 
 urlpatterns = [
     path('', include('pts_requests.urls', namespace='pts_requests')),
@@ -9,4 +18,5 @@ urlpatterns = [
     path('place/', include('place_broadcast.urls', namespace='place')),
     path('config/', include('pts_config.urls', namespace='config')),
     path('api/', include('api.urls')),
+    path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0)),
 ]
