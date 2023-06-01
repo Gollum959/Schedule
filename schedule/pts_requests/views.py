@@ -46,7 +46,7 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
         """Different requests for different data and
          different level permission."""
 
-        requests = PtsRequest.objects.all()
+        # requests = PtsRequest.objects.all()
         today = date.today()
         start_week = today - timedelta(days=today.weekday())
         end_week = start_week + timedelta(days=7)
@@ -64,12 +64,21 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
             res = False
 
         if res:
-            requests = requests.filter(
+            requests = PtsRequest.objects.filter(
                 broadcast_start_date__date=self.request.GET.get('date')
             )
         else:
-            requests = requests.filter(
-                broadcast_start_date__range=[start_week, end_week]
+            requests = PtsRequest.objects.filter(
+                Q(
+                    status__in=['ON_APPROVAL',
+                                'ON_SOUNDMAN',
+                                'FINAL_VALIDATION',
+                                'GDPT', 'DTOV']
+                ) |
+                Q(
+                    status__in=['DRAFT', 'APPROVED', 'CANCEL'],
+                    broadcast_start_date__range=(start_week, end_week)
+                )
             )
 
         if self.request.user.is_admin:
