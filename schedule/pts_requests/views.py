@@ -70,44 +70,47 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
         else:
             requests = PtsRequest.objects.filter(
                 Q(
-                    status__in=['ON_APPROVAL',
-                                'ON_SOUNDMAN',
-                                'FINAL_VALIDATION',
-                                'GDPT', 'DTOV']
+                    status__in=['approval',
+                                'soundman',
+                                'final',
+                                'gdpt', 'dtov'],
+                    broadcast_start_date__gte=start_week
                 ) |
                 Q(
-                    status__in=['DRAFT', 'APPROVED', 'CANCEL'],
+                    status__in=['draft', 'approved', 'cancel'],
                     broadcast_start_date__range=(start_week, end_week)
                 )
             )
 
-        if self.request.user.is_admin:
+        user = self.request.user
+
+        if user.is_admin:
             return requests
 
-        if self.request.user.is_moderator:
+        if (user.is_moderator or user.is_dtov_headmaster):
+            return requests.exclude(status='draft')
+
+        if user.is_soundman:
+            return requests.filter(status__in=(
+                'soundman', 'approved', 'approval')
+            )
+
+        if user.is_gdpt:
+            return requests.exclude(status__in=['dtov', 'draft'])
+
+        # requests = requests.filter(
+        #     author__direction=self.request.user.direction
+        # ).exclude(~Q(author=self.request.user), status='cancel')
+
+        if user.is_main_director or user.is_director:
             return requests.filter(
-                status__in=('approval', 'final', 'approved'))
+                Q(status='approved') | Q(author__direction=user.direction)
+            ).exclude(Q(status='draft') & ~Q(author=user))
 
-        if self.request.user.is_soundman:
-            return requests.filter(status='soundman')
-
-        if self.request.user.is_gdpt:
-            return requests.filter(status='gdpt')
-
-        if self.request.user.is_dtov_headmaster:
-            return requests.filter(status='dtov')
-
-        requests = requests.filter(
-            author__direction=self.request.user.direction
-        ).exclude(~Q(author=self.request.user), status='cancel')
-
-        if self.request.user.is_main_director:
-            return requests
-
-        if self.request.user.is_director:
-            return requests.filter(~Q(
-                ~Q(author=self.request.user)
-                & Q(Q(status='draft') | Q(status='rejected'))))
+        # if user.is_director:
+        #     return requests.filter(~Q(
+        #         ~Q(author=self.request.user)
+        #         & Q(Q(status='draft') | Q(status='rejected'))))
 
 
 class PtsRequestDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
