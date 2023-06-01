@@ -1,0 +1,10 @@
+.container{
+  background-color: rgb(25, 37, 6);
+}
+.main{
+  background-color: rgb(25, 37, 6);
+  height:100vh;
+}
+.item{
+  text-align: center;
+}
