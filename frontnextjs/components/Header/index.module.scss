@@ -1,0 +1,57 @@
+
+
+
+.parent {
+  display: grid;
+  height: auto;
+  grid-template-columns: 0.4fr 1fr;
+  grid-template-rows: 0.2fr 1fr;
+  grid-template-areas:
+    "options options"
+    "team users";
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+}
+
+.registration-grid-container {
+  grid-area: upermenu;
+}
+.options-grid-container {
+  grid-area: options
+}
+.team-grid-container {
+  grid-area: team
+}
+
+.participant-grid-container {
+  grid-area: users;
+}
+.menu{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.menu-logo{
+  flex-grow: 1;
+}
+.menu-list{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+.menu-item{
+  flex-grow: 1;
+}
+
+
+
+@media only screen and (max-width: 600px) {
+  .parent {
+    grid-template-columns: 1fr;
+    grid-template-rows: 01fr 05fr 05fr;
+    grid-template-areas:
+    "options"
+    "team"
+    "users";
+  }
+}
