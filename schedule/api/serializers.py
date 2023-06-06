@@ -1,13 +1,85 @@
 from rest_framework import serializers
+from django.db.models import Q
 
 from pts_requests.models import PtsRequest, PtsName
 from pts_config.models import (PtsConstructor,
                                CameraPtsConstructor,
+                               Camera,
+                               CameraBrend,
+                               CameraModelBrend,
+                               Optic,
                                OpticPtsConstructor,
                                ServerRecordingRepeatConstructor,
                                MicrophonePtsConstructor)
 from place_broadcast.models import PlaceConstructor, PlaceCity, EventType
 from users.models import User
+
+
+# Block for the matrices of equipment
+# Cameras' block
+
+class CameraTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Camera
+        fields = ('id', 'name')
+
+
+class CameraBrendSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CameraBrend
+        fields = (
+            'id',
+            'name',
+            'type_pts'
+        )
+
+
+class CameraBrendMatrixSerializer(serializers.ModelSerializer):
+    camera_brend = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Camera
+        fields = (
+            'id',
+            'name',
+            'camera_brend'
+        )
+
+    def get_camera_brend(self, obj):
+        type_pts = self.context['request'].query_params.get('type_pts', None)
+
+        camera_brends = CameraBrend.objects.filter(
+            cameramodelbrend__type=obj).distinct()
+
+        if type_pts:
+            camera_brends = camera_brends.filter(
+                Q(type_pts=type_pts) | Q(type_pts=None))
+
+        serializer = CameraBrendSerializer(camera_brends, many=True)
+        return serializer.data
+
+
+class CameraModelSerializer(serializers.ModelSerializer):
+    type = CameraTypeSerializer()
+    brend = CameraBrendSerializer()
+
+    class Meta:
+        model = CameraModelBrend
+        fields = (
+            'id',
+            'name',
+            'type',
+            'brend'
+        )
+
+
+# Optics' block
+
+class OpticTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Optic
+        fields = ('id', 'name', 'visible_to_user')
 
 
 # Block for User
