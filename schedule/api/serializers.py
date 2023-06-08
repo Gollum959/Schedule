@@ -3,13 +3,23 @@ from django.db.models import Q
 
 from pts_requests.models import PtsRequest, PtsName
 from pts_config.models import (PtsConstructor,
+                               TypePtsForConfiguration,
                                CameraPtsConstructor,
                                Camera,
                                CameraBrend,
                                CameraModelBrend,
                                Optic,
+                               OpticBrend,
+                               OpticModelBrend,
                                OpticPtsConstructor,
+                               ServerRecordingRepeatType,
                                ServerRecordingRepeatConstructor,
+                               ServerPlayerType,
+                               ServerRecordingRepeatBrend,
+                               ServerRecordingRepeatModelBrend,
+                               MicrophoneType,
+                               MicrophoneBrend,
+                               MicrophoneModelBrend,
                                MicrophonePtsConstructor)
 from place_broadcast.models import PlaceConstructor, PlaceCity, EventType
 from users.models import User
@@ -80,6 +90,110 @@ class OpticTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Optic
         fields = ('id', 'name', 'visible_to_user')
+
+
+class OpticBrendSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = OpticBrend
+        fields = ('id', 'name', 'type_pts')
+
+
+class OpticBrendMatrixSerializer(serializers.ModelSerializer):
+    optic_brend = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Optic
+        fields = ('id', 'name', 'optic_brend')
+
+    def get_optic_brend(self, obj):
+        type_pts = self.context['request'].query_params.get('type_pts', None)
+
+        optic_brends = OpticBrend.objects.filter(
+            opticmodelbrend__type=obj).distinct()
+
+        if type_pts:
+            optic_brends = optic_brends.filter(
+                Q(type_pts=type_pts) | Q(type_pts=None))
+
+        serializer = CameraBrendSerializer(optic_brends, many=True)
+        return serializer.data
+
+
+class OpticModelSerializer(serializers.ModelSerializer):
+    type = OpticTypeSerializer()
+    brend = OpticBrendSerializer()
+
+    class Meta:
+        model = OpticModelBrend
+        fields = ('id', 'name', 'type', 'brend')
+
+
+# Servers' block
+
+class ServerTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServerRecordingRepeatType
+        fields = ('id', 'name')
+
+
+class ServerPlayerTypeSerializer(serializers.ModelSerializer):
+
+    rec_rep_type = ServerTypeSerializer()
+
+    class Meta:
+        model = ServerPlayerType
+        fields = ('id', 'name', 'rec_rep_type', 'visible_to_user')
+
+
+class ServerBrendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServerRecordingRepeatBrend
+        fields = ('id', 'name', 'type_pts')
+
+
+class ServerModelSerializer(serializers.ModelSerializer):
+
+    brend = ServerBrendSerializer()
+
+    class Meta:
+        model = ServerRecordingRepeatModelBrend
+        fields = ('id', 'name', 'brend')
+
+
+# Block for microphones
+
+class MicrophoneTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MicrophoneType
+        fields = ('id', 'name')
+
+
+class MicrophoneBrendSerializer(serializers.ModelSerializer):
+
+    type_pts = serializers.SerializerMethodField(allow_null=True)
+    type_micro = serializers.SerializerMethodField()
+
+    class Meta:
+        model = MicrophoneBrend
+        fields = ('id', 'name', 'type_pts', 'type_micro')
+
+    def get_type_pts(self, obj):
+        microphone_model_brends = obj.microphonemodelbrend_set.all()
+        type_pts_list = [microphone_model_brend.type_pts.pk for microphone_model_brend in microphone_model_brends]
+        return set(type_pts_list)
+    
+    def get_type_micro(self, obj):
+        microphone_model_brends = obj.microphonemodelbrend_set.all()
+        type_pts_list = [microphone_model_brend.type_micro.pk for microphone_model_brend in microphone_model_brends]
+        return set(type_pts_list)
+
+
+class MicrophoneModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = MicrophoneModelBrend
+        fields = ('id', 'name', 'brend', 'type_micro', 'type_pts')
 
 
 # Block for User
