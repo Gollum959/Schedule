@@ -15,7 +15,18 @@ const changeTime = (time, timeCorrection) => {
 
 var globalCamCount = 0;
 var globalOpticsCount = 0;
+var globalCamFormCount = 0;
+var globalOpticsFormCount = 0;
 const checkQuantityList = ['camera-form', 'optic-form'];
+
+function sumQuantity(globalFormCount, elementPrefix) {
+  var devicesCount = 0
+  for (let i = 0; i < globalFormCount; i++) {
+    const quantityField = `${elementPrefix}-${i}-quantity`
+    devicesCount += parseInt(document.getElementById(quantityField).value, 10);
+  }
+  return devicesCount
+}
 
 function add_new_form(
     listName,
@@ -43,32 +54,39 @@ function add_new_form(
     const totalNewForms = document.getElementById(totalNumberOfElementId)
     totalNewForms.setAttribute('value', addedFormCount + 1)
     formCopyTarget.append(copyemptyFormEl)
-
     // VTSYK
+
     if (checkQuantityList.includes(clonedElementClassName)) {
+      if(elementPrefix === 'id_cameraptsconstructor_set')
+        globalCamFormCount += 1;
+      if(elementPrefix === 'id_opticptsconstructor_set')
+        globalOpticsFormCount +=1;
       const inputId = `${elementPrefix}-${addedFormCount}-quantity`
       const input = document.getElementById(inputId);
-      const addMoreOpticId ='add-more-optic';
-      const opticContsrtuctor ='id_opticptsconstructor_set';
+      // const addMoreOpticId ='add-more-optic';
+      // const opticContsrtuctor ='id_opticptsconstructor_set';
       input.addEventListener('change', e => {
         if(elementPrefix === 'id_cameraptsconstructor_set')
-          globalCamCount = 0;
+          globalCamCount = sumQuantity(globalCamFormCount, elementPrefix)
+          // globalCamCount = 0;
         if(elementPrefix === 'id_opticptsconstructor_set')
-          globalOpticsCount = 0;
-        for (let i = 0; i <= addedFormCount; i++) {
+          globalOpticsCount = sumQuantity(globalOpticsFormCount, elementPrefix)
+
+          // globalOpticsCount = 0;
+        // for (let i = 0; i < globalCamFormCount; i++) {
           
-          const inputId = `${elementPrefix}-${i}-quantity`
+        //   const quantityField = `${elementPrefix}-${i}-quantity`
     
-          if(elementPrefix === 'id_cameraptsconstructor_set')
-            globalCamCount += parseInt(document.getElementById(inputId).value, 10);
+        //   if(elementPrefix === 'id_cameraptsconstructor_set')
+        //     globalCamCount += parseInt(document.getElementById(quantityField).value, 10);
 
-          if(elementPrefix === 'id_opticptsconstructor_set')
-            globalOpticsCount += parseInt(document.getElementById(inputId).value, 10);
-        }
+        //   if(elementPrefix === 'id_opticptsconstructor_set')
+        //     globalOpticsCount += parseInt(document.getElementById(quantityField).value, 10);
+        // }
         
-        console.log('cam count'+globalCamCount);
-        console.log('opticas count'+globalOpticsCount);
-
+        // console.log('cam count'+globalCamCount);
+        // console.log('opticas count'+globalOpticsCount);
+        
         if(globalCamCount-globalOpticsCount == 0)
           document.getElementById('add-more-optic').disabled = true;
         else
@@ -83,7 +101,7 @@ function add_new_form(
    
     //VTSYK
 
-    //Date block
+    //Datetimepicker block
     const datetimepickerList = ['comm-id', 'tech-comm-id', 'internet-id'];
 
     if (datetimepickerList.includes(hiddenElementId)) {
@@ -126,7 +144,7 @@ function add_new_form(
         });
       });
     }
-    //Date block
+    //Datetimepicker block
 
     if (brend_url!==''){
       var typeId = `${elementPrefix}-${addedFormCount}-type`
@@ -167,14 +185,16 @@ function add_new_form(
     //VTSYK
     if (checkQuantityList.includes(clonedElementClassName)) {
       if(listName === 'camera-form-list'){
+        globalCamFormCount -= 1
         lastCamVal = document.getElementById(`id_cameraptsconstructor_set-${currentFormCount}-quantity`).value; 
         globalCamCount -= parseInt(lastCamVal, 10);
-        console.log('After remove cam count = '+globalCamCount);
+        // console.log('After remove cam count = '+globalCamCount);
       }
       if(listName === 'optic-form-list'){
+        globalOpticsFormCount -= 1
         lastOptVal = document.getElementById(`id_opticptsconstructor_set-${currentFormCount}-quantity`).value; 
         globalOpticsCount -= parseInt(lastOptVal, 10);
-        console.log('After remove optics count = '+ globalOpticsCount);
+        // console.log('After remove optics count = '+ globalOpticsCount);
       }
     }
     //VTSYK
@@ -183,6 +203,7 @@ function add_new_form(
     currentFormCount = currentFormCount - 1
     emptyFormEl.remove()
     totalNewForms.setAttribute('value', currentFormCount + 1)
+    // console.log('After remove cam form count = '+globalCamFormCount);
     if (currentFormCount-initialCount<0) {
       removeLineBtn.setAttribute('class', 'hidden')
     }
