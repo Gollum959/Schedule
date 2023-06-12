@@ -17,6 +17,7 @@ var globalCamCount = 0;
 var globalOpticsCount = 0;
 var globalCamFormCount = 0;
 var globalOpticsFormCount = 0;
+var previusValuesDict = {}
 const checkQuantityList = ['camera-form', 'optic-form'];
 
 function sumQuantity(globalFormCount, elementPrefix) {
@@ -54,52 +55,46 @@ function add_new_form(
     const totalNewForms = document.getElementById(totalNumberOfElementId)
     totalNewForms.setAttribute('value', addedFormCount + 1)
     formCopyTarget.append(copyemptyFormEl)
-    // VTSYK
+
+    // Cameras - optics block
 
     if (checkQuantityList.includes(clonedElementClassName)) {
+      var previusValue = '';
       if(elementPrefix === 'id_cameraptsconstructor_set')
         globalCamFormCount += 1;
       if(elementPrefix === 'id_opticptsconstructor_set')
         globalOpticsFormCount +=1;
       const inputId = `${elementPrefix}-${addedFormCount}-quantity`
       const input = document.getElementById(inputId);
-      // const addMoreOpticId ='add-more-optic';
-      // const opticContsrtuctor ='id_opticptsconstructor_set';
       input.addEventListener('change', e => {
         if(elementPrefix === 'id_cameraptsconstructor_set')
           globalCamCount = sumQuantity(globalCamFormCount, elementPrefix)
-          // globalCamCount = 0;
+
         if(elementPrefix === 'id_opticptsconstructor_set')
           globalOpticsCount = sumQuantity(globalOpticsFormCount, elementPrefix)
 
-          // globalOpticsCount = 0;
-        // for (let i = 0; i < globalCamFormCount; i++) {
-          
-        //   const quantityField = `${elementPrefix}-${i}-quantity`
-    
-        //   if(elementPrefix === 'id_cameraptsconstructor_set')
-        //     globalCamCount += parseInt(document.getElementById(quantityField).value, 10);
-
-        //   if(elementPrefix === 'id_opticptsconstructor_set')
-        //     globalOpticsCount += parseInt(document.getElementById(quantityField).value, 10);
-        // }
-        
-        // console.log('cam count'+globalCamCount);
-        // console.log('opticas count'+globalOpticsCount);
-        
-        if(globalCamCount-globalOpticsCount == 0)
+        if(globalCamCount-globalOpticsCount <= 0)
           document.getElementById('add-more-optic').disabled = true;
         else
           document.getElementById('add-more-optic').disabled = false;
-        if(globalCamCount-globalOpticsCount < 0){
-          alert('Количество оптики не может превышать количество камер, будьте внимательней');
-          document.getElementById(inputId).value = 0;
-          document.getElementById('add-more-optic').disabled = false;
+
+        if(globalCamCount-globalOpticsCount < 0 && elementPrefix === 'id_opticptsconstructor_set'){
+          alert('Количество оптики не может превышать количество камер, будьте внимательней!');
+          document.getElementById(inputId).value = previusValuesDict[inputId];
         }
+        else if (elementPrefix === 'id_opticptsconstructor_set') previusValuesDict[inputId] = document.getElementById(inputId).value
+
+        if(globalCamCount-globalOpticsCount < 0 && elementPrefix === 'id_cameraptsconstructor_set'){
+          alert('Количество камер не может быть меньше количества оптики, будьте внимательней!');
+          document.getElementById(inputId).value = previusValuesDict[inputId];
+        }
+        else if (elementPrefix === 'id_cameraptsconstructor_set') previusValuesDict[inputId] = document.getElementById(inputId).value
+
+        console.log(previusValuesDict)
       });
     }
    
-    //VTSYK
+    // Cameras - optics block
 
     //Datetimepicker block
     const datetimepickerList = ['comm-id', 'tech-comm-id', 'internet-id'];
@@ -181,29 +176,31 @@ function add_new_form(
     }
 
     var currentFormCount = currentCommlineForms.length-1
+    
 
-    //VTSYK
+    // Cameras - optics block
     if (checkQuantityList.includes(clonedElementClassName)) {
       if(listName === 'camera-form-list'){
-        globalCamFormCount -= 1
         lastCamVal = document.getElementById(`id_cameraptsconstructor_set-${currentFormCount}-quantity`).value; 
+        if(globalCamCount-globalOpticsCount-lastCamVal < 0){
+          alert('Следите за тем что б количетсво оптики не превышало количества камер');
+          return
+        }
+        globalCamFormCount -= 1
         globalCamCount -= parseInt(lastCamVal, 10);
-        // console.log('After remove cam count = '+globalCamCount);
       }
       if(listName === 'optic-form-list'){
         globalOpticsFormCount -= 1
         lastOptVal = document.getElementById(`id_opticptsconstructor_set-${currentFormCount}-quantity`).value; 
         globalOpticsCount -= parseInt(lastOptVal, 10);
-        // console.log('After remove optics count = '+ globalOpticsCount);
       }
     }
-    //VTSYK
+    // Cameras - optics block
 
     const emptyFormEl = formCopyTarget.querySelector(`#form-${currentFormCount}`)
     currentFormCount = currentFormCount - 1
     emptyFormEl.remove()
     totalNewForms.setAttribute('value', currentFormCount + 1)
-    // console.log('After remove cam form count = '+globalCamFormCount);
     if (currentFormCount-initialCount<0) {
       removeLineBtn.setAttribute('class', 'hidden')
     }
