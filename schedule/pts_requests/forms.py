@@ -34,10 +34,12 @@ class AddRequestFrom(ModelForm):
     )
     broadcast_start_date = DateTimeField(
         widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
-        input_formats=['%Y-%m-%d %H:%M'])
+        input_formats=['%Y-%m-%d %H:%M'],
+        label='Дата и время начала трансляции')
     broadcast_end_date = DateTimeField(
         widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
-        input_formats=['%Y-%m-%d %H:%M'])
+        input_formats=['%Y-%m-%d %H:%M'],
+        label='Дата и время окончания трансляции')
 
     def __init__(self, *args, **kwargs):
         """Method allows creating a link between
@@ -105,10 +107,12 @@ class TimeStartEnd(ModelForm):
     """Form for special widget DateTime."""
     start = DateTimeField(
         widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
-        input_formats=['%Y-%m-%d %H:%M'])
+        input_formats=['%Y-%m-%d %H:%M'],
+        label='Дата и время начала работ')
     end = DateTimeField(
         widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
-        input_formats=['%Y-%m-%d %H:%M'])
+        input_formats=['%Y-%m-%d %H:%M'],
+        label='Дата и время начала работ')
 
 
 class AddCommLine(TimeStartEnd):

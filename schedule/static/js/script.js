@@ -29,6 +29,44 @@ function sumQuantity(globalFormCount, elementPrefix) {
   return devicesCount
 }
 
+function updateDateTimePicker(startTimeId, endTimeId, clonedElementClassName) {
+  const timeRange = {
+    'commline-form': [-20, 10],
+    'techcommline-form': [-30, 20],
+    'internetline-form': [-60, 20],
+  };
+  const timeStringStart = $('#id_broadcast_start_date').val();
+  const updateStartTime = timeStringStart !== '' ? changeTime(timeStringStart, timeRange[clonedElementClassName][0]) : '';
+  $(startTimeId).val(updateStartTime);
+
+  const timeStringEnd = $('#id_broadcast_end_date').val();
+  const updateEndTime = timeStringEnd !== '' ? changeTime(timeStringEnd, timeRange[clonedElementClassName][1]) : '';
+  $(endTimeId).val(updateEndTime);
+
+  $(document).ready(function () {
+    $(startTimeId).datetimepicker({
+      format: 'Y-m-d H:i',
+      minDate: 0,
+      step: 5,
+      onShow: function () {
+        this.setOptions({
+          maxDate: $(endTimeId).val() ? $(endTimeId).val() : false,
+        });
+      },
+    });
+    $(endTimeId).datetimepicker({
+      format: 'Y-m-d H:i',
+      step: 5,
+      onShow: function () {
+        this.setOptions({
+          minDate: $(startTimeId).val() ? $(startTimeId).val() : 0,
+          value: $(endTimeId).val() ? $(endTimeId).val() : $(startTimeId).val() ? $(startTimeId).val() : 0,
+        });
+      },
+    });
+  });
+}
+
 function add_new_form(
     listName,
     hiddenElementId,
@@ -57,9 +95,7 @@ function add_new_form(
     formCopyTarget.append(copyemptyFormEl)
 
     // Cameras - optics block
-
     if (checkQuantityList.includes(clonedElementClassName)) {
-      var previusValue = '';
       if(elementPrefix === 'id_cameraptsconstructor_set')
         globalCamFormCount += 1;
       if(elementPrefix === 'id_opticptsconstructor_set')
@@ -93,7 +129,6 @@ function add_new_form(
         console.log(previusValuesDict)
       });
     }
-   
     // Cameras - optics block
 
     //Datetimepicker block
@@ -102,42 +137,7 @@ function add_new_form(
     if (datetimepickerList.includes(hiddenElementId)) {
       const startTimeId = `#${elementPrefix}-${addedFormCount}-start`
       const endTimeId = `#${elementPrefix}-${addedFormCount}-end`
-      const timeRange = {
-        'commline-form': [-20, 10],
-        'techcommline-form': [-30, 20],
-        'internetline-form': [-60, 20],
-      }
-      var timeStringStart = $('#id_broadcast_start_date').val()
-      var updateStartTime = timeStringStart !== '' ? changeTime(timeStringStart, timeRange[clonedElementClassName][0]) : '';
-      $(startTimeId).val(updateStartTime)
-      
-      var timeStringEnd = $('#id_broadcast_end_date').val()
-      var updateEndTime = timeStringEnd !== '' ? changeTime(timeStringEnd, timeRange[clonedElementClassName][1]) : '';
-      $(endTimeId).val(updateEndTime)
-
-      $(document).ready(function(){
-        $(startTimeId).datetimepicker({
-          format:'Y-m-d H:i',
-          minDate : 0,
-          step: 5,
-          onShow:function(){
-            this.setOptions({
-              maxDate:$(endTimeId).val()?$(endTimeId).val():false
-            })
-          },
-        });
-        $(endTimeId).datetimepicker({
-        format:'Y-m-d H:i',
-        step: 5,
-        onShow:function(){
-          this.setOptions({
-            minDate:$(startTimeId).val()?$(startTimeId).val():0,
-            value: $(endTimeId).val()?$(endTimeId).val():
-            ($(startTimeId).val()?$(startTimeId).val():0)
-          })
-        },
-        });
-      });
+      updateDateTimePicker(startTimeId, endTimeId, clonedElementClassName);
     }
     //Datetimepicker block
 
