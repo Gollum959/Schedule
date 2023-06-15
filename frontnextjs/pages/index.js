@@ -11,6 +11,7 @@ import { useRouter } from 'next/router'
 import axios from 'axios';
 import { Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 import PlaceDetails from './PlaceDetails';
+import PtsRequest from "@/components/PtsRequest";
 
 function Home() {
   const [data, setData] = useState(null);
@@ -34,6 +35,7 @@ console.log('DATA', data)
  
     return (
     <div>
+      <PtsRequest />
       {data ? (
         <Table>
           <TableHead>

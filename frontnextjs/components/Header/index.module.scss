@@ -30,20 +30,22 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid black;
 }
 .menu-logo{
   flex-grow: 1;
+
 }
 .pts-menu-list{
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
 }
-.pts-menu-item{
+.pts-menu-items{
   flex-grow: 1;
-  padding: 20px;
-  color: red;
-  border-bottom: 2px solid black;
+  padding: 10px;
+
 
 
 }
