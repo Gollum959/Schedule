@@ -57,7 +57,7 @@ class PlaceConstructor(models.Model):
         max_length=120,
     )
     phone = models.CharField('Контактный телефон', max_length=25, blank=True)
-    web = models.URLField('Website Address', blank=True)
+    web = models.CharField('Website Address', max_length=35, blank=True)
     email_address = models.EmailField('E-mail', blank=True)
     judge_system = models.CharField(
         'Судейская система',

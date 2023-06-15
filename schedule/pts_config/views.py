@@ -144,7 +144,6 @@ class PtsBaseConfigCreate(CreateOnlyMainDirectorMixin, CreateView):
 
         form.instance.author = self.request.user
         form.instance.base_conf = self.BASE_CFG
-        print(form.instance.base_conf)
         context = self.get_context_data()
         pts_cfg_forms = [context['camera'], context['optic'],
                          context['server'], context['gfx']]

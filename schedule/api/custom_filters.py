@@ -1,4 +1,4 @@
-from django_filters.rest_framework import DjangoFilterBackend, FilterSet, CharFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 
 from pts_config.models import CameraModelBrend, OpticModelBrend
@@ -33,13 +33,3 @@ class OpticDjangoFilterBackend(DjangoFilterBackend):
         if type_name:
             queryset = queryset.filter(type__name=type_name)
         return queryset
-
-
-class MicrophoneBrendFilter(FilterSet):
-    ...
-#     type_pts = CharFilter(field_name='micromodel__type_pts__name')
-#     type_micro = CharFilter(field_name='type_micro__name')
-
-#     class Meta:
-#         model = MicrophoneBrend
-#         fields = []
