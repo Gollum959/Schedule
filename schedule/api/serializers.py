@@ -4,7 +4,7 @@ from rest_framework import serializers
 from django.db.models import Q
 from datetime import datetime
 from django.core.exceptions import ValidationError
-from django.core.validators import FileExtensionValidator
+from drf_extra_fields.fields import Base64ImageField
 
 from pts_requests.models import PtsRequest, PtsName
 from pts_config.models import (PtsConstructor,
@@ -627,14 +627,7 @@ class PtsConfigSerializerSave(serializers.ModelSerializer):
     place = serializers.PrimaryKeyRelatedField(
         queryset=PlaceConstructor.objects.all()
     )
-    image = ImageOrPdfField(
-        allow_empty_file=False,
-        use_url=True,
-        validators=[
-            FileExtensionValidator(['jpg', 'jpeg', 'png', 'pdf']),
-        ],
-        required=False
-    )
+    image = Base64ImageField()
     create_date = serializers.DateTimeField(
         default=datetime.now, read_only=True)
     camera_pts_constructor = CameraConstructorSaveSerializer(

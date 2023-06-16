@@ -12,3 +12,4 @@ sorl-thumbnail==12.9.0
 psycopg2
 django-cors-headers
 drf-yasg
+drf-extra-fields
