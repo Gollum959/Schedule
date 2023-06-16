@@ -4,6 +4,7 @@ from rest_framework import serializers
 from django.db.models import Q
 from datetime import datetime
 from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 
 from pts_requests.models import PtsRequest, PtsName
 from pts_config.models import (PtsConstructor,
@@ -607,6 +608,13 @@ class GfxConstructorSaveSerializer(serializers.ModelSerializer):
         fields = ('gfx', 'license_type', 'judicial_system', 'quantity', )
 
 
+class ImageOrPdfField(serializers.FileField):
+    def to_representation(self, value):
+        if value:
+            return value.url
+        return None
+
+
 class PtsConfigSerializerSave(serializers.ModelSerializer):
 
     # temporary without login
@@ -619,62 +627,68 @@ class PtsConfigSerializerSave(serializers.ModelSerializer):
     place = serializers.PrimaryKeyRelatedField(
         queryset=PlaceConstructor.objects.all()
     )
-    create_date = serializers.DateTimeField(
-        default=datetime.now, read_only=True
+    image = ImageOrPdfField(
+        allow_empty_file=False,
+        use_url=True,
+        validators=[
+            FileExtensionValidator(['jpg', 'jpeg', 'png', 'pdf']),
+        ],
+        required=False
     )
-    camera_pts_constructor = CameraConstructorSaveSerializer(many=True, required=False,)
-    optic_pts_constructor = OpticConstructorSaveSerializer(many=True, required=False,)
-    server_pts_constructor = ServerConstructorSaveSerializer(many=True, required=False,)
-    gfx_pts_constructor = GfxConstructorSaveSerializer(many=True, required=False,)
+    create_date = serializers.DateTimeField(
+        default=datetime.now, read_only=True)
+    camera_pts_constructor = CameraConstructorSaveSerializer(
+        many=True, required=False, )
+    optic_pts_constructor = OpticConstructorSaveSerializer(
+        many=True, required=False, )
+    server_pts_constructor = ServerConstructorSaveSerializer(
+        many=True, required=False, )
+    gfx_pts_constructor = GfxConstructorSaveSerializer(
+        many=True, required=False, )
 
     class Meta:
         model = PtsConstructor
         fields = (
-            'name', 'author', 'event_type', 'place', 'base_conf', 'clone_conf',
-            'camera_pts_constructor', 'optic_pts_constructor',
-            'server_pts_constructor', 'gfx_pts_constructor', 'microphone_quantity',
-            'microphone_comment', 'image', 'create_date'
+            'name', 'author', 'event_type', 'place', 'base_conf',
+            'clone_conf', 'camera_pts_constructor', 'optic_pts_constructor',
+            'server_pts_constructor', 'gfx_pts_constructor',
+            'microphone_quantity', 'microphone_comment', 'create_date',
+            'image'
         )
 
     @transaction.atomic
     def create(self, validated_data):
         camera_pts_constructor_data = validated_data.pop(
-            'camera_pts_constructor', None
-        )
+            'camera_pts_constructor', None)
         optic_pts_constructor_data = validated_data.pop(
-            'optic_pts_constructor', None
-        )
+            'optic_pts_constructor', None)
         server_pts_constructor_data = validated_data.pop(
-            'server_pts_constructor', None
-        )
+            'server_pts_constructor', None)
         gfx_pts_constructor_data = validated_data.pop(
-            'gfx_pts_constructor', None
-        )
+            'gfx_pts_constructor', None)
 
         pts_constructor = PtsConstructor.objects.create(**validated_data)
 
         if camera_pts_constructor_data:
             for camera_pts_data in camera_pts_constructor_data:
                 CameraPtsConstructor.objects.create(
-                    constructor=pts_constructor, **camera_pts_data
-                )
+                    constructor=pts_constructor, **camera_pts_data)
 
         if optic_pts_constructor_data:
             for optic_pts_data in optic_pts_constructor_data:
                 OpticPtsConstructor.objects.create(
-                    constructor=pts_constructor, **optic_pts_data
-                )
+                    constructor=pts_constructor, **optic_pts_data)
 
         if server_pts_constructor_data:
             for server_pts_data in server_pts_constructor_data:
                 ServerRecordingRepeatConstructor.objects.create(
-                    constructor=pts_constructor, **server_pts_data
-                )
+                    constructor=pts_constructor, **server_pts_data)
 
         if gfx_pts_constructor_data:
             for gfx_pts_data in gfx_pts_constructor_data:
                 license_type = gfx_pts_data.pop('license_type', [])
-                gfx_pts_constructor = GfxPtsConstructor.objects.create(constructor=pts_constructor, **gfx_pts_data)
+                gfx_pts_constructor = GfxPtsConstructor.objects.create(
+                    constructor=pts_constructor, **gfx_pts_data)
                 gfx_pts_constructor.license_type.set(license_type)
 
         return pts_constructor
