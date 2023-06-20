@@ -337,7 +337,9 @@ class PtsConstructor(models.Model):
     microphone_comment = models.TextField(
         'Комментарий к заказу микрофонов',
         max_length=2000,
-        blank=True)
+        blank=True,
+        null=True
+        )
     image = models.ImageField(
         'Картинка или pdf',
         upload_to='plans/',
