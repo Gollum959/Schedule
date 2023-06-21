@@ -111,6 +111,11 @@ htmx_urlpatterns = [
         views.config_microphones_edit_form,
         name='config_microphones_edit'
     ),
+    path(
+        'request/<int:pk>/on_aproval/',
+        views.validate_on_aprovall_status,
+        name='validate_on_aprovall_status'
+    ),
 ]
 
 urlpatterns += htmx_urlpatterns

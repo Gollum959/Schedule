@@ -1,5 +1,5 @@
-<div class="col-auto d-flex justify-content-end">
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chage-statusModal">
+<div class="col-auto d-flex justify-content-end" >
+    <button id="modal-delay" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chage-statusModal" hx-get="{% url 'pts_requests:validate_on_aprovall_status' ptsrequest.pk %}" hx-target="#test">
       Отправить заявку на утверждение звукорежиссером
     </button>
   </div>
@@ -11,16 +11,20 @@
           <h1 class="modal-title fs-5" id="chage-statusModalLabel">Рассмотрение заявки</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-          <b>Вы точно хотите направить заявку {{ ptsrequest.name }} на рассмотрение звукорежиссером?</b>
+
+        <div id="test" hx-swap="innerHTML">
+          <div class="modal-body">
+            <b>Вы точно хотите направить заявку {{ ptsrequest.name }} на рассмотрение звукорежиссером?</b>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+            <form action="{% url 'pts_requests:request_change_status_soundman' ptsrequest.pk %}" method="POST">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary">Да</button>
+            </form>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-          <form action="{% url 'pts_requests:request_change_status_soundman' ptsrequest.pk %}" method="POST">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary">Да</button>
-          </form>
-        </div>
+
       </div>
     </div>
   </div>
