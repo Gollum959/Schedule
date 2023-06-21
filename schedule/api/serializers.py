@@ -627,7 +627,7 @@ class PtsConfigSerializerSave(serializers.ModelSerializer):
     place = serializers.PrimaryKeyRelatedField(
         queryset=PlaceConstructor.objects.all()
     )
-    image = Base64ImageField()
+    image = Base64ImageField(required=False)
     create_date = serializers.DateTimeField(
         default=datetime.now, read_only=True)
     camera_pts_constructor = CameraConstructorSaveSerializer(
@@ -691,6 +691,56 @@ class PtsConfigSerializerSave(serializers.ModelSerializer):
             instance=pts_constructor, context=self.context
         )
         return serializer.data
+
+def update(self, instance, validated_data):
+    camera_pts_constructor_data = validated_data.pop('camera_pts_constructor', None)
+    optic_pts_constructor_data = validated_data.pop('optic_pts_constructor', None)
+    server_pts_constructor_data = validated_data.pop('server_pts_constructor', None)
+    gfx_pts_constructor_data = validated_data.pop('gfx_pts_constructor', None)
+
+    instance.name = validated_data.get('name', instance.name)
+    instance.base_conf = validated_data.get('base_conf', instance.base_conf)
+    instance.clone_conf = validated_data.get('clone_conf', instance.clone_conf)
+    instance.microphone_quantity = validated_data.get('microphone_quantity', instance.microphone_quantity)
+    instance.microphone_comment = validated_data.get('microphone_comment', instance.microphone_comment)
+    instance.image = validated_data.get('image', instance.image)
+
+    if 'author' in validated_data:
+        instance.author = validated_data['author']
+    if 'event_type' in validated_data:
+        instance.event_type = validated_data['event_type']
+    if 'place' in validated_data:
+        instance.place = validated_data['place']
+
+    instance.save() 
+
+    if camera_pts_constructor_data:
+        instance.cameraptsconstructor_set.clear()
+        # CameraPtsConstructor.objects.filter(constructor=instance).delete()
+        for camera_pts_data in camera_pts_constructor_data:
+            CameraPtsConstructor.objects.create(constructor=instance, **camera_pts_data)
+
+    if optic_pts_constructor_data:
+        instance.opticptsconstructor_set.clear()
+        # OpticPtsConstructor.objects.filter(constructor=instance).delete()
+        for optic_pts_data in optic_pts_constructor_data:
+            OpticPtsConstructor.objects.create(constructor=instance, **optic_pts_data)
+
+    if server_pts_constructor_data:
+        instance.serverrecordingrepeatconstructor_set.clear()
+        # ServerRecordingRepeatConstructor.objects.filter(constructor=instance).delete()
+        for server_pts_data in server_pts_constructor_data:
+            ServerRecordingRepeatConstructor.objects.create(constructor=instance, **server_pts_data)
+
+    if gfx_pts_constructor_data:
+        instance.gfxptsconstructor_set.clear()
+        # GfxPtsConstructor.objects.filter(constructor=instance).delete()
+        for gfx_pts_data in gfx_pts_constructor_data:
+            license_type = gfx_pts_data.pop('license_type', [])
+            gfx_pts_constructor = GfxPtsConstructor.objects.create(constructor=instance, **gfx_pts_data)
+            gfx_pts_constructor.license_type.set(license_type)
+
+    return instance
 
 
 # block for PTS requests

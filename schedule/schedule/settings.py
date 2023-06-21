@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,12 +23,15 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3n@*940p-&qv+kxre$etn18ce7l5z5(m&(a4y8!i&w8*i_0kyi'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.getenv('DEBUG', 1)))
 
-ALLOWED_HOSTS = ['10.2.3.15', '10.2.16.45']
+
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'web', '10.2.3.15', '10.2.16.45']
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1']
+
 
 
 # Application definition
@@ -99,11 +105,11 @@ WSGI_APPLICATION = 'schedule.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'schedule',
-        'USER': 'bt_admin',
-        'PASSWORD': 'Snezhinka158',
-        'HOST': 'schedule.postgres.database.azure.com',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='postgres'),
+        'PORT': os.getenv('DB_PORT', default='postgres')
     }
 }
 # host=schedule.postgres.database.azure.com port=5432 dbname={your_database} user=bt_admin password={your_password} sslmode=require
@@ -154,6 +160,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -267,8 +267,7 @@ def download_letter(request, pk):
         '2': '80/40 Мбит/c',
         '3': '200/200 Мбит/c',
     }
-    doc_template_path = os.path.join(MEDIA_ROOT, 'letters',)
-    doc_template_path += 'template.docx'
+    doc_template_path = os.path.join(MEDIA_ROOT, 'letters', 'template.docx')
     doc = DocxTemplate(doc_template_path)
     start_date_time = pts_request.broadcast_start_date
     end_date_time = pts_request.broadcast_end_date
@@ -502,10 +501,12 @@ def time_travel_edit_form(request, pk):
 
     initial_dict = {}
     if not ptsrequest.start_date:
-        initial_dict['start_date'] = ptsrequest.trakt_start_date.strftime(
+        work_start_date = ptsrequest.broadcast_start_date - timedelta(hours=12)
+        initial_dict['start_date'] = work_start_date.strftime(
             '%Y-%m-%d %H:%M')
     if not ptsrequest.end_date:
-        initial_dict['end_date'] = ptsrequest.broadcast_end_date.strftime(
+        work_end_date = ptsrequest.broadcast_end_date + timedelta(hours=2)
+        initial_dict['end_date'] = work_end_date.strftime(
             '%Y-%m-%d %H:%M')
 
     if request.method == 'PUT':

@@ -112,7 +112,7 @@ class TimeStartEnd(ModelForm):
     end = DateTimeField(
         widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
         input_formats=['%Y-%m-%d %H:%M'],
-        label='Дата и время начала работ')
+        label='Дата и время окончания работ')
 
 
 class AddCommLine(TimeStartEnd):
@@ -164,6 +164,10 @@ class AddInternetLine(TimeStartEnd):
     class Meta:
         model = InternetLineConstructor
         fields = ['speed', 'phone', 'quantity', 'start', 'end', ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['quantity'].initial = 1
 
 
 InternetLineFormset = inlineformset_factory(
