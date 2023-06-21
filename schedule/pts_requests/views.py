@@ -267,8 +267,7 @@ def download_letter(request, pk):
         '2': '80/40 Мбит/c',
         '3': '200/200 Мбит/c',
     }
-    doc_template_path = os.path.join(MEDIA_ROOT, 'letters',)
-    doc_template_path += 'template.docx'
+    doc_template_path = os.path.join(MEDIA_ROOT, 'letters', 'template.docx')
     doc = DocxTemplate(doc_template_path)
     start_date_time = pts_request.broadcast_start_date
     end_date_time = pts_request.broadcast_end_date
