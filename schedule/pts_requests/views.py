@@ -501,10 +501,12 @@ def time_travel_edit_form(request, pk):
 
     initial_dict = {}
     if not ptsrequest.start_date:
-        initial_dict['start_date'] = ptsrequest.trakt_start_date.strftime(
+        work_start_date = ptsrequest.broadcast_start_date - timedelta(hours=12)
+        initial_dict['start_date'] = work_start_date.strftime(
             '%Y-%m-%d %H:%M')
     if not ptsrequest.end_date:
-        initial_dict['end_date'] = ptsrequest.broadcast_end_date.strftime(
+        work_end_date = ptsrequest.broadcast_end_date + timedelta(hours=2)
+        initial_dict['end_date'] = work_end_date.strftime(
             '%Y-%m-%d %H:%M')
 
     if request.method == 'PUT':
