@@ -50,7 +50,8 @@
               </div>
             </div>
           {% endif %}
-          <p class="card-text mb-1"><b>Ответственное лицо:</b> {{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.position}}, {{ptsrequest.author.direction}}</p>
+          <p class="card-text mb-1"><b>Ответственное лицо:</b> {{ ptsrequest.author.get_full_name }}, {{ptsrequest.author.position}}, {{ptsrequest.author.get_direction_display}}</p>
+          <p class="card-text mb-1"><b>Режиссер трансляции:</b> {{ ptsrequest.director }}, {{ptsrequest.director.position}}, {{ptsrequest.director.get_direction_display}}</p>
       </div>
     </div>
     {% include 'includes/place_detail.html' %} 

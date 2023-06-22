@@ -41,7 +41,8 @@
               <div id="eventField" event-type-url="{% url 'pts_requests:ajax_load_event_types' %}" class="col-4">{{ form.event_type|as_crispy_field }}</div>
             </div>
             <div class="row">
-              <div class="col-8">{{ form.name|as_crispy_field }}</div>
+              <div class="col-5">{{ form.name|as_crispy_field }}</div>
+              <div class="col-3">{{ form.director|as_crispy_field }}</div>
               <div class="col-4">{{ form.type|as_crispy_field }}</div>
             </div>
             <div class="row">

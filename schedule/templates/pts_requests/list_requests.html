@@ -9,7 +9,7 @@
         <th class="col-1">Время трансляции</th>
         <th class="col-2">Название передачи</th>
         <th class="col">Статус</th>
-        <th class="col">Автор</th>
+        <th class="col">Режиссер</th>
         <th class="col-1">Имя ПТС</th>
         <th class="col-2">Конфигурация ПТС</th>
         <th class="col-2">Место работы</th>
@@ -28,7 +28,7 @@
             <a href="{% url 'pts_requests:request_detail' request.pk %}">{{ request.name }}, ID№ {{request.pk}}</a>
           </td>
           <td class="col pt-0 pb-0">{{ request.get_status_display }}</td>
-          <td class="col pt-0 pb-0">{{ request.author.get_full_name }}</td>
+          <td class="col pt-0 pb-0">{{ request.director.get_full_name }}</td>
           <td class="col-1 pt-0 pb-0">{{ request.pts_name.name }}</td>
           <td class="col-2 pt-0 pb-0">{{ request.pts_cfg.name }}</td>
           <td class="col-2 pt-0 pb-0">{{ request.place.city_name}},<br><h6>{{request.place.name }}</h6> </td>

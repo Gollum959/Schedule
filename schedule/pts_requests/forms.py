@@ -11,6 +11,7 @@ from pts_requests.models import (PtsRequest,
                                  CommLineConstructor,
                                  TechCommLineConstructor,
                                  InternetLineConstructor)
+from users.models import User
 from pts_config.models import PtsConstructor
 
 
@@ -18,9 +19,14 @@ class AddRequestFrom(ModelForm):
     """Form for creating and updating PTS request."""
 
     city_name = ModelChoiceField(
-        queryset=PlaceCity.objects.all(),
+        queryset=User.objects.none(),
         label='Город',
         empty_label='Выберите город'
+    )
+    director = ModelChoiceField(
+        queryset=User.objects.all(),
+        label='Режисер трасляции',
+        empty_label='Выберете режиссера'
     )
     event_type = ModelChoiceField(
         queryset=EventType.objects.all(),
@@ -47,7 +53,9 @@ class AddRequestFrom(ModelForm):
 
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-
+        self.fields['director'].queryset = User.objects.filter(
+            direction=self.user.direction)
+        self.fields['director'].initial = self.user
         self.fields['place'].empty_label = 'Выберите площадку'
         self.fields['type'].empty_label = 'Выберите вид работ'
         self.fields['event_type'].empty_label = 'Выберите вид события'
@@ -99,7 +107,7 @@ class AddRequestFrom(ModelForm):
         model = PtsRequest
         fields = [
             'name', 'city_name', 'place', 'event_type', 'broadcast_start_date',
-            'broadcast_end_date', 'place', 'type', 'pts_cfg',
+            'broadcast_end_date', 'place', 'type', 'pts_cfg', 'director'
         ]
 
 

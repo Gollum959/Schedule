@@ -309,6 +309,13 @@ class PtsRequest(models.Model):
         User,
         on_delete=models.CASCADE,
     )
+    director = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='director',
+        blank=True,
+        null=True
+    )
     moderator = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
