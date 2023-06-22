@@ -213,6 +213,7 @@ class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
         """Validation and save request and all related lines."""
 
         context = self.get_context_data()
+        print(context)
         commlines = context['commline']
         techcommlines = context['techcommline']
         internetlines = context['internetline']
@@ -920,7 +921,8 @@ def change_status_to_approved(request, pk):
 def validate_on_aprovall_status(request, pk):
     pts_request = get_object_or_404(PtsRequest, pk=pk)
     result = True
-    error_message = '<div class="modal-body"><div class="ps-4 pb-2"><b>Замечания</b></div><ul style="color: red">'
+    error_message = ('<div class="modal-body"><div class="ps-4 pb-2">'
+                     '<b>Замечания</b></div><ul style="color: red">')
     if pts_request.pts_name is None:
         error_message += '<li>Убедитесь, что выбрали ПТС.</li>'
         result = False
@@ -951,5 +953,5 @@ def validate_on_aprovall_status(request, pk):
         response = HttpResponse(status=204)
         response['HX-Trigger'] = 'false'
         return response
-    
+
     return HttpResponse(f'{error_message}</ul></div>')

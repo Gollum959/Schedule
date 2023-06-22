@@ -72,6 +72,9 @@ class User(AbstractUser):
     class Meta:
         ordering = ('id', )
 
+    def __str__(self) -> str:
+        return self.get_full_name()
+
     @property
     def is_admin(self):
         """Return True if user is Admin."""

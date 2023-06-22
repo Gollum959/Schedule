@@ -97,9 +97,13 @@ function add_new_form(
     // Cameras - optics block
     if (checkQuantityList.includes(clonedElementClassName)) {
       if(elementPrefix === 'id_cameraptsconstructor_set')
-        globalCamFormCount += 1;
+        globalCamFormCount = totalNewForms.value;
       if(elementPrefix === 'id_opticptsconstructor_set')
-        globalOpticsFormCount +=1;
+        globalOpticsFormCount = totalNewForms.value;
+
+      // console.log('cam'+globalCamFormCount);
+      // console.log('opt'+globalOpticsFormCount);
+
       const inputId = `${elementPrefix}-${addedFormCount}-quantity`
       const input = document.getElementById(inputId);
       input.addEventListener('change', e => {
