@@ -50,17 +50,20 @@
               <div class="col-3">{{ form.broadcast_end_date|as_crispy_field }}</div>
               <div class="col-6">
                 <div class="row align-items-end">
-                  <div class="col-11">
+                  <div class="col-10">
                     {{ form.pts_cfg|as_crispy_field }}
                   </div>
                   <div class="col-1 ps-0 pe-0 mb-3">
-                    <button id="cfg-detail" cfg-detail-url="{% url 'pts_requests:ajax_load_cfg_detail' %}" type="button" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#cfgModal">
+                    <button id="cfg-detail" cfg-detail-url="{% url 'pts_requests:ajax_load_cfg_detail' %}" type="button" class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#cfgModal" disabled>
                       <img src="{% static 'img/diagnostics.png' %}" style="width: 38px;" alt="Подробная информация">
                     </button>
                   </div>
-                  
+                  <div class="col-1 ps-0 pe-0 mb-3">
+                    <button id="create-cfg" type="button" class="btn btn-link p-0" onclick="return showCfgCreatePopup();" disabled title="Создать конфигурацию на основе базовой">
+                      <img src="{% static 'img/diagnostics.png' %}" style="width: 38px;">
+                    </button>
+                  </div>
                   <div id="modal-cfg-detail"></div> 
-
               </div>
             </div>
             <hr style="border: 1px;">
@@ -178,6 +181,8 @@
     $("#id_city_name").change(function () {
       var url = $("#requestForm").attr("data-places-url");
       var cityId = $(this).val();
+      var button = document.getElementById("create-cfg");
+      button.disabled = true;
 
       $.ajax({
         url: url,
@@ -195,6 +200,8 @@
     $("#id_place").change(function () {
       var url = $("#eventField").attr("event-type-url");
       var placeId = $(this).val();
+      var button = document.getElementById("create-cfg");
+      button.disabled = true;
   
       $.ajax({
         url: url,
@@ -212,6 +219,8 @@
       var url = $("#requestForm").attr("cfg-url");
       var eventId = $(this).val();
       var placeId = $("#id_place").val();
+      var button = document.getElementById("create-cfg");
+      button.disabled = true;
 
       $.ajax({
         url: url,
@@ -227,8 +236,13 @@
 
     $("#id_pts_cfg").change(function () {
       var url = $("#cfg-detail").attr("cfg-detail-url");
+      var button = document.getElementById("cfg-detail");
       var cfgId = $(this).val();
-
+      if (cfgId !== '') {
+        button.disabled = false;
+      } else {
+        button.disabled = true;
+      }
       $.ajax({
         url: url,
         data: {

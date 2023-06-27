@@ -27,7 +27,7 @@ class CreatePtsConfigurationMixin(forms.ModelForm):
     """Mixin to creat configuration with 2 fields(image, name)
      and clean_image method"""
 
-    image = forms.FileField()
+    image_or_pdf = forms.FileField()
     name = forms.CharField(
         label='Название конфигурации ПТС',
         validators=[RegexValidator(
@@ -41,7 +41,7 @@ class CreatePtsConfigurationMixin(forms.ModelForm):
     def clean_image(self):
         """Checks if a file is an image or a pdf"""
 
-        uploaded_file = self.cleaned_data['image']
+        uploaded_file = self.cleaned_data['image_or_pdf']
         try:
             im = forms.ImageField()
             im.to_python(uploaded_file)
@@ -66,6 +66,7 @@ class AddPtsConfigFrom(CreatePtsConfigurationMixin):
 
         self.fields['place'].label = 'Название объекта'
         self.fields['place'].disabled = True
+
         if self.place_id:
             self.fields['place'].initial = self.place_id
 
@@ -77,7 +78,7 @@ class AddPtsConfigFrom(CreatePtsConfigurationMixin):
     class Meta:
         model = PtsConstructor
         fields = ('place', 'event_type',
-                  'name', 'microphone_quantity', 'microphone_comment', 'image')
+                  'name', 'microphone_quantity', 'microphone_comment', 'image_or_pdf')
         widgets = {
             'microphone_comment': forms.Textarea(attrs={'rows': 5}),
         }
@@ -92,7 +93,7 @@ class AddPtsConfigOnBaseFrom(CreatePtsConfigurationMixin):
 
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        self.fields['image'].required = False
+        self.fields['image_or_pdf'].required = False
 
     def clean(self):
         """Checks that three fields: clone_conf, name, author,
@@ -108,7 +109,7 @@ class AddPtsConfigOnBaseFrom(CreatePtsConfigurationMixin):
 
     class Meta:
         model = PtsConstructor
-        fields = ('name', 'microphone_quantity', 'microphone_comment', 'image')
+        fields = ('name', 'microphone_quantity', 'microphone_comment', 'image_or_pdf')
         widgets = {
             'microphone_comment': forms.Textarea(attrs={'rows': 5}),
         }

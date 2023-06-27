@@ -212,11 +212,28 @@ function add_new_form(
 function showAddPopup(triggeringLink) {
     var name = triggeringLink.id.replace(/^add_/, '');
     href = triggeringLink.href;
-    var win = window.open(href, name, 'height=300,width=400,resizable=yes,scrollbars=yes');
+    var win = window.open(href, name, 'height=600,width=400,resizable=yes,scrollbars=yes');
     win.focus();
     return false;
 }
 function closePopup(win, newID, newRepr, id) {
     $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
     win.close();
+}
+
+function showCfgCreatePopup() {
+  var name = 'Create-config'
+  href =  $('#base-cfg').attr('create-on-base')
+  var width = 800;
+  var height = 900;
+  var left = (window.innerWidth / 2) - (width / 2);
+  var top = (window.innerHeight / 2) - (height / 2);
+  var win = window.open(href, name, 'width=' + width + ', height=' + height + ', left=' + left + ', top=' + top + ', resizable=yes, scrollbars=yes');
+  win.focus();
+  return false;
+}
+
+function closeCfgCreatePopup(win, newID, newRepr, id) {
+  $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
+  win.close();
 }

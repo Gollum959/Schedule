@@ -1,7 +1,7 @@
 {% if cfg %}
   <div class="modal fade" id="cfgModal" tabindex="-1" aria-labelledby="cfgModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered  modal-dialog-scrollable modal-lg">
-      <div class="modal-content">
+      <div class="modal-content" id="short-detail">
         <div class="modal-header ps-5">
           <h5 class="modal-title" id="cfgModalLabel">{{ cfg.name }}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -149,9 +149,26 @@
             </div>
           </div>
         </div>
+
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
         </div>
+
+        <script>
+          $("#create_cfg_short").click(function () {
+            var url = $("#create_cfg_short").attr("cfg-create-url");
+        
+            $.ajax({
+              url: url,
+              data: {
+              },
+              success: function (data) {
+                $("#short-detail").html(data);
+              }
+            });
+          });
+        </script>
+
       </div>
     </div>
   </div>

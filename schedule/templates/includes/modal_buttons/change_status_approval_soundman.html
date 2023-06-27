@@ -1,5 +1,5 @@
 <div class="col-auto d-flex justify-content-end" >
-    <button id="modal-delay" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chage-statusModal" hx-get="{% url 'pts_requests:validate_on_aprovall_status' ptsrequest.pk %}" hx-target="#test">
+    <button id="modal-delay" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chage-statusModal" hx-get="{% url 'pts_requests:validate_on_aprovall_status' ptsrequest.pk %}" hx-target="#window_body">
       Отправить заявку на утверждение звукорежиссером
     </button>
   </div>
@@ -12,7 +12,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
-        <div id="test" hx-swap="innerHTML">
+        <div id="window_body" hx-swap="innerHTML">
           <div class="modal-body">
             <b>Вы точно хотите направить заявку {{ ptsrequest.name }} на рассмотрение звукорежиссером?</b>
           </div>
