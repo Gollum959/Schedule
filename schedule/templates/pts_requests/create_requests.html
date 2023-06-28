@@ -60,7 +60,7 @@
                   </div>
                   <div class="col-1 ps-0 pe-0 mb-3">
                     <button id="create-cfg" type="button" class="btn btn-link p-0" onclick="return showCfgCreatePopup();" disabled title="Создать конфигурацию на основе базовой">
-                      <img src="{% static 'img/diagnostics.png' %}" style="width: 38px;">
+                      <img src="{% static 'img/cfg_add.png' %}" style="width: 38px;">
                     </button>
                   </div>
                   <div id="modal-cfg-detail"></div> 
@@ -238,17 +238,16 @@
       var url = $("#cfg-detail").attr("cfg-detail-url");
       var button = document.getElementById("cfg-detail");
       var cfgId = $(this).val();
-      if (cfgId !== '') {
-        button.disabled = false;
-      } else {
-        button.disabled = true;
-      }
+      button.disabled = true;
       $.ajax({
         url: url,
         data: {
           'id': cfgId
         },
         success: function (data) {
+          if (cfgId !== ''){
+            button.disabled = false;
+          }
           $("#modal-cfg-detail").html(data);
         }
       });

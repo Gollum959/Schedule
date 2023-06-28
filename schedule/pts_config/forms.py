@@ -27,7 +27,7 @@ class CreatePtsConfigurationMixin(forms.ModelForm):
     """Mixin to creat configuration with 2 fields(image, name)
      and clean_image method"""
 
-    image_or_pdf = forms.FileField()
+    image = forms.FileField()
     name = forms.CharField(
         label='Название конфигурации ПТС',
         validators=[RegexValidator(
@@ -41,7 +41,7 @@ class CreatePtsConfigurationMixin(forms.ModelForm):
     def clean_image(self):
         """Checks if a file is an image or a pdf"""
 
-        uploaded_file = self.cleaned_data['image_or_pdf']
+        uploaded_file = self.cleaned_data['image']
         try:
             im = forms.ImageField()
             im.to_python(uploaded_file)
@@ -78,7 +78,7 @@ class AddPtsConfigFrom(CreatePtsConfigurationMixin):
     class Meta:
         model = PtsConstructor
         fields = ('place', 'event_type',
-                  'name', 'microphone_quantity', 'microphone_comment', 'image_or_pdf')
+                  'name', 'microphone_quantity', 'microphone_comment', 'image')
         widgets = {
             'microphone_comment': forms.Textarea(attrs={'rows': 5}),
         }
@@ -93,7 +93,7 @@ class AddPtsConfigOnBaseFrom(CreatePtsConfigurationMixin):
 
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        self.fields['image_or_pdf'].required = False
+        self.fields['image'].required = False
 
     def clean(self):
         """Checks that three fields: clone_conf, name, author,
@@ -109,7 +109,7 @@ class AddPtsConfigOnBaseFrom(CreatePtsConfigurationMixin):
 
     class Meta:
         model = PtsConstructor
-        fields = ('name', 'microphone_quantity', 'microphone_comment', 'image_or_pdf')
+        fields = ('name', 'microphone_quantity', 'microphone_comment', 'image')
         widgets = {
             'microphone_comment': forms.Textarea(attrs={'rows': 5}),
         }

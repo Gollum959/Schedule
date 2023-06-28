@@ -100,10 +100,6 @@ function add_new_form(
         globalCamFormCount = totalNewForms.value;
       if(elementPrefix === 'id_opticptsconstructor_set')
         globalOpticsFormCount = totalNewForms.value;
-
-      // console.log('cam'+globalCamFormCount);
-      // console.log('opt'+globalOpticsFormCount);
-
       const inputId = `${elementPrefix}-${addedFormCount}-quantity`
       const input = document.getElementById(inputId);
       input.addEventListener('change', e => {
@@ -117,20 +113,16 @@ function add_new_form(
           document.getElementById('add-more-optic').disabled = true;
         else
           document.getElementById('add-more-optic').disabled = false;
-
         if(globalCamCount-globalOpticsCount < 0 && elementPrefix === 'id_opticptsconstructor_set'){
           alert('Количество оптики не может превышать количество камер, будьте внимательней!');
           document.getElementById(inputId).value = previusValuesDict[inputId];
         }
         else if (elementPrefix === 'id_opticptsconstructor_set') previusValuesDict[inputId] = document.getElementById(inputId).value
-
         if(globalCamCount-globalOpticsCount < 0 && elementPrefix === 'id_cameraptsconstructor_set'){
           alert('Количество камер не может быть меньше количества оптики, будьте внимательней!');
           document.getElementById(inputId).value = previusValuesDict[inputId];
         }
         else if (elementPrefix === 'id_cameraptsconstructor_set') previusValuesDict[inputId] = document.getElementById(inputId).value
-
-        console.log(previusValuesDict)
       });
     }
     // Cameras - optics block
@@ -234,6 +226,19 @@ function showCfgCreatePopup() {
 }
 
 function closeCfgCreatePopup(win, newID, newRepr, id) {
+  var url = $("#cfg-detail").attr("cfg-detail-url");
+  var button = document.getElementById("cfg-detail");
+  button.disabled = true;
+  $.ajax({
+    url: url,
+    data: {
+      'id': newID
+    },
+    success: function (data) {
+      button.disabled = false;
+      $("#modal-cfg-detail").html(data);
+    }
+  });
   $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
   win.close();
 }

@@ -230,7 +230,7 @@ class PtsConfigCreateOnBase(LoginRequiredMixin, CreateView):
                         visible_to_user=True,
                         rec_rep_type=server.initial.get('type')
                     ).order_by('name')
-            data['form'] = AddPtsConfigFrom(instance=self.object)
+            data['form'] = AddPtsConfigOnBaseFrom(instance=self.object)
 
         data['cfg_info'] = base_object
         return data
