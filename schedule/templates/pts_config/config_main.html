@@ -1,6 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
-
+<style>
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(203, 220, 222, 0.5);
+    z-index: 9999;
+    display: none;
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
+}
+</style>
+  <div id="loading-overlay" class="overlay">
+    <div class="spinner-border text-info" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
   <div class="container py-3">     
     <h1>Конфигурации ПТС</h1>
     <div class="card shadow-sm">
@@ -53,15 +76,22 @@
     $("#id_place").change(function () {
       var url = $("#id_place").attr("event-type-url");
       var placeId = $(this).val();
+      var $overlay = $("#loading-overlay");
 
       $.ajax({
         url: url,
         data: {
           'place_id': placeId
         },
+        beforeSend: function () {
+          $overlay.show();
+        },
         success: function (data) {
           $("#id_event").html(data);
           $("#list_cfg").empty();
+        },
+        complete: function () {
+          $overlay.hide();
         }
       });
     });
@@ -70,6 +100,7 @@
       var url = $("#id_event").attr("config-list-url");
       var eventId = $(this).val();
       var placeId = $("#id_place").val();
+      var $overlay = $("#loading-overlay");
 
       $.ajax({
         url: url,
@@ -77,8 +108,14 @@
           'place_id': placeId,
           'event_type_id': eventId
         },
+        beforeSend: function () {
+          $overlay.show();
+        },
         success: function (data) {
           $("#list_cfg").html(data);
+        },
+        complete: function () {
+          $overlay.hide();
         }
       });
     });
