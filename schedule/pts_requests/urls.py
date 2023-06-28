@@ -116,6 +116,11 @@ htmx_urlpatterns = [
         views.validate_on_aprovall_status,
         name='validate_on_aprovall_status'
     ),
+    path(
+        'request/<int:pk>/create-cfg/',
+        views.PtsRequestCreateCfg.as_view(),
+        name='request_create_cfg'
+    ),
 ]
 
 urlpatterns += htmx_urlpatterns

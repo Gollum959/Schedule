@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
-{% block title %}<title></title>{% endblock %}
+{% block title %}<title>Создать заявку</title>{% endblock %}
+{% block header %}
+{% endblock %} 
 {% block content %}
   {% load crispy_forms_tags %}
   <style>
@@ -33,21 +35,18 @@
   </style>
   <div class="container p-3">
     <div class="row justify-content-center">
-      <h1>
-        {% if object %}
-          Изменить {% if object.base_conf %}базовую{% endif %} конфигурацию в {{ city_name }}
-        {% else %}
-          Создать базовую конфигурацию в {{ city_name }}
-        {% endif %}
-      </h1>
+      <h1>Создать конфигурацию в {{ cfg_info.place.city_name }}</h1>
+      <h3>Название объекта: {{ cfg_info.place }}</h3>
+      <h3>Вид события: {{ cfg_info.event_type }}</h3>
       <div class="card shadow-sm">
         <div class="card-body">        
           <form method="post" server-url="{% url 'config:ajax_load_server_config' %}" enctype="multipart/form-data" id="cfgForm">
             {% csrf_token %}
-            <div class="row">
-              <div class="col-6">{{ form.place|as_crispy_field }}</div>
-              <div class="col-6">{{ form.event_type|as_crispy_field }}</div>
-            </div>
+            {% if form.non_field_errors %}
+              <div class="row">
+                <div class="col-12 text-danger">{{ form.non_field_errors }}</div>
+              </div>
+            {% endif %}
             <div class="row">
               <div class="col-8">{{ form.name|as_crispy_field }}</div>
               <div class="col-4">{{ form.image|as_crispy_field }}</div>
@@ -79,13 +78,7 @@
             </div>
             <div class="row">
               <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">
-                  {% if object %}
-                    Изменить {% if object.base_conf %}базовую{% endif %} конфигурацию
-                  {% else %}
-                    Создать базовую конфигурацию
-                  {% endif %}
-                </button>
+                <button type="submit" class="btn btn-primary">Создать конфигурацию</button>
               </div>
             </div>
           </form>
@@ -95,62 +88,8 @@
   </div>
 
   <script>
-
-    var globalCamFormCount = $("#id_cameraptsconstructor_set-TOTAL_FORMS").val();
-    var globalOpticsFormCount = $("#id_opticptsconstructor_set-TOTAL_FORMS").val();
-
-    for (let i = 0; i < globalCamFormCount; i++) {
-      const inputId = `id_cameraptsconstructor_set-${i}-quantity`;
-      previusValuesDict[inputId] = document.getElementById(inputId).value
-    }
-
-    for (let i = 0; i < globalOpticsFormCount; i++) {
-      const inputId = `id_opticptsconstructor_set-${i}-quantity`;
-      previusValuesDict[inputId] = document.getElementById(inputId).value
-    }
-
-    globalCamCount = sumQuantity(globalCamFormCount, 'id_cameraptsconstructor_set');
-    globalOpticsCount = sumQuantity(globalOpticsFormCount, 'id_opticptsconstructor_set');
-
-    if(globalCamCount-globalOpticsCount > 0)
-          document.getElementById('add-more-optic').disabled = false;
-
-    for (let i = 0; i < globalCamFormCount; i++) {
-      const inputId = `id_cameraptsconstructor_set-${i}-quantity`;
-      const input = document.getElementById(inputId);
-      input.addEventListener('change', e => {
-        globalCamCount = sumQuantity(globalCamFormCount, 'id_cameraptsconstructor_set');
-        if(globalCamCount-globalOpticsCount <= 0)
-          document.getElementById('add-more-optic').disabled = true;
-        else
-          document.getElementById('add-more-optic').disabled = false;
-        if(globalCamCount-globalOpticsCount < 0){
-          alert('Количество камер не может быть меньше количества оптики, будьте внимательней!');
-          document.getElementById(inputId).value = previusValuesDict[inputId];
-        }
-        else previusValuesDict[inputId] = document.getElementById(inputId).value
-      });
-    }
-
-    for (let i = 0; i < globalOpticsFormCount; i++) {
-      const inputId = `id_opticptsconstructor_set-${i}-quantity`;
-      const input = document.getElementById(inputId);
-      input.addEventListener('change', e => {
-        globalOpticsCount = sumQuantity(globalOpticsFormCount, 'id_opticptsconstructor_set');
-        if(globalCamCount-globalOpticsCount <= 0)
-          document.getElementById('add-more-optic').disabled = true;
-        else
-          document.getElementById('add-more-optic').disabled = false;
-        if(globalCamCount-globalOpticsCount < 0){
-          alert('Количество оптики не может превышать количество камер, будьте внимательней!');
-          document.getElementById(inputId).value = previusValuesDict[inputId];
-        }
-        else previusValuesDict[inputId] = document.getElementById(inputId).value
-      });
-    }
-
+    
     var countForm = $("#id_serverrecordingrepeatconstructor_set-TOTAL_FORMS").val()
-
     for (let i = 0; i < countForm; i++) {
       
       $(`#id_serverrecordingrepeatconstructor_set-${i}-type`).change(function () {

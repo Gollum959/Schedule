@@ -15,6 +15,7 @@ from django.http import HttpResponseRedirect
 from docxtpl import DocxTemplate
 
 from place_broadcast.models import PlaceConstructor, EventType
+from pts_config.views import PtsConfigCreateOnBase
 from pts_requests.models import PtsRequest, PtsRequestApprovalStages
 from pts_config.models import PtsConstructor, MicrophoneType
 from pts_requests.forms import (AddRequestFrom,
@@ -213,7 +214,6 @@ class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
         """Validation and save request and all related lines."""
 
         context = self.get_context_data()
-        print(context)
         commlines = context['commline']
         techcommlines = context['techcommline']
         internetlines = context['internetline']
@@ -233,6 +233,36 @@ class PtsRequestEdit(UserToFormMixin, EditOnlyAuthorMixin,
             return self.render_to_response(self.get_context_data(form=form))
 
         return HttpResponseRedirect(self.get_success_url())
+
+
+class PtsRequestCreateCfg(PtsConfigCreateOnBase):
+
+    template_name = 'pts_config/create_pts_cgf_short.html'
+
+    def form_valid(self, form):
+
+        context = self.get_context_data()
+        if not form.cleaned_data.get('image'):
+            form.instance.image = context.get('cfg_info').image
+        form.instance.event_type = context.get('cfg_info').event_type
+        form.instance.place = context.get('cfg_info').place
+        form.instance.author = self.request.user
+        form.instance.base_conf = self.BASE_CFG
+        pts_cfg_forms = [context['camera'], context['optic'],
+                         context['server'], context['gfx']]
+        if all([inline_form.is_valid() for inline_form in pts_cfg_forms]):
+            self.object = form.save()
+            for cfg_form in pts_cfg_forms:
+                cfg_form.instance = self.object
+                cfg_form.save()
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
+        return HttpResponse(
+            f'<script>opener.closeCfgCreatePopup(window, '
+            f'"{self.object.pk}", "{self.object.name}", "#id_pts_cfg");</script>'
+        )
+        # return HttpResponseRedirect(self.get_success_url())
 
 
 @login_required

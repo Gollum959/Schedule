@@ -66,6 +66,7 @@ class AddPtsConfigFrom(CreatePtsConfigurationMixin):
 
         self.fields['place'].label = 'Название объекта'
         self.fields['place'].disabled = True
+
         if self.place_id:
             self.fields['place'].initial = self.place_id
 

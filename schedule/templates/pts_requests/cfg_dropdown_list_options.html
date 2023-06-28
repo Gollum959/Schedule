@@ -1,4 +1,12 @@
 <option value="">Выберите конфигурацию ПТС</option>
 {% for cfg in cfgs %}
-  <option value="{{ cfg.pk }}">{{ cfg.get_base_name }}</option>
+  {% if cfg.base_conf %}
+    <option id="base-cfg" create-on-base="{% url 'pts_requests:request_create_cfg' cfg.pk %}" value="{{ cfg.pk }}">{{ cfg.get_base_name }}</option>
+    <script>
+      var button = document.getElementById("create-cfg");
+      button.disabled = false;
+    </script>
+  {% else %}
+    <option value="{{ cfg.pk }}">{{ cfg.get_base_name }}</option>
+  {% endif %}
 {% endfor %}

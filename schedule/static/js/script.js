@@ -100,10 +100,6 @@ function add_new_form(
         globalCamFormCount = totalNewForms.value;
       if(elementPrefix === 'id_opticptsconstructor_set')
         globalOpticsFormCount = totalNewForms.value;
-
-      // console.log('cam'+globalCamFormCount);
-      // console.log('opt'+globalOpticsFormCount);
-
       const inputId = `${elementPrefix}-${addedFormCount}-quantity`
       const input = document.getElementById(inputId);
       input.addEventListener('change', e => {
@@ -117,20 +113,16 @@ function add_new_form(
           document.getElementById('add-more-optic').disabled = true;
         else
           document.getElementById('add-more-optic').disabled = false;
-
         if(globalCamCount-globalOpticsCount < 0 && elementPrefix === 'id_opticptsconstructor_set'){
           alert('Количество оптики не может превышать количество камер, будьте внимательней!');
           document.getElementById(inputId).value = previusValuesDict[inputId];
         }
         else if (elementPrefix === 'id_opticptsconstructor_set') previusValuesDict[inputId] = document.getElementById(inputId).value
-
         if(globalCamCount-globalOpticsCount < 0 && elementPrefix === 'id_cameraptsconstructor_set'){
           alert('Количество камер не может быть меньше количества оптики, будьте внимательней!');
           document.getElementById(inputId).value = previusValuesDict[inputId];
         }
         else if (elementPrefix === 'id_cameraptsconstructor_set') previusValuesDict[inputId] = document.getElementById(inputId).value
-
-        console.log(previusValuesDict)
       });
     }
     // Cameras - optics block
@@ -212,11 +204,41 @@ function add_new_form(
 function showAddPopup(triggeringLink) {
     var name = triggeringLink.id.replace(/^add_/, '');
     href = triggeringLink.href;
-    var win = window.open(href, name, 'height=300,width=400,resizable=yes,scrollbars=yes');
+    var win = window.open(href, name, 'height=600,width=400,resizable=yes,scrollbars=yes');
     win.focus();
     return false;
 }
 function closePopup(win, newID, newRepr, id) {
     $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
     win.close();
+}
+
+function showCfgCreatePopup() {
+  var name = 'Create-config'
+  href =  $('#base-cfg').attr('create-on-base')
+  var width = 800;
+  var height = 900;
+  var left = (window.innerWidth / 2) - (width / 2);
+  var top = (window.innerHeight / 2) - (height / 2);
+  var win = window.open(href, name, 'width=' + width + ', height=' + height + ', left=' + left + ', top=' + top + ', resizable=yes, scrollbars=yes');
+  win.focus();
+  return false;
+}
+
+function closeCfgCreatePopup(win, newID, newRepr, id) {
+  var url = $("#cfg-detail").attr("cfg-detail-url");
+  var button = document.getElementById("cfg-detail");
+  button.disabled = true;
+  $.ajax({
+    url: url,
+    data: {
+      'id': newID
+    },
+    success: function (data) {
+      button.disabled = false;
+      $("#modal-cfg-detail").html(data);
+    }
+  });
+  $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
+  win.close();
 }
