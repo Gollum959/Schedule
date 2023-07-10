@@ -13,6 +13,7 @@ const changeTime = (time, timeCorrection) => {
   return updateNewTimeString
 };
 
+
 var globalCamCount = 0;
 var globalOpticsCount = 0;
 var globalCamFormCount = 0;
@@ -208,8 +209,20 @@ function showAddPopup(triggeringLink) {
     win.focus();
     return false;
 }
+
+function changeCreatePlaceLink(newID) {
+    var baseUrl = $('#newCity').attr('href');
+    var updatedUrl = baseUrl.split('?')[0];
+    updatedUrl += '?city_id=' + newID;
+    $('#newCity').attr('href', updatedUrl);
+}
+
 function closePopup(win, newID, newRepr, id) {
     $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
+    if ($('#list_places').length) {
+      document.getElementById("list_places").style.display = "none";
+      changeCreatePlaceLink(newID)
+    }
     win.close();
 }
 

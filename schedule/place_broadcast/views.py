@@ -40,14 +40,14 @@ class CitiesBroadcastView(LoginRequiredMixin, ListView):
     def post(self, request, *args, **kwargs):
         """Handles the site removal.
         Only admin and main director have permission."""
-
         placecity_list = PlaceCity.objects.all()
-        place_to_be_deleted = get_object_or_404(
-            PlaceConstructor, pk=request.POST.get('place_pk')
-        )
-        deleted_place = place_to_be_deleted.name
-        city = place_to_be_deleted.city_name.name
         if request.method == 'POST' and request.user.is_main_director_or_admin:
+            place_to_be_deleted = get_object_or_404(
+                PlaceConstructor, pk=request.POST.get('place_pk')
+            )
+            deleted_place = place_to_be_deleted.name
+
+            city = place_to_be_deleted.city_name.name
             try:
                 place_to_be_deleted.delete()
                 exept = False

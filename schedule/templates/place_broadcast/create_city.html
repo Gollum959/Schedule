@@ -10,7 +10,18 @@
     <form method="post">
       {% csrf_token %}
       {{ form|crispy }}
-      <button type="submit">Add</button>
+      <button id="add-city-button" class="btn btn-primary" type="submit">Добавить город</button>
     </form>
   </div>
+
+  <script>
+    $(document).ready(function() {
+      $("#add-city-button").click(function() {
+        $(this).prop("disabled", true);
+        $(this).closest("form").submit();
+      });
+    });
+  </script>
+  
 {% endblock %} 
+
