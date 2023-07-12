@@ -25,7 +25,7 @@
             {% if user.is_main_director_or_admin %}
               <div class="row">
                 <div class="col d-flex justify-content-end">
-                  <a type="button" class="btn btn-secondary" href="{% url 'place:place_edit' place.pk %}">Изменить площадку</a>
+                  <a type="button" id="edit-place" class="btn btn-secondary" href="{% url 'place:place_edit' place.pk %}">Изменить площадку</a>
                 </div>
                 <div class="col-md-auto d-flex justify-content-end pe-0">
                   <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#remove-place{{ place.pk }}Modal">
@@ -47,7 +47,8 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
                         <form action="{% url 'place:places' %}" method="POST" id="delete_form_{{ place.pk }}">
                           {% csrf_token %}
-                          <button type="submit" name="place_pk" class="btn btn-primary" value="{{ place.pk }}">Да</button>
+                          <input name="place_pk" type="hidden" value="{{ place.pk }}">
+                          <button type="submit" id="deleteBtn" class="btn btn-primary">Да</button>
                         </form>
                       </div>
                     </div>
@@ -61,10 +62,24 @@
   {% endfor %}
 </div>
 
-{% if city_id != "0" and user.is_main_director_or_admin %}
-  <div class="row ms-1 pt-4 me-2">
-    <div class="d-flex justify-content-end">
-      <a type="button" class="btn btn-primary" href="{% url 'place:place_create' %}?city_id={{ city_id }}">Добавить новый объект</a>
-    </div>
-  </div>
-{% endif %}
+<script>
+
+  $(document).ready(function() {
+    $("a#edit-place").on("click", function(e) {
+      e.preventDefault();
+      var url = $(this).attr("href");
+      var $overlay = $("#loading-overlay");
+      $overlay.show();
+      window.location.href = url;
+    });
+
+    $("button#deleteBtn").on('click',function(event){
+        var button = $(this);
+        button.prop("disabled", true);
+        button.html('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Удаление...');
+        button.closest('form').submit();
+    });
+
+  });
+  
+</script>

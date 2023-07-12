@@ -1,18 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load static %} 
   <div class="container py-3">     
     <h1>Список объектов</h1>
     <div class="card shadow-sm">
       <div class="card-body">
         <div class="row">
           <div class="col-4">
-            <select class="form-select ms-3" id="id_city">
+            <select class="form-select ms-3" id="id_city_name">
               <option value=0>Выбирите город</option>
               {% for city in placecity_list %}
                 <option  {% if place_city == city.name %}selected{% endif %} value="{{ city.id }}">{{ city.name }}</option>
               {% endfor %}
             </select>
           </div>
+          {% if user.is_main_director_or_admin %}
+            <div class="col-md-auto">
+              <a href="{% url 'place:city_create' %}" id="add_city" onclick="return showAddPopup(this);">
+                <img src="{% static 'img/blue-plus-icon-2.jpg' %}" style="width: 38px;" title="Добавить город">
+              </a>
+            </div>
+          {% endif %}
         </div>
         {% if deleted_place %}
           <div id="deleted" class="row ps-3 pt-3">
@@ -29,7 +37,7 @@
         </div>
         {% if user.is_main_director_or_admin %}
           <div class="row ms-1">
-            <div class="d-flex justify-content-end">
+            <div class="d-flex justify-content-end pt-2">
               <a type="button" id="newCity" class="btn btn-primary" href="{% url 'place:place_create' %}">Добавить новый объект</a>
             </div>
           </div>
@@ -40,42 +48,65 @@
 
   <script>
 
+    function updateLink() {
+
+    }
+
     $(window).on('load', function() {
-      var cityId = $("#id_city").val();
+      var cityId = $("#id_city_name").val();
       var url = $("#list_places").attr("places-url");
+      changeCreatePlaceLink(cityId)
+      var $overlay = $("#loading-overlay");
       if (cityId !== "0"){
-        document.getElementById("newCity").style.display = "none";
         $.ajax({
           url: url,
           data: {
             'city_id': cityId
           },
+          beforeSend: function () {
+            $overlay.show();
+          },
           success: function (data) {
             $("#list_places").html(data);
+          },
+          complete: function () {
+            $overlay.hide();
           }
         });
       }
      });
 
-    $("#id_city").change(function () {
+    $("#id_city_name").change(function () {
       if(document.getElementById("deleted")){
         document.getElementById("deleted").style.display = "none"
       }
       var url = $("#list_places").attr("places-url");
       var cityId = $(this).val();
-      const cityStyle = cityId !== "0" ? "none" : "block";
-      if(document.getElementById("newCity")){
-        document.getElementById("newCity").style.display = cityStyle;
-      }
+      changeCreatePlaceLink(cityId)
+      var $overlay = $("#loading-overlay");
       $.ajax({
         url: url,
         data: {
           'city_id': cityId
         },
+        beforeSend: function () {
+          $overlay.show();
+        },
         success: function (data) {
           $("#list_places").html(data);
+        },
+        complete: function () {
+          $overlay.hide();
         }
       });
+    });
+
+    $("#newCity").on("click", function(e) {
+      e.preventDefault();
+      var url = $(this).attr("href");
+      var $overlay = $("#loading-overlay");
+      $overlay.show();
+      window.location.href = url;
     });
 
   </script>

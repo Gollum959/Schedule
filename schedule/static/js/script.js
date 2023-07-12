@@ -13,6 +13,7 @@ const changeTime = (time, timeCorrection) => {
   return updateNewTimeString
 };
 
+
 var globalCamCount = 0;
 var globalOpticsCount = 0;
 var globalCamFormCount = 0;
@@ -189,6 +190,10 @@ function add_new_form(
         globalOpticsFormCount -= 1
         lastOptVal = document.getElementById(`id_opticptsconstructor_set-${currentFormCount}-quantity`).value; 
         globalOpticsCount -= parseInt(lastOptVal, 10);
+        if(globalCamCount-globalOpticsCount <= 0)
+          document.getElementById('add-more-optic').disabled = true;
+        else
+          document.getElementById('add-more-optic').disabled = false;
       }
     }
     // Cameras - optics block
@@ -208,8 +213,20 @@ function showAddPopup(triggeringLink) {
     win.focus();
     return false;
 }
+
+function changeCreatePlaceLink(newID) {
+    var baseUrl = $('#newCity').attr('href');
+    var updatedUrl = baseUrl.split('?')[0];
+    updatedUrl += '?city_id=' + newID;
+    $('#newCity').attr('href', updatedUrl);
+}
+
 function closePopup(win, newID, newRepr, id) {
     $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
+    if ($('#list_places').length) {
+      document.getElementById("list_places").style.display = "none";
+      changeCreatePlaceLink(newID)
+    }
     win.close();
 }
 

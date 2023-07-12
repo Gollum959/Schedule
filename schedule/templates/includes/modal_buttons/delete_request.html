@@ -28,10 +28,7 @@
   <script>
     $(document).ready(function() {
       $('#deleteBtn').on('click',function(event){
-          // disable button
           $(this).prop("disabled", true);
-
-          // add spinner to button for some time
           $(this).html('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Удаление...');
           $(this).closest('form').submit();
       });

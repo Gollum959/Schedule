@@ -21,7 +21,7 @@
             {% endif %}
             <div class="row">
               <div class="col-3">{{ form.city_name|as_crispy_field }}</div>
-              <div class="col-md-auto" style="">
+              <div class="col-md-auto">
                 <a href="{% url 'place:city_create' %}" style="position:relative;top: 38px;right: 10px" id="add_city" onclick="return showAddPopup(this);">
                   <img src="{% static 'img/icon-addlink.svg' %}" title="Добавить город">
                 </a>
@@ -57,7 +57,7 @@
               <div class="col-12">{{ form.event_type|as_crispy_field }}</div>
             </div>
             <div class="d-flex justify-content-end">
-              <button type="submit" class="btn btn-primary">
+              <button type="submit" id="place-create-button" class="btn btn-primary">
                 {% if object %}
                   Изменить площадку
                 {% else %}
@@ -71,6 +71,15 @@
     </div>
   </div>
   <script>
+    
     $('input[name="phone"]').mask('(00) 000-00-00');
+
+    $(document).ready(function() {
+      $("#place-create-button").on('click',function(event){
+        var $overlay = $("#loading-overlay");
+        $overlay.show();
+      });
+    });
   </script>
-{% endblock %} 
+
+{% endblock %}
