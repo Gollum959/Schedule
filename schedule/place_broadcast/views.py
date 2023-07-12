@@ -8,7 +8,8 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView
 
 from place_broadcast.forms import AddBroadcastPlace
 from place_broadcast.models import PlaceConstructor, PlaceCity
-from core.custom_view import EditOnlyAuthorAdminMainDirMixin, DetalInformationMixin
+from core.custom_view import (EditOnlyAuthorAdminMainDirMixin,
+                              DetalInformationMixin)
 
 
 class CityBroadcastCreate(LoginRequiredMixin, CreateView):

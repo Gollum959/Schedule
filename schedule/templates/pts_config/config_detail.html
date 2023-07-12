@@ -175,7 +175,7 @@
         {% if user == ptsconstructor.author or user.is_admin %}
           <div class="row ms-1 align-items-center pt-3">
             <div class="col d-flex justify-content-end">
-              <a class="btn btn-primary" href="{% url 'config:config_edit' ptsconstructor.pk %}">
+              <a class="btn btn-primary" id="edit-place" href="{% url 'config:config_edit' ptsconstructor.pk %}">
                 Изменить конфигурацию
               </a>
             </div>
@@ -184,5 +184,18 @@
       </div>
     </div>
   </div>
+
+  <script>
+    $(document).ready(function() {
+      $("a#edit-place").on("click", function(e) {
+        e.preventDefault();
+        var url = $(this).attr("href");
+        var $overlay = $("#loading-overlay");
+        $overlay.show();
+        window.location.href = url;
+      });
+    });
+  </script>
+
 {% endblock %}
 

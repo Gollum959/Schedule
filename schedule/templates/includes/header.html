@@ -1,7 +1,7 @@
 {% load static %}
 <nav class="navbar shadow-sm navbar-expand-lg navbar-light bg-light p-0">
   <div class="container">
-    <a class="navbar-brand" style="font-size: x-large;" href="{% url 'pts_requests:index' %}">
+    <a id="navbar" class="navbar-brand" style="font-size: x-large;" href="{% url 'pts_requests:index' %}">
       <img src="{% static 'img/logo.png' %}" class="d-inline-block align-top" alt="">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -11,17 +11,17 @@
       <ul class="navbar-nav ms-auto">
         {% if user.is_authenticated %}
           <li class="nav-item"> 
-            <a class="nav-link" href="{% url 'pts_requests:request_create' %}">
+            <a id="navbar" class="nav-link" href="{% url 'pts_requests:request_create' %}">
               Создать заявку
             </a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link" href="{% url 'place:places' %}">
+            <a id="navbar" class="nav-link" href="{% url 'place:places' %}">
               Площадки
             </a>
           </li>
           <li class="nav-item"> 
-            <a class="nav-link" href="{% url 'config:pts_configs' %}">
+            <a id="navbar" class="nav-link" href="{% url 'config:pts_configs' %}">
               Конфигурации
             </a>
           </li>
@@ -44,3 +44,16 @@
     </div>
   </div>
 </nav>
+<script>
+
+  $(document).ready(function() {
+    $("a#navbar").on("click", function(e) {
+      e.preventDefault();
+      var url = $(this).attr("href");
+      var $overlay = $("#loading-overlay");
+      $overlay.show();
+      window.location.href = url;
+    });
+  });
+  
+</script>

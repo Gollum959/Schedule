@@ -36,16 +36,23 @@
     $("#id_city").change(function () {
       var url = $("#id_city").attr("data-places-url");
       var cityId = $(this).val();
+      var $overlay = $("#loading-overlay");
 
       $.ajax({
         url: url,
         data: {
           'city_name': cityId
         },
+        beforeSend: function () {
+          $overlay.show();
+        },
         success: function (data) {
           $("#id_place").html(data);
           $("#id_event").empty().append("<option selected value=''>Выберите вид события</option>");
           $("#list_cfg").empty();
+        },
+        complete: function () {
+          $overlay.hide();
         }
       });
     });

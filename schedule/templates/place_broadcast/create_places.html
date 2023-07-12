@@ -57,7 +57,7 @@
               <div class="col-12">{{ form.event_type|as_crispy_field }}</div>
             </div>
             <div class="d-flex justify-content-end">
-              <button type="submit" id="place_create_button" class="btn btn-primary">
+              <button type="submit" id="place-create-button" class="btn btn-primary">
                 {% if object %}
                   Изменить площадку
                 {% else %}
@@ -75,10 +75,9 @@
     $('input[name="phone"]').mask('(00) 000-00-00');
 
     $(document).ready(function() {
-      $("#place_create_button").on('click',function(event){
+      $("#place-create-button").on('click',function(event){
         var $overlay = $("#loading-overlay");
         $overlay.show();
-        button.closest('form').submit();
       });
     });
   </script>

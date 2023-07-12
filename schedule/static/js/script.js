@@ -190,6 +190,10 @@ function add_new_form(
         globalOpticsFormCount -= 1
         lastOptVal = document.getElementById(`id_opticptsconstructor_set-${currentFormCount}-quantity`).value; 
         globalOpticsCount -= parseInt(lastOptVal, 10);
+        if(globalCamCount-globalOpticsCount <= 0)
+          document.getElementById('add-more-optic').disabled = true;
+        else
+          document.getElementById('add-more-optic').disabled = false;
       }
     }
     // Cameras - optics block

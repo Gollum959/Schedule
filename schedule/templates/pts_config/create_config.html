@@ -79,7 +79,7 @@
             </div>
             <div class="row">
               <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" id="cfg-create-button" class="btn btn-primary">
                   {% if object %}
                     Изменить {% if object.base_conf %}базовую{% endif %} конфигурацию
                   {% else %}
@@ -95,6 +95,13 @@
   </div>
 
   <script>
+
+    $(document).ready(function() {
+      $("#cfg-create-button").on('click',function(event){
+        var $overlay = $("#loading-overlay");
+        $overlay.show();
+      });
+    });
 
     var globalCamFormCount = $("#id_cameraptsconstructor_set-TOTAL_FORMS").val();
     var globalOpticsFormCount = $("#id_opticptsconstructor_set-TOTAL_FORMS").val();
