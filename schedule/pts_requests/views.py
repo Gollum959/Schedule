@@ -98,7 +98,7 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
             )
 
         if user.is_gdpt:
-            return requests.exclude(status__in=['dtov', 'draft'])
+            return requests.exclude(status__in=('dtov', 'draft'))
 
         # requests = requests.filter(
         #     author__direction=self.request.user.direction
@@ -260,7 +260,8 @@ class PtsRequestCreateCfg(PtsConfigCreateOnBase):
 
         return HttpResponse(
             f'<script>opener.closeCfgCreatePopup(window, '
-            f'"{self.object.pk}", "{self.object.name}", "#id_pts_cfg");</script>'
+            f'"{self.object.pk}", "{self.object.name}", "#id_pts_cfg");'
+            f'</script>'
         )
         # return HttpResponseRedirect(self.get_success_url())
 

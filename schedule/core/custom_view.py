@@ -12,9 +12,15 @@ class DetalInformationMixin:
         if (
             (self.request.user.is_admin or
                 obj.author.direction == self.request.user.direction) or
-            (obj.status == 'soundman' and self.request.user.is_soundman) or
-            (obj.status == 'gdpt' and self.request.user.is_gdpt) or
-            (obj.status == 'dtov' and self.request.user.is_dtov_headmaster) or
+            (
+                obj.status in ('soundman', 'approved', 'approval') and
+                self.request.user.is_soundman
+            ) or
+            (
+                obj.status not in ('dtov', 'draft') and
+                self.request.user.is_gdpt
+            ) or
+            (obj.status != 'draft' and self.request.user.is_dtov_headmaster) or
             (obj.status != 'draft' and self.request.user.is_moderator)
         ):
             return obj

@@ -157,6 +157,15 @@ class User(AbstractUser):
         )
 
     @property
+    def is_supporting_roles(self):
+        """Return True if user is Director DTOV, GDTP, Soundman."""
+        return (
+            self.role == self.SOUNDMAN or
+            self.role == self.GDPT or
+            self.role == self.DTOV_HEADMASTER
+        )
+
+    @property
     def get_fio(self):
         """Return FIO."""
         short_surname = f'{self.surname}' if self.surname else ''
