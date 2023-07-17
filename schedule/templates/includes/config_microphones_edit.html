@@ -1,5 +1,5 @@
   {% load crispy_forms_tags %}
-
+  
   <div class="row">
     <section class="intro">
         <div class="mask d-flex align-items-center h-100">
@@ -48,13 +48,13 @@
                   </div>
                   <div class="row pt-3">
                     <div class="col d-flex justify-content-end">
-                      <button class="btn btn-secondary btn-sm me-3" 
+                      <button class="btn btn-secondary btn-sm me-3" id="back-button"
                         hx-get="{% url 'pts_requests:config_microphones_edit' ptsrequest.pk %}?step=back"
                         hx-target="#config-microphones-edit"
                       >
                         Назад
                       </button>
-                      <button class="btn btn-secondary btn-sm" type="submit">
+                      <button id="change-button" class="btn btn-secondary btn-sm" type="submit">
                         Изменить
                       </button>
                     </div>
@@ -68,43 +68,86 @@
   </div>
 
   <script>
-    var countForm = $("#id_microphoneptsconstructor_set-TOTAL_FORMS").val()
-    for (let i = 0; i < countForm; i++) {
-      
-      $(`#id_microphoneptsconstructor_set-${i}-brend`).change(function () {
-        const url = $("#microphone_form").attr("microphone-url");  
-        const typeId = $(`#id_microphoneptsconstructor_set-${i}-type`).val()
-        const brendId = $(`#id_microphoneptsconstructor_set-${i}-brend`).val(); 
 
-        $.ajax({                       
-          url: url,                   
-          data: {
-            'brend': brendId,
-            'micro_type': typeId        
-          },
-          success: function (data) {  
-            $(`#id_microphoneptsconstructor_set-${i}-model`).html(data);  
+    // id_microphoneptsconstructor_set-0-quantity, id_microphoneptsconstructor_set-1-quantity, id_microphoneptsconstructor_set-4-quantity
+
+    function sumMicrophonesQuantity(countForm) {
+      var micro_count = 0
+      for (let i = 0; i < countForm; i++) {
+        quantityField = `id_microphoneptsconstructor_set-${i}-quantity`
+        const inputValue = document.getElementById(quantityField).value.trim();
+        if (inputValue !== "") {
+          const parsedValue = parseInt(inputValue, 10);
+          if (!isNaN(parsedValue)) {
+            micro_count += parsedValue;
           }
-        });
-
-      });
-
-      $(`#id_microphoneptsconstructor_set-${i}-type`).change(function () {
-        const url = $("#microphone_form").attr("microphone-brend-url");  
-        const typeId = $(`#id_microphoneptsconstructor_set-${i}-type`).val()
-
-        $.ajax({                       
-          url: url,                   
-          data: {
-            'micro_type': typeId        
-          },
-          success: function (data) {  
-            $(`#id_microphoneptsconstructor_set-${i}-brend`).html(data);  
-            $(`#id_microphoneptsconstructor_set-${i}-model`).html('<option value="">---------</option>');
-          }
-        });
-
-      });
-
+        }
+      }
+      return micro_count
     }
+
+    $(document).ready(function(){
+      var countForm = $("#id_microphoneptsconstructor_set-TOTAL_FORMS").val()
+      for (let i = 0; i < countForm; i++) {
+        $(`#id_microphoneptsconstructor_set-${i}-brend`).change(function () {
+          const url = $("#microphone_form").attr("microphone-url");  
+          const typeId = $(`#id_microphoneptsconstructor_set-${i}-type`).val()
+          const brendId = $(`#id_microphoneptsconstructor_set-${i}-brend`).val(); 
+          $.ajax({                       
+            url: url,                   
+            data: {
+              'brend': brendId,
+              'micro_type': typeId        
+            },
+            success: function (data) {  
+              $(`#id_microphoneptsconstructor_set-${i}-model`).html(data);  
+            }
+          });
+        });
+
+        $(`#id_microphoneptsconstructor_set-${i}-type`).change(function () {
+          const url = $("#microphone_form").attr("microphone-brend-url");  
+          const typeId = $(`#id_microphoneptsconstructor_set-${i}-type`).val()
+          $.ajax({                       
+            url: url,                   
+            data: {
+              'micro_type': typeId        
+            },
+            success: function (data) {  
+              $(`#id_microphoneptsconstructor_set-${i}-brend`).html(data);  
+              $(`#id_microphoneptsconstructor_set-${i}-model`).html('<option value="">---------</option>');
+            }
+          });
+        });
+      }
+
+      var micro_count = sumMicrophonesQuantity(countForm)
+      var pts_microphone_quantity = parseInt('{{ ptsrequest.pts_cfg.microphone_quantity }}', 10);
+      if (micro_count < pts_microphone_quantity) 
+        document.getElementById('change-button').disabled = true;
+
+      for (let i = 0; i < countForm; i++) {
+        $(`#id_microphoneptsconstructor_set-${i}-quantity`).change(function () {
+          micro_count = sumMicrophonesQuantity(countForm)
+          if (micro_count < pts_microphone_quantity) 
+            document.getElementById('change-button').disabled = true;
+          else
+            document.getElementById('change-button').disabled = false;
+        });
+      }
+
+      // $('#change-button').on('click',function(event){
+      //   event.preventDefault();
+        
+      //   $(this).prop("disabled", true);
+      //   $(this).html('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Загрузка...');
+      //   $(this).closest('form').submit();
+      // });
+
+      // $('#back-button').on('click',function(event){
+      //   $(this).html('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Назад');
+      // });
+
+
+    });
   </script>
