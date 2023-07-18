@@ -233,7 +233,7 @@ function closePopup(win, newID, newRepr, id) {
 function showCfgCreatePopup() {
   var name = 'Create-config'
   href =  $('#base-cfg').attr('create-on-base')
-  var width = 800;
+  var width = 1200;
   var height = 900;
   var left = (window.innerWidth / 2) - (width / 2);
   var top = (window.innerHeight / 2) - (height / 2);
