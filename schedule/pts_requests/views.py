@@ -458,10 +458,12 @@ def load_pts_cfg(request):
             Q(author=request.user) | Q(base_conf=True)).order_by('name')
     else:
         cfgs = PtsConstructor.objects.none()
+    modal_id = ("#NoBaseDirectorModal"
+                if request.user.is_main_director_or_admin else "#NoBaseModal")
     return render(
         request,
         'pts_requests/cfg_dropdown_list_options.html',
-        {'cfgs': cfgs}
+        {'cfgs': cfgs, "modal_id": modal_id}
     )
 
 

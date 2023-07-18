@@ -1,12 +1,29 @@
 <option value="">Выберите конфигурацию ПТС</option>
-{% for cfg in cfgs %}
-  {% if cfg.base_conf %}
-    <option id="base-cfg" create-on-base="{% url 'pts_requests:request_create_cfg' cfg.pk %}" value="{{ cfg.pk }}">{{ cfg.get_base_name }}</option>
-    <script>
-      var button = document.getElementById("create-cfg");
-      button.disabled = false;
-    </script>
-  {% else %}
-    <option value="{{ cfg.pk }}">{{ cfg.get_base_name }}</option>
-  {% endif %}
-{% endfor %}
+{% if cfgs|length > 0 %}
+  {% for cfg in cfgs %}
+    {% if cfg.base_conf %}
+      <option id="base-cfg" create-on-base="{% url 'pts_requests:request_create_cfg' cfg.pk %}" value="{{ cfg.pk }}">{{ cfg.get_base_name }}</option>
+      <script>
+        var button = document.getElementById("create-cfg");
+        button.disabled = false;
+        if (button.hasAttribute("data-bs-toggle"))
+          button.removeAttribute("data-bs-toggle");
+        if (button.hasAttribute("data-bs-target"))
+          button.removeAttribute("data-bs-target");
+        if (!button.hasAttribute("onclick"))
+          button.setAttribute("onclick", "return showCfgCreatePopup();");
+      </script>
+    {% else %}
+      <option value="{{ cfg.pk }}">{{ cfg.get_base_name }}</option>
+    {% endif %}
+  {% endfor %}
+{% else %}
+  <script>
+    var button = document.getElementById("create-cfg");
+    button.disabled = false;
+    if (button.hasAttribute("onclick"))
+      button.removeAttribute("onclick");
+    button.setAttribute("data-bs-toggle", "modal");
+    button.setAttribute("data-bs-target", "{{ modal_id }}");
+  </script>
+{% endif %}

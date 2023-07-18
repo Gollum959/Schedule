@@ -62,6 +62,42 @@
                     <button id="create-cfg" type="button" class="btn btn-link p-0" onclick="return showCfgCreatePopup();" disabled title="Создать конфигурацию на основе базовой">
                       <img src="{% static 'img/cfg_add.png' %}" style="width: 38px;">
                     </button>
+                    <div class="modal fade" id="NoBaseDirectorModal" tabindex="-1" aria-labelledby="NoBaseDirectorModalModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="NoBaseDirectorModalModalLabel">Информация</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <b>
+                              Пожалуйста пройдите по ссылке 
+                              <a id="config-create-link" href="{% url 'config:config_create' %}" class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" target="_blank">Создать базовую конфигурацию</a>
+                               и создайте базовую конфигурацию.
+                            </b>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal fade" id="NoBaseModal" tabindex="-1" aria-labelledby="NoBaseModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="NoBaseModalLabel">Информация</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <b>Отсутствует базовая конфигурация. Обратитесь к главному режиссеру - для создания базовой конфигурации</b>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <div id="modal-cfg-detail"></div> 
               </div>
@@ -221,6 +257,14 @@
       var placeId = $("#id_place").val();
       var button = document.getElementById("create-cfg");
       button.disabled = true;
+      var link = $("#config-create-link");
+      var currentUrl = link.attr("href");
+
+      if (currentUrl.indexOf("?") !== -1) {
+        currentUrl = currentUrl.split("?")[0];
+      }
+      var updatedUrl = currentUrl + "?place=" + placeId + "&event=" + eventId;
+      link.attr("href", updatedUrl);
 
       $.ajax({
         url: url,
