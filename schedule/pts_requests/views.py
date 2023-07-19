@@ -75,7 +75,9 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
                     status__in=['approval',
                                 'soundman',
                                 'final',
-                                'gdpt', 'dtov'],
+                                'gdpt',
+                                'dtov',
+                                'rejected'],
                     broadcast_start_date__gte=start_week
                 ) |
                 Q(
