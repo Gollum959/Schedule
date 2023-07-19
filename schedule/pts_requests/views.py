@@ -956,20 +956,29 @@ def change_status_to_approved(request, pk):
 def validate_on_aprovall_status(request, pk):
     pts_request = get_object_or_404(PtsRequest, pk=pk)
     result = True
+    message_error = {
+        'pts': False,
+        'cam': False,
+        'opt': False,
+        'server': False,
+    }
     if pts_request.pts_name is None:
         result = False
+        message_error['pts'] = True
     if not pts_request.pts_cfg.cameraptsconstructor_set.filter(
         cameras__isnull=False,
         brend__isnull=False,
         model__isnull=False
     ).exists():
         result = False
+        message_error['cam'] = True
     if not pts_request.pts_cfg.opticptsconstructor_set.filter(
         optics__isnull=False,
         brend__isnull=False,
         model__isnull=False
     ).exists():
         result = False
+        message_error['opt'] = True
     if not pts_request.pts_cfg.serverrecordingrepeatconstructor_set.filter(
         type__isnull=False,
         type_player__isnull=False,
@@ -977,6 +986,7 @@ def validate_on_aprovall_status(request, pk):
         model__isnull=False
     ).exists():
         result = False
+        message_error['server'] = True
 
     if result:
         return render(
@@ -988,4 +998,5 @@ def validate_on_aprovall_status(request, pk):
     return render(
             request,
             'includes/validations/error_message.html',
+            {'message_error': message_error}
         )

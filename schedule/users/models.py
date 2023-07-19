@@ -162,7 +162,8 @@ class User(AbstractUser):
         return (
             self.role == self.SOUNDMAN or
             self.role == self.GDPT or
-            self.role == self.DTOV_HEADMASTER
+            self.role == self.DTOV_HEADMASTER or
+            self.role == self.MODERATOR
         )
 
     @property
