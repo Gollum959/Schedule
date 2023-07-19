@@ -13,16 +13,7 @@
         </div>
 
         <div id="window_body" hx-swap="innerHTML">
-          <div class="modal-body">
-            <b>Вы точно хотите направить заявку {{ ptsrequest.name }} на рассмотрение звукорежиссером?</b>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-            <form action="{% url 'pts_requests:request_change_status_soundman' ptsrequest.pk %}" method="POST">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-primary">Да</button>
-            </form>
-          </div>
+
         </div>
 
       </div>

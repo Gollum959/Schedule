@@ -956,24 +956,19 @@ def change_status_to_approved(request, pk):
 def validate_on_aprovall_status(request, pk):
     pts_request = get_object_or_404(PtsRequest, pk=pk)
     result = True
-    error_message = ('<div class="modal-body"><div class="ps-4 pb-2">'
-                     '<b>Замечания</b></div><ul style="color: red">')
     if pts_request.pts_name is None:
-        error_message += '<li>Убедитесь, что выбрали ПТС.</li>'
         result = False
     if not pts_request.pts_cfg.cameraptsconstructor_set.filter(
         cameras__isnull=False,
         brend__isnull=False,
         model__isnull=False
     ).exists():
-        error_message += '<li>Убедитесь, что заполнили блок камер.</li>'
         result = False
     if not pts_request.pts_cfg.opticptsconstructor_set.filter(
         optics__isnull=False,
         brend__isnull=False,
         model__isnull=False
     ).exists():
-        error_message += '<li>Убедитесь, что заполнили блок оптики.</li>'
         result = False
     if not pts_request.pts_cfg.serverrecordingrepeatconstructor_set.filter(
         type__isnull=False,
@@ -981,12 +976,16 @@ def validate_on_aprovall_status(request, pk):
         brend__isnull=False,
         model__isnull=False
     ).exists():
-        error_message += '<li>Убедитесь, что заполнили блок серверов.</li>'
         result = False
 
     if result:
-        response = HttpResponse(status=204)
-        response['HX-Trigger'] = 'false'
-        return response
+        return render(
+            request,
+            'includes/validations/approval_message.html',
+            {'ptsrequest': pts_request}
+        )
 
-    return HttpResponse(f'{error_message}</ul></div>')
+    return render(
+            request,
+            'includes/validations/error_message.html',
+        )
