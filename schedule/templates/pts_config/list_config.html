@@ -30,14 +30,14 @@
 
               {% if user.is_admin or request.user == conf.author %}
                 <div class="col-md-auto d-flex justify-content-end pe-0">
-                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#baseDeletionModal">
                     Удалить
                   </button>
-                  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal fade" id="baseDeletionModal" tabindex="-1" aria-labelledby="baseDeletionModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="exampleModalLabel">Удалить конфигурацию</h1>
+                          <h1 class="modal-title fs-5" id="baseDeletionModalLabel">Удалить конфигурацию</h1>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -80,17 +80,17 @@
               {% include "includes/config_detail_short.html" with ptsconstructor=conf %}
               <div class="row ms-1 align-items-center pe-3">
                 <div class="col d-flex justify-content-end pe-0">
-                  <a type="button" id="new-city" class="btn btn-primary" href="{% url 'config:config_edit' conf.pk %}">Изменить кофигурацию</a>
+                  <a type="button" id="create-change-cfg" class="btn btn-primary" href="{% url 'config:config_edit' conf.pk %}">Изменить кофигурацию</a>
                 </div>
                 <div class="col-md-auto d-flex justify-content-end pe-0">
-                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#onBaseDeletionModal{{ conf.pk }}">
                     Удалить
                   </button>
-                  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal fade" id="onBaseDeletionModal{{ conf.pk }}" tabindex="-1" aria-labelledby="onBaseDeletionModalLabel{{ conf.pk }}" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="exampleModalLabel">Удалить конфигурацию</h1>
+                          <h1 class="modal-title fs-5" id="onBaseDeletionModalLabel{{ conf.pk }}">Удалить конфигурацию</h1>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">

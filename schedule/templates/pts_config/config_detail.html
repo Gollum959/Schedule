@@ -172,6 +172,19 @@
 
         <p class="fs-6 ms-4 mb-2"><b>Количество микрофонов: </b>{{ ptsconstructor.microphone_quantity }}</p>
         <p class="fs-6 ms-4 mb-2"><b>Комментарий к заказу микрофонов: </b>{{ ptsconstructor.microphone_comment }}</p>
+        <p class="fs-6 ms-4 mb-2">
+          <b>Организовать комментаторскую позицию: </b>
+          {% if ptsconstructor.commentator_position %}Да{% else %}Нет{% endif %}
+        </p>
+        <p class="fs-6 ms-4 mb-2">
+          <b>Предоставить 2 гарнитуры: </b>
+          {% if ptsconstructor.commentator_headsets %}Да{% else %}Нет{% endif %}
+        </p>
+        <p class="fs-6 ms-4 mb-2">
+          <b>Комментарий к заказу микрофонов: </b>
+          {% if ptsconstructor.commentator_comment %}{{ ptsconstructor.commentator_comment }}{% else %}Нет{% endif %}
+        </p>
+
         {% if user == ptsconstructor.author or user.is_admin %}
           <div class="row ms-1 align-items-center pt-3">
             <div class="col d-flex justify-content-end">

@@ -96,7 +96,7 @@ class PtsRequestsView(LoginRequiredMixin, ListView):
 
         if user.is_soundman:
             return requests.filter(status__in=(
-                'soundman', 'approved', 'approval')
+                'soundman', 'approved')
             )
 
         if user.is_gdpt:

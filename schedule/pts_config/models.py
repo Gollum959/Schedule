@@ -339,7 +339,21 @@ class PtsConstructor(models.Model):
         max_length=2000,
         blank=True,
         null=True
-        )
+    )
+    commentator_position = models.BooleanField(
+        'Комментаторская позиция',
+        default=False
+    )
+    commentator_headsets = models.BooleanField(
+        'Комментаторские гарнитуры',
+        default=False
+    )
+    commentator_comment = models.TextField(
+        'Комментарий к заказу оборудования для комментаторской позиции',
+        max_length=2000,
+        blank=True,
+        null=True
+    )
     image = models.ImageField(
         'Картинка или pdf',
         upload_to='plans/',
