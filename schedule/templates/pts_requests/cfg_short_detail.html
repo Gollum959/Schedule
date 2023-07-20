@@ -148,8 +148,30 @@
               </div>
             </div>
           </div>
+          <div class="container">
+            <div class="card shadow-sm mb-3">
+              <div class="card-body p-0 ms-2 me-2 mb-2">
+                <div class="row justify-content-center">
+                  <div class="col-12">
+                    <p class="fs-4 ms-2 me-2" style="border-bottom: 1px solid black;">Блок заказа комментаторского оборудования</p>
+                    <p class="fs-5">
+                      Организовать комментаторскую позицию: 
+                      {% if cfg.commentator_position %}Да{% else %}Нет{% endif %}
+                    </p>
+                    <p class="fs-5">
+                      Предоставить 2 гарнитуры: 
+                      {% if cfg.commentator_headsets %}Да{% else %}Нет{% endif %}
+                    </p>
+                    <p class="fs-5">
+                      Комментарий к заказу микрофонов: 
+                      {% if cfg.commentator_comment %}{{ cfg.commentator_comment }}{% else %}Нет{% endif %}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
         </div>
