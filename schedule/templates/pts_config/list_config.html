@@ -80,7 +80,7 @@
               {% include "includes/config_detail_short.html" with ptsconstructor=conf %}
               <div class="row ms-1 align-items-center pe-3">
                 <div class="col d-flex justify-content-end pe-0">
-                  <a type="button" id="new-city" class="btn btn-primary" href="{% url 'config:config_edit' conf.pk %}">Изменить кофигурацию</a>
+                  <a type="button" id="create-change-cfg" class="btn btn-primary" href="{% url 'config:config_edit' conf.pk %}">Изменить кофигурацию</a>
                 </div>
                 <div class="col-md-auto d-flex justify-content-end pe-0">
                   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">

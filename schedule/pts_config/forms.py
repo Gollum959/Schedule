@@ -66,6 +66,8 @@ class AddPtsConfigFrom(CreatePtsConfigurationMixin):
 
         self.fields['place'].label = 'Название объекта'
         self.fields['place'].disabled = True
+        self.fields['commentator_position'].label = 'Организовать комментаторскую позицию'
+        self.fields['commentator_headsets'].label = 'Предоставить 2 гарнитуры'
 
         if self.place_id:
             self.fields['place'].initial = self.place_id
@@ -78,9 +80,12 @@ class AddPtsConfigFrom(CreatePtsConfigurationMixin):
     class Meta:
         model = PtsConstructor
         fields = ('place', 'event_type',
-                  'name', 'microphone_quantity', 'microphone_comment', 'image')
+                  'name', 'microphone_quantity', 'microphone_comment', 'image',
+                  'commentator_position', 'commentator_headsets',
+                  'commentator_comment')
         widgets = {
             'microphone_comment': forms.Textarea(attrs={'rows': 5}),
+            'commentator_comment': forms.Textarea(attrs={'rows': 4}),
         }
 
 
@@ -94,6 +99,8 @@ class AddPtsConfigOnBaseFrom(CreatePtsConfigurationMixin):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.fields['image'].required = False
+        self.fields['commentator_position'].label = 'Организовать комментаторскую позицию'
+        self.fields['commentator_headsets'].label = 'Предоставить 2 гарнитуры'
 
     def clean(self):
         """Checks that three fields: clone_conf, name, author,
@@ -109,9 +116,12 @@ class AddPtsConfigOnBaseFrom(CreatePtsConfigurationMixin):
 
     class Meta:
         model = PtsConstructor
-        fields = ('name', 'microphone_quantity', 'microphone_comment', 'image')
+        fields = ('name', 'microphone_quantity', 'microphone_comment', 'image',
+                  'commentator_position', 'commentator_headsets',
+                  'commentator_comment')
         widgets = {
             'microphone_comment': forms.Textarea(attrs={'rows': 5}),
+            'commentator_comment': forms.Textarea(attrs={'rows': 4}),
         }
 
 
