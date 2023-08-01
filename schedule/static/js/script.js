@@ -20,12 +20,20 @@ var globalCamFormCount = 0;
 var globalOpticsFormCount = 0;
 var previusValuesDict = {}
 const checkQuantityList = ['camera-form', 'optic-form'];
+const camList = ['3', '4', ''];
 
 function sumQuantity(globalFormCount, elementPrefix) {
   var devicesCount = 0
+  var camType = -1
   for (let i = 0; i < globalFormCount; i++) {
     const quantityField = `${elementPrefix}-${i}-quantity`
-    devicesCount += parseInt(document.getElementById(quantityField).value, 10);
+    if (elementPrefix === 'id_cameraptsconstructor_set') {
+      const camTypeField = `${elementPrefix}-${i}-cameras`;
+      camType = document.getElementById(camTypeField).value;
+    }
+    if (!camList.includes(camType)){
+      devicesCount += parseInt(document.getElementById(quantityField).value, 10);
+    }
   }
   return devicesCount
 }
