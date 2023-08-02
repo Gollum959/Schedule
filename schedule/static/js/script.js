@@ -19,13 +19,22 @@ var globalOpticsCount = 0;
 var globalCamFormCount = 0;
 var globalOpticsFormCount = 0;
 var previusValuesDict = {}
+var previusCamTypeDict = {}
 const checkQuantityList = ['camera-form', 'optic-form'];
+const camList = ['3', '4', ''];
 
 function sumQuantity(globalFormCount, elementPrefix) {
   var devicesCount = 0
+  var camType = -1
   for (let i = 0; i < globalFormCount; i++) {
     const quantityField = `${elementPrefix}-${i}-quantity`
-    devicesCount += parseInt(document.getElementById(quantityField).value, 10);
+    if (elementPrefix === 'id_cameraptsconstructor_set') {
+      const camTypeField = `${elementPrefix}-${i}-cameras`;
+      camType = document.getElementById(camTypeField).value;
+    }
+    if (!camList.includes(camType)){
+      devicesCount += parseInt(document.getElementById(quantityField).value, 10);
+    }
   }
   return devicesCount
 }
@@ -97,18 +106,39 @@ function add_new_form(
 
     // Cameras - optics block
     if (checkQuantityList.includes(clonedElementClassName)) {
-      if(elementPrefix === 'id_cameraptsconstructor_set')
+      if(elementPrefix === 'id_cameraptsconstructor_set') {
         globalCamFormCount = totalNewForms.value;
+        var camTypeId = `${elementPrefix}-${addedFormCount}-cameras`;
+        var camTypeField = document.getElementById(camTypeId);
+        camTypeField.addEventListener('change', e => {
+          globalCamCount = sumQuantity(globalCamFormCount, elementPrefix);
+          if(globalCamCount-globalOpticsCount < 0) {
+            alert('Вы не можете изменить тип камеры, пока не измените количество оптики.')
+            document.getElementById(camTypeId).value = previusCamTypeDict[camTypeId];
+          }
+
+          if(globalCamCount-globalOpticsCount <= 0)
+            document.getElementById('add-more-optic').disabled = true;
+          else
+            document.getElementById('add-more-optic').disabled = false;
+
+          previusCamTypeDict[camTypeId] = document.getElementById(camTypeId).value
+        });
+      }
       if(elementPrefix === 'id_opticptsconstructor_set')
         globalOpticsFormCount = totalNewForms.value;
       const inputId = `${elementPrefix}-${addedFormCount}-quantity`
       const input = document.getElementById(inputId);
+
       input.addEventListener('change', e => {
-        if(elementPrefix === 'id_cameraptsconstructor_set')
-          globalCamCount = sumQuantity(globalCamFormCount, elementPrefix)
+        if(elementPrefix === 'id_cameraptsconstructor_set') {
+          camTypeId = `${elementPrefix}-${addedFormCount}-cameras`;
+          camTypeValue = document.getElementById(camTypeId).value;
+          globalCamCount = sumQuantity(globalCamFormCount, elementPrefix);
+        }
 
         if(elementPrefix === 'id_opticptsconstructor_set')
-          globalOpticsCount = sumQuantity(globalOpticsFormCount, elementPrefix)
+          globalOpticsCount = sumQuantity(globalOpticsFormCount, elementPrefix);
 
         if(globalCamCount-globalOpticsCount <= 0)
           document.getElementById('add-more-optic').disabled = true;
@@ -117,11 +147,14 @@ function add_new_form(
         if(globalCamCount-globalOpticsCount < 0 && elementPrefix === 'id_opticptsconstructor_set'){
           alert('Количество оптики не может превышать количество камер, будьте внимательней!');
           document.getElementById(inputId).value = previusValuesDict[inputId];
+          globalOpticsCount = sumQuantity(globalOpticsFormCount, elementPrefix);
         }
         else if (elementPrefix === 'id_opticptsconstructor_set') previusValuesDict[inputId] = document.getElementById(inputId).value
-        if(globalCamCount-globalOpticsCount < 0 && elementPrefix === 'id_cameraptsconstructor_set'){
+
+        if(globalCamCount-globalOpticsCount < 0 && elementPrefix === 'id_cameraptsconstructor_set' && !camList.includes(camTypeValue)){
           alert('Количество камер не может быть меньше количества оптики, будьте внимательней!');
           document.getElementById(inputId).value = previusValuesDict[inputId];
+          globalCamCount = sumQuantity(globalCamFormCount, elementPrefix);
         }
         else if (elementPrefix === 'id_cameraptsconstructor_set') previusValuesDict[inputId] = document.getElementById(inputId).value
       });
@@ -178,13 +211,23 @@ function add_new_form(
     // Cameras - optics block
     if (checkQuantityList.includes(clonedElementClassName)) {
       if(listName === 'camera-form-list'){
-        lastCamVal = document.getElementById(`id_cameraptsconstructor_set-${currentFormCount}-quantity`).value; 
+
+        var camTypeValue = document.getElementById(`id_cameraptsconstructor_set-${currentFormCount}-cameras`).value;
+        if (!camList.includes(camTypeValue))
+          lastCamVal = document.getElementById(`id_cameraptsconstructor_set-${currentFormCount}-quantity`).value;
+        else
+          lastCamVal = 0
+  
         if(globalCamCount-globalOpticsCount-lastCamVal < 0){
           alert('Следите за тем что б количетсво оптики не превышало количества камер');
           return
         }
         globalCamFormCount -= 1
         globalCamCount -= parseInt(lastCamVal, 10);
+        if(globalCamCount-globalOpticsCount <= 0)
+          document.getElementById('add-more-optic').disabled = true;
+        else
+          document.getElementById('add-more-optic').disabled = false;
       }
       if(listName === 'optic-form-list'){
         globalOpticsFormCount -= 1
