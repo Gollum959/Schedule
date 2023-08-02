@@ -392,8 +392,8 @@ def download_letter(request, pk):
         'pts_head_name': pts_request.pts_name.head_fullname,
         'pts_name': pts_request.pts_name,
         'pts_phone': pts_request.pts_name.head_contact,
-        'director_name': pts_request.author.get_fio,
-        'director_job_title': pts_request.author.position,
+        'director_name': pts_request.director.get_fio,
+        'director_job_title': pts_request.director.position,
         'director_phone': pts_request.author.phone_number,
     }
     doc.render(context)
