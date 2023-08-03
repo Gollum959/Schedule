@@ -657,8 +657,9 @@ def config_optics_edit_form(request, pk):
         )
 
     if request.method == 'POST':
-        form = OpticModerateFormset(request.POST, instance=ptsrequest.pts_cfg)
+        form = OpticModerateFormset(request.POST, instance=ptsrequest.pts_cfg, form_kwargs={'request_pk': pk})
         context = {'ptsrequest': ptsrequest}
+        print(form.errors)
 
         if form.is_valid():
             ptsrequest.moderator = request.user
@@ -670,7 +671,10 @@ def config_optics_edit_form(request, pk):
         context['optic_forms'] = form
         return render(request, 'includes/config_optics_edit.html', context)
 
-    optic_forms = OpticModerateFormset(instance=ptsrequest.pts_cfg)
+    optic_forms = OpticModerateFormset(
+        instance=ptsrequest.pts_cfg,
+        form_kwargs={'request_pk': pk}
+    )
     context = {'ptsrequest': ptsrequest, 'optic_forms': optic_forms}
     return render(request, 'includes/config_optics_edit.html', context)
 
