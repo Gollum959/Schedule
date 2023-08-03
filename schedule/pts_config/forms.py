@@ -291,16 +291,18 @@ class ModerateOptic(forms.ModelForm):
 
     quantity = forms.IntegerField(min_value=0, max_value=30, required=False)
     user_magnification = forms.ModelChoiceField(
-        queryset=Optic.objects.all(),
+        queryset=Optic.objects.all(), required=False
     )
 
     def __init__(self, *args, **kwargs):
         """Method allows creating a matrix of equipment"""
 
+        self.pts_request_id = kwargs.pop('request_pk', None)
         super().__init__(*args, **kwargs)
-        self.fields['user_magnification'].initial = self.instance.optics
+        if hasattr(self.instance, 'optics'):
+            self.fields['user_magnification'].initial = self.instance.optics
         self.__make_disable_readonly('user_magnification')
-        pts_request = PtsRequest.objects.get(pts_cfg=self.instance.constructor)
+        pts_request = PtsRequest.objects.get(pk=self.pts_request_id)
         self.fields['optics'].queryset = Optic.objects.filter(
                 opticmodelbrend__type__isnull=False
             ).filter(
@@ -348,7 +350,7 @@ class ModerateOptic(forms.ModelForm):
 OpticModerateFormset = forms.inlineformset_factory(
     PtsConstructor, OpticPtsConstructor,
     form=ModerateOptic,
-    extra=0,
+    extra=2,
     can_delete=True
 )
 
