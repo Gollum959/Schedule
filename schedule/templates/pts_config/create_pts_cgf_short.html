@@ -101,8 +101,30 @@
     var globalOpticsFormCount = $("#id_opticptsconstructor_set-TOTAL_FORMS").val();
 
     for (let i = 0; i < globalCamFormCount; i++) {
-      const inputId = `id_cameraptsconstructor_set-${i}-quantity`;
+      var inputId = `id_cameraptsconstructor_set-${i}-quantity`;
+      var camTypeId = `id_cameraptsconstructor_set-${i}-cameras`;
       previusValuesDict[inputId] = document.getElementById(inputId).value
+      previusCamTypeDict[camTypeId] = document.getElementById(camTypeId).value
+    }
+
+    for (let i = 0; i < globalCamFormCount; i++) {
+      const camTypeId = `id_cameraptsconstructor_set-${i}-cameras`;
+      const camTypeField = document.getElementById(camTypeId);
+      camTypeField.addEventListener('change', e => {
+          globalCamCount = sumQuantity(globalCamFormCount, 'id_cameraptsconstructor_set');
+          if(globalCamCount-globalOpticsCount < 0) {
+            alert('Вы не можете изменить тип камеры, пока не измените количество оптики.')
+            document.getElementById(camTypeId).value = previusCamTypeDict[camTypeId];
+            globalCamCount = sumQuantity(globalCamFormCount, 'id_cameraptsconstructor_set');
+          }
+
+          if(globalCamCount-globalOpticsCount <= 0)
+            document.getElementById('add-more-optic').disabled = true;
+          else
+            document.getElementById('add-more-optic').disabled = false;
+          
+          previusCamTypeDict[camTypeId] = document.getElementById(camTypeId).value
+        });
     }
 
     for (let i = 0; i < globalOpticsFormCount; i++) {
@@ -119,15 +141,19 @@
     for (let i = 0; i < globalCamFormCount; i++) {
       const inputId = `id_cameraptsconstructor_set-${i}-quantity`;
       const input = document.getElementById(inputId);
+      camTypeId = `id_cameraptsconstructor_set-${i}-cameras`;
+      var camTypeValue = document.getElementById(camTypeId).value;
       input.addEventListener('change', e => {
         globalCamCount = sumQuantity(globalCamFormCount, 'id_cameraptsconstructor_set');
         if(globalCamCount-globalOpticsCount <= 0)
           document.getElementById('add-more-optic').disabled = true;
         else
           document.getElementById('add-more-optic').disabled = false;
-        if(globalCamCount-globalOpticsCount < 0){
+
+        if(globalCamCount-globalOpticsCount < 0 && !camList.includes(camTypeValue)){
           alert('Количество камер не может быть меньше количества оптики, будьте внимательней!');
           document.getElementById(inputId).value = previusValuesDict[inputId];
+          globalCamCount = sumQuantity(globalCamFormCount, 'id_cameraptsconstructor_set');
         }
         else previusValuesDict[inputId] = document.getElementById(inputId).value
       });

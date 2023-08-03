@@ -53,13 +53,17 @@
                         });
                       </script>
                     {% else %}
-                      <p class="fs-5 ms-2 me-2">Информация отсутсвует в конфигурации ПТС</p>
+                      <p class="fs-5">Информация отсутсвует в конфигурации ПТС</p>
                       <script>
                         $(document).ready(function() {
                           $('#soundmanButton').prop("disabled", true);
                         });
                       </script>
                     {% endif %}
+                    <p class="fs-5">
+                      Комментарий к заказу микрофонов: 
+                      {% if ptsrequest.pts_cfg.microphone_comment %}{{ ptsrequest.pts_cfg.microphone_comment }}{% else %}Нет{% endif %}
+                    </p>
                   </div>
                 </div>
                 {% if user.is_soundman_or_admin and ptsrequest.is_soundman == True or user.is_admin %}
