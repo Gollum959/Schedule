@@ -50,7 +50,7 @@
               <div class="col-3">{{ form.broadcast_end_date|as_crispy_field }}</div>
               <div class="col-6">
                 <div class="row align-items-end">
-                  <div class="col-10">
+                  <div class="col-9">
                     {{ form.pts_cfg|as_crispy_field }}
                   </div>
                   <div class="col-1 ps-0 pe-0 mb-3">
@@ -98,6 +98,11 @@
                         </div>
                       </div>
                     </div>
+                  </div>
+                  <div class="col-1 ps-0 pe-0 mb-3">
+                    <button id="cfg-refresh" type="button" class="btn btn-link p-0" disabled onclick="return refreshCfg();">
+                      <img src="{% static 'img/refresh.png' %}" style="width: 38px;" alt="Обновить список конфигураций">
+                    </button>
                   </div>
                   <div id="modal-cfg-detail"></div> 
               </div>
@@ -219,6 +224,8 @@
       var cityId = $(this).val();
       var button = document.getElementById("create-cfg");
       button.disabled = true;
+      var refreshButton = document.getElementById("cfg-refresh");
+      refreshButton.disabled = true;
 
       $.ajax({
         url: url,
@@ -238,6 +245,8 @@
       var placeId = $(this).val();
       var button = document.getElementById("create-cfg");
       button.disabled = true;
+      var refreshButton = document.getElementById("cfg-refresh");
+      refreshButton.disabled = true;
   
       $.ajax({
         url: url,
@@ -257,6 +266,9 @@
       var placeId = $("#id_place").val();
       var button = document.getElementById("create-cfg");
       button.disabled = true;
+      var refreshButton = document.getElementById("cfg-refresh");
+      refreshButton.disabled = true;
+      
       var link = $("#config-create-link");
       var currentUrl = link.attr("href");
 

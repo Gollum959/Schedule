@@ -303,3 +303,30 @@ function closeCfgCreatePopup(win, newID, newRepr, id) {
   $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
   win.close();
 }
+
+function refreshCfg() {
+  var url = $("#requestForm").attr("cfg-url");
+  var eventId = $("#id_event_type").val();
+  var placeId = $("#id_place").val();
+  var button = document.getElementById("create-cfg");
+  button.disabled = true;
+  var link = $("#config-create-link");
+  var currentUrl = link.attr("href");
+
+  if (currentUrl.indexOf("?") !== -1) {
+    currentUrl = currentUrl.split("?")[0];
+  }
+  var updatedUrl = currentUrl + "?place=" + placeId + "&event=" + eventId;
+  link.attr("href", updatedUrl);
+
+  $.ajax({
+    url: url,
+    data: {
+      'event_id': eventId,
+      'place_id': placeId
+    },
+    success: function (data) {
+      $("#id_pts_cfg").html(data);
+    }
+  });
+}
