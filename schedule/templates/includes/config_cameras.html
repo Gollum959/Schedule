@@ -78,7 +78,6 @@
                     {% endif %}
                   </div>
                 </div>
-                {% if user.is_admin_or_moderator and ptsrequest.is_approval or user.is_admin %}
                   <div class="row pt-3">
                     <div class="col d-flex justify-content-start">
                       <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#camPlansModal">
@@ -105,16 +104,17 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col d-flex justify-content-end">
-                      <button class="btn btn-secondary btn-sm"
-                        hx-get="{% url 'pts_requests:config_cameras_edit' ptsrequest.pk %}"
-                        hx-target="#config-cameras-edit"
-                      >
-                        Изменить
-                      </button>
-                    </div>
+                    {% if user.is_admin_or_moderator and ptsrequest.is_approval or user.is_admin %}
+                      <div class="col d-flex justify-content-end">
+                        <button class="btn btn-secondary btn-sm"
+                          hx-get="{% url 'pts_requests:config_cameras_edit' ptsrequest.pk %}"
+                          hx-target="#config-cameras-edit"
+                        >
+                          Изменить
+                        </button>
+                      </div>
+                    {% endif %}
                   </div>
-                {% endif %}
               </div>
             </div>
           </div>
