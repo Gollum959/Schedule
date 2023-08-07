@@ -1,3 +1,4 @@
+{% load static %}
 <style>
   html,
   body,
@@ -30,6 +31,29 @@
   thead {
     top: 0;
     position: sticky;
+  }
+  
+  #zoomImage {
+      padding: 20px;
+      transition: transform 0.3s;
+      margin: 0 auto;
+  }
+  #dragOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    cursor: grab;
+  }
+  /* .zoom-buttons {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 10px;
+      right: 10px;
+  } */
+
+  .zoom-buttons button {
+      padding: 4px 8px;
   }
 </style>
 <div id="config-cameras-edit">
@@ -90,15 +114,36 @@
                               <h1 class="modal-title fs-5" id="camPlansModalLabel">Камерный план</h1>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body">
-                              {% if ptsrequest.pts_cfg.image|lower|slice:"-3:" == 'pdf' %}
-                                <a href="{{ ptsrequest.pts_cfg.image }}" target="_blank">View PDF</a>
-                              {% else %}
-                                <img src="{{ ptsrequest.pts_cfg.image.url }}" alt="Image">
-                              {% endif %}
-                            </div>
+                              <div id="imageContainer" class="modal-body" style="height: 700px;">
+                                {% if ptsrequest.pts_cfg.image|lower|slice:"-3:" == 'pdf' %}
+                                  <a href="{{ ptsrequest.pts_cfg.image.url }}" target="_blank">View PDF</a>
+                                {% else %}
+                                  <div id="dragOverlay" style="width: 760px; height: 700px;"></div>
+                                  <img id="zoomImage" src="{{ ptsrequest.pts_cfg.image.url }}" alt="Image" style="width: 760px;">
+                                {% endif %}
+                              </div>
                             <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+
+                              <div class="row justify-content-center align-items-center" style="width: 100%;">
+                                <div class="col-4 text-stat"> 
+                                  <a href="{{ ptsrequest.pts_cfg.image.url }}" download>
+                                    <button type="button" class="btn btn-secondary">Скачать</button>
+                                  </a>
+                                </div>
+                                <div class="col-2">
+                                  <button id="zoomInButton" class="btn btn-link">
+                                    <img src="{% static 'img/plus-2-256.png' %}" style="width: 38px;" alt="Увеличить">
+                                  </button>
+                                </div>
+                                <div class="col-2">
+                                  <button id="zoomOutButton" class="btn btn-link">
+                                    <img src="{% static 'img/minus-256.png' %}" style="width: 38px;" alt="Увеличить">
+                                  </button>
+                                </div>
+                                <div class="col-4 text-end"> 
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -122,3 +167,78 @@
     </section>
   </div>
 </div>
+
+<script>
+  let isDragging = false;
+  let startMouseX, startMouseY, startScrollX, startScrollY;
+
+  const dragOverlay = document.getElementById("dragOverlay");
+  const image = document.getElementById("zoomImage");
+  const imageContainer = document.getElementById("imageContainer");
+  
+
+  dragOverlay.addEventListener("mousedown", (event) => {
+    isDragging = true;
+    startMouseX = event.clientX;
+    startMouseY = event.clientY;
+    startScrollX = imageContainer.scrollLeft;
+    startScrollY = imageContainer.scrollTop;
+    dragOverlay.style.cursor = "grabbing"; 
+  });
+
+  dragOverlay.addEventListener("mousemove", (event) => {
+    if (!isDragging) return;
+
+    const offsetX = event.clientX - startMouseX;
+    const offsetY = event.clientY - startMouseY;
+
+    imageContainer.scrollLeft = startScrollX - offsetX;
+    imageContainer.scrollTop = startScrollY - offsetY;
+  });
+
+  dragOverlay.addEventListener("mouseup", () => {
+    isDragging = false;
+    dragOverlay.style.cursor = "grab"; 
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const zoomInButton = document.getElementById("zoomInButton");
+    const zoomOutButton = document.getElementById("zoomOutButton");
+
+    let currentZoom = 760;
+    let currentHeight = 700;
+    const realWidth = image.naturalWidth;
+    const realHeight = image.naturalHeigh;
+
+
+    zoomInButton.addEventListener("click", function () {
+        currentZoom += 20;
+        currentHeight += 20
+        if (currentZoom > realWidth) {
+            currentZoom = realWidth;
+        }
+        if (currentHeight > realHeight) {
+          currentHeight = realHeight;
+        }
+        image.style.width = `${currentZoom}px`;
+        dragOverlay.style.width = `${currentZoom}px`;
+        dragOverlay.style.height = `${currentZoom}px`;
+    });
+
+    zoomOutButton.addEventListener("click", function () {
+        currentZoom -= 20;
+        if (currentZoom < 760) {
+            currentZoom = 760;
+        }
+        image.style.width = `${currentZoom}px`;
+        dragOverlay.style.width = `${currentZoom}px`;
+        dragOverlay.style.height = `${currentZoom}px`;
+    });
+  });
+</script>
+
+
+
+<script>
+
+</script>
