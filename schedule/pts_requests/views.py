@@ -657,9 +657,10 @@ def config_optics_edit_form(request, pk):
         )
 
     if request.method == 'POST':
-        form = OpticModerateFormset(request.POST, instance=ptsrequest.pts_cfg, form_kwargs={'request_pk': pk})
+        form = OpticModerateFormset(request.POST,
+                                    instance=ptsrequest.pts_cfg,
+                                    form_kwargs={'request_pk': pk})
         context = {'ptsrequest': ptsrequest}
-        print(form.errors)
 
         if form.is_valid():
             ptsrequest.moderator = request.user
@@ -810,12 +811,12 @@ def change_status_to_on_approval(request, pk):
                 author=request.user
             )
     step.save()
-    pts_request.trakt_start_date = (
-        pts_request.broadcast_start_date - timedelta(hours=1)
-    )
-    pts_request.trakt_end_date = (
-        pts_request.broadcast_start_date - timedelta(minutes=10)
-    )
+    # pts_request.trakt_start_date = (
+    #     pts_request.broadcast_start_date - timedelta(hours=1)
+    # )
+    # pts_request.trakt_end_date = (
+    #     pts_request.broadcast_start_date - timedelta(minutes=10)
+    # )
     pts_request.status = 'approval'
     pts_request.save()
     return redirect('pts_requests:request_detail', pk=pts_request.pk)

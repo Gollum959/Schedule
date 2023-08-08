@@ -13,15 +13,18 @@
             </div>
           </div>
         </div>
-        {% if ptsrequest.is_draft %}
-          <div class="col-sm-4">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h5 class="card-title">Тракт</h5>
-                <p class="card-text">Информация появится после утверждения заявки</p>
-              </div>
+        <div class="col-sm-4">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Тракт</h5>
+              <p class="card-text">
+                <b>Начало:</b> {{ ptsrequest.trakt_start_date|date:'d E Y H:i' }}</br>
+                <b>Конец:</b> {{ ptsrequest.trakt_end_date|date:'d E Y H:i' }}
+              </p>
             </div>
           </div>
+        </div>
+        {% if ptsrequest.is_draft %}
           <div class="col-sm-4">
             <div class="card shadow-sm">
               <div class="card-body">

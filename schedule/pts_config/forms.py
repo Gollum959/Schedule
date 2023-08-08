@@ -66,7 +66,8 @@ class AddPtsConfigFrom(CreatePtsConfigurationMixin):
 
         self.fields['place'].label = 'Название объекта'
         self.fields['place'].disabled = True
-        self.fields['commentator_position'].label = 'Организовать комментаторскую позицию'
+        self.fields['commentator_position'].label = (
+            'Организовать комментаторскую позицию')
         self.fields['commentator_headsets'].label = 'Предоставить 2 гарнитуры'
 
         if self.place_id:
@@ -99,7 +100,8 @@ class AddPtsConfigOnBaseFrom(CreatePtsConfigurationMixin):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.fields['image'].required = False
-        self.fields['commentator_position'].label = 'Организовать комментаторскую позицию'
+        self.fields['commentator_position'].label = (
+            'Организовать комментаторскую позицию')
         self.fields['commentator_headsets'].label = 'Предоставить 2 гарнитуры'
 
     def clean(self):

@@ -104,8 +104,13 @@
                       <img src="{% static 'img/refresh.png' %}" style="width: 38px;" alt="Обновить список конфигураций">
                     </button>
                   </div>
-                  <div id="modal-cfg-detail"></div> 
+                  <div id="modal-cfg-detail"></div>
+                </div>
               </div>
+            </div>
+            <div class="row">
+              <div class="col-3">{{ form.trakt_start_date|as_crispy_field }}</div>
+              <div class="col-3">{{ form.trakt_end_date|as_crispy_field }}</div>
             </div>
             <hr style="border: 1px;">
             <div class="form-group row my-3 p-3">
@@ -214,9 +219,46 @@
         })
        },
       });
+      $('#id_trakt_start_date').datetimepicker({
+        format:'Y-m-d H:i',
+        minDate : 0,
+        step: 5,
+        onShow:function(){
+          this.setOptions({
+            minDate: $('#id_broadcast_start_date').val()?$('#id_broadcast_start_date').val():0,
+            maxDate: $('#id_broadcast_end_date').val()?$('#id_broadcast_end_date').val():false,
+            value: $('#id_trakt_start_date').val()?$('#id_trakt_start_date').val():
+            ($('#id_broadcast_start_date').val()?$('#id_broadcast_start_date').val():0)
+          })
+        },
+      });
+      $('#id_trakt_end_date').datetimepicker({
+       format:'Y-m-d H:i',
+       step: 5,
+       onShow:function(){
+        this.setOptions({
+          minDate: $('#id_broadcast_start_date').val()?$('#id_broadcast_start_date').val():0,
+          maxDate: $('#id_broadcast_end_date').val()?$('#id_broadcast_end_date').val():false,
+          value: $('#id_trakt_end_date').val()?$('#id_trakt_end_date').val():
+          ($('#id_broadcast_start_date').val()?$('#id_broadcast_start_date').val():0)
+        })
+       },
+      });
       addCalendar('commlineconstructor')
       addCalendar('internetlineconstructor')
       addCalendar('techcommlineconstructor')
+
+      $("#id_broadcast_start_date").change(function () {
+        let startTime = $(this).val();
+        let traktStartDate = new Date(startTime);
+        let traktEndDate = new Date(startTime);
+        traktStartDate.setHours(traktStartDate.getHours() - 1);
+        traktEndDate.setMilliseconds(traktEndDate.getMilliseconds() - 600000);
+        let modifiedTraktStartDate = formatDate(traktStartDate);
+        let modifiedTraktEndDate = formatDate(traktEndDate);
+        $('#id_trakt_start_date').val(modifiedTraktStartDate)
+        $('#id_trakt_end_date').val(modifiedTraktEndDate)
+      });
      });
 
     $("#id_city_name").change(function () {
