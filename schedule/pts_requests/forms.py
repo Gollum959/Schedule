@@ -46,6 +46,14 @@ class AddRequestFrom(ModelForm):
         widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
         input_formats=['%Y-%m-%d %H:%M'],
         label='Дата и время окончания трансляции')
+    trakt_start_date = DateTimeField(
+        widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
+        input_formats=['%Y-%m-%d %H:%M'],
+        label='Дата и время начала тракта')
+    trakt_end_date = DateTimeField(
+        widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
+        input_formats=['%Y-%m-%d %H:%M'],
+        label='Дата и время окончания тракта')
 
     def __init__(self, *args, **kwargs):
         """Method allows creating a link between
@@ -107,7 +115,8 @@ class AddRequestFrom(ModelForm):
         model = PtsRequest
         fields = [
             'name', 'city_name', 'place', 'event_type', 'broadcast_start_date',
-            'broadcast_end_date', 'place', 'type', 'pts_cfg', 'director'
+            'broadcast_end_date', 'trakt_start_date', 'trakt_end_date',
+            'place', 'type', 'pts_cfg', 'director'
         ]
 
 
