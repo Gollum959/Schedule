@@ -30,6 +30,11 @@
                         {% endfor %}
                       </tbody>
                     </table>
+                    <div class="row pt-3">
+                      <a href="{{ cfg.image.url }}" target="_blank">
+                        <button type="button" class="btn btn-secondary">Камерный план</button>
+                      </a>
+                    </div>
                     {% else %}
                       <p class="fs-5 ms-2 me-2">Информация отсутсвует в конфигурации ПТС</p>
                     {% endif %}

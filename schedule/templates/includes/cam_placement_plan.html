@@ -1,0 +1,127 @@
+{% load static %}
+<style>
+  .zoomImage {
+    padding: 20px;
+    transition: transform 0.3s;
+    margin: 0 auto;
+  }
+  .dragOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    cursor: grab;
+  }
+  .zoom-buttons button {
+    padding: 4px 8px;
+  }
+</style>
+<div class="col d-flex justify-content-start">
+  <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#camPlansModal{{ pts_cfg.pk }}">
+    Камерный план
+  </button>
+  <div class="modal fade" id="camPlansModal{{ pts_cfg.pk }}" tabindex="-1" aria-labelledby="camPlansModalLabel{{ pts_cfg.pk }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable {% if pts_cfg.image|lower|slice:'-3:' != 'pdf' %}modal-lg{% else %}modal-sm{% endif %}">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="camPlansModalLabel{{ pts_cfg.pk }}">Камерный план</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="imageContainer{{ pts_cfg.pk }}" class="modal-body" {% if pts_cfg.image|lower|slice:'-3:' != 'pdf' %}style="height: 700px;{% endif %}">
+          {% if pts_cfg.image|lower|slice:"-3:" == 'pdf' %}
+            <a href="{{ pts_cfg.image.url }}" target="_blank">Просмотр PDF файла</a>
+          {% else %}
+            <div id="dragOverlay{{ pts_cfg.pk }}" class="dragOverlay" style="width: 760px; height: 700px;"></div>
+            <img id="zoomImage{{ pts_cfg.pk }}" src="{{ pts_cfg.image.url }}" alt="Image" style="width: 760px;" class="zoomImage">
+          {% endif %}
+        </div>
+        <div class="modal-footer">
+          {% if pts_cfg.image|lower|slice:'-3:' != 'pdf' %}
+            <div class="row justify-content-center align-items-center" style="width: 100%;">
+              <div class="col-4 text-stat"> 
+                <a href="{{ pts_cfg.image.url }}" download>
+                  <button type="button" class="btn btn-secondary">Скачать</button>
+                </a>
+              </div>
+              <div class="col-2">
+                <button id="zoomInButton{{ pts_cfg.pk }}" class="btn btn-link">
+                  <img src="{% static 'img/plus-2-256.png' %}" style="width: 38px;" alt="Увеличить">
+                </button>
+              </div>
+              <div class="col-2">
+                <button id="zoomOutButton{{ pts_cfg.pk }}" class="btn btn-link">
+                  <img src="{% static 'img/minus-256.png' %}" style="width: 38px;" alt="Увеличить">
+                </button>
+              </div>
+              <div class="col-4 text-end"> 
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+              </div>
+            </div>
+
+            <script>
+              $(document).ready(function() {
+                let isDragging = false;
+                let startMouseX, startMouseY, startScrollX, startScrollY;
+                const dragOverlay = document.getElementById("dragOverlay{{ pts_cfg.pk }}");
+                const imageContainer = document.getElementById("imageContainer{{ pts_cfg.pk }}");
+                const zoomInButton = document.getElementById("zoomInButton{{ pts_cfg.pk }}");
+                const zoomOutButton = document.getElementById("zoomOutButton{{ pts_cfg.pk }}");
+                const image = document.getElementById("zoomImage{{ pts_cfg.pk }}");
+                var currentZoom = 760;
+                var currentHeight = 700;
+
+                dragOverlay.addEventListener("mousedown", (event) => {
+                  isDragging = true;
+                  startMouseX = event.clientX;
+                  startMouseY = event.clientY;
+                  startScrollX = imageContainer.scrollLeft;
+                  startScrollY = imageContainer.scrollTop;
+                  dragOverlay.style.cursor = "grabbing"; 
+                });
+              
+                dragOverlay.addEventListener("mousemove", (event) => {
+                  if (!isDragging) return;
+                  const offsetX = event.clientX - startMouseX;
+                  const offsetY = event.clientY - startMouseY;
+                  imageContainer.scrollLeft = startScrollX - offsetX;
+                  imageContainer.scrollTop = startScrollY - offsetY;
+                });
+              
+                dragOverlay.addEventListener("mouseup", () => {
+                  isDragging = false;
+                  dragOverlay.style.cursor = "grab"; 
+                });
+
+                zoomInButton.addEventListener("click", function () {
+                  currentZoom += 20;
+                  currentHeight += 20
+                  if (currentZoom > image.naturalWidth) {
+                    currentZoom = image.naturalWidth;
+                  }
+                  if (currentHeight > image.naturalHeigh) {
+                    currentHeight = image.naturalHeigh;
+                  }
+                  image.style.width = `${currentZoom}px`;
+                  dragOverlay.style.width = `${currentZoom}px`;
+                  dragOverlay.style.height = `${currentZoom}px`;
+                });
+             
+                zoomOutButton.addEventListener("click", function () {
+                  currentZoom -= 20;
+                  if (currentZoom < 760) {
+                    currentZoom = 760;
+                  }
+                  image.style.width = `${currentZoom}px`;
+                  dragOverlay.style.width = `${currentZoom}px`;
+                  dragOverlay.style.height = `${currentZoom}px`;
+                });
+              });
+            </script>
+          {% else %}
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
