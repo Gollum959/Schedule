@@ -1,19 +1,27 @@
 <div class="card shadow-sm mt-3">
   <div class="card-header align-items-center p-0">
+    {% if not user.is_soundman %}
       <button class="accordion-button collapsed pt-2 pb-2" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-config" aria-expanded="false" aria-controls="panelsStayOpen-config">
-        <h5 style="margin-bottom: 0px; color: black">Конфигурация ПТС</h5>
-      </button>
+    {% else %}
+      <button class="accordion-button pt-2 pb-2" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-config" aria-expanded="true" aria-controls="panelsStayOpen-config">
+    {% endif %}
+      <h5 style="margin-bottom: 0px; color: black">Конфигурация ПТС</h5>
+    </button>
   </div>
-  <div id="panelsStayOpen-config" request-id="{{ ptsrequest.pk }}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-config">
+  <div id="panelsStayOpen-config" request-id="{{ ptsrequest.pk }}" class="accordion-collapse {% if user.is_soundman %}show{% endif %} collapse" aria-labelledby="panelsStayOpen-config">
     <div class="card-body">
       <h4 class="card-title ms-5">{{ ptsrequest.pts_cfg.name }}</h4>
-
       {% include 'includes/config_choice_pts.html' %}
+      {% if user.is_soundman %}
+        {% include 'includes/config_microphones.html' %}
+      {% endif %}
       {% include 'includes/config_cameras.html' %}
       {% include 'includes/config_optics.html' %}
       {% include 'includes/config_servers.html' %}
       {% include 'includes/config_gfx.html' %}
-      {% include 'includes/config_microphones.html' %}
+      {% if not user.is_soundman %}
+        {% include 'includes/config_microphones.html' %}
+      {% endif %}
       {% include 'includes/config_commentator.html' %}
 
     </div>
