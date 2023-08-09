@@ -14,15 +14,7 @@
           </div>
         </div>
         <div class="col-sm-4">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">Тракт</h5>
-              <p class="card-text">
-                <b>Начало:</b> {{ ptsrequest.trakt_start_date|date:'d E Y H:i' }}</br>
-                <b>Конец:</b> {{ ptsrequest.trakt_end_date|date:'d E Y H:i' }}
-              </p>
-            </div>
-          </div>
+          {% include 'includes/time_trakt.html' %}
         </div>
         {% if ptsrequest.is_draft %}
           <div class="col-sm-4">
@@ -34,9 +26,6 @@
             </div>
           </div>
         {% else %}
-          <div class="col-sm-4">
-            {% include 'includes/time_trakt.html' %}
-          </div>
           <div class="col-sm-4">
             {% include 'includes/time_travel.html' %}
           </div>

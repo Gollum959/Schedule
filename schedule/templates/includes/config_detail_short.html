@@ -30,31 +30,7 @@
                           </tbody>
                         </table>
                         <div class="row pt-3">
-                          <div class="col d-flex justify-content-start">
-                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#camPlansModal">
-                              Камерный план
-                            </button>
-                            <div class="modal fade" id="camPlansModal" tabindex="-1" aria-labelledby="camPlansModalLabel" aria-hidden="true">
-                              <div class="modal-dialog modal-dialog-scrollable modal-lg">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="camPlansModalLabel">Камерный план</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                  </div>
-                                  <div class="modal-body">
-                                    {% if ptsconstructor.image|lower|slice:"-3:" == 'pdf' %}
-                                      <a href="{{ ptsconstructor.image }}" target="_blank">View PDF</a>
-                                    {% else %}
-                                      <img src="{{ ptsconstructor.image.url }}" alt="Image">
-                                    {% endif %}
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                          {% include 'includes/cam_placement_plan.html' with pts_cfg=ptsconstructor %}
                         </div>
                         {% else %}
                           Информация отсутсвует в конфигурации ПТС
