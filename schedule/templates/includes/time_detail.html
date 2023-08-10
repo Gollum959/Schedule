@@ -4,7 +4,7 @@
     </div>
     <div class="card-body">
       <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-3">
           <div class="card shadow-sm">
             <div class="card-body">
               <h5 class="card-title">{{ ptsrequest.type }}</h5>
@@ -13,11 +13,11 @@
             </div>
           </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
           {% include 'includes/time_trakt.html' %}
         </div>
         {% if ptsrequest.is_draft %}
-          <div class="col-sm-4">
+          <div class="col-sm-6">
             <div class="card shadow-sm">
               <div class="card-body">
                 <h5 class="card-title">Время работы ПТС</h5>
@@ -26,7 +26,7 @@
             </div>
           </div>
         {% else %}
-          <div class="col-sm-4">
+          <div class="col-sm-6">
             {% include 'includes/time_travel.html' %}
           </div>
         {% endif %}

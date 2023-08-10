@@ -220,19 +220,32 @@ class UpdateTravelTime(ModelForm):
     """Form for moderating travel time"""
     start_date = DateTimeField(
         widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
-        input_formats=['%Y-%m-%d %H:%M'])
+        input_formats=['%Y-%m-%d %H:%M'],
+        label="Дата и время выезда ПТС с базы")
     end_date = DateTimeField(
         widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
-        input_formats=['%Y-%m-%d %H:%M'])
+        input_formats=['%Y-%m-%d %H:%M'],
+        label="Дата и время отьезда ПТС с объекта")
+    start_date_arrival = DateTimeField(
+        widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
+        input_formats=['%Y-%m-%d %H:%M'],
+        label="Дата и время прибытия ПТС на объект")
+    end_date_arrival = DateTimeField(
+        widget=DateTimeInput(format='%Y-%m-%d %H:%M'),
+        input_formats=['%Y-%m-%d %H:%M'],
+        label="Дата и время прибытия ПТС на базу")
 
     class Meta:
         model = PtsRequest
-        fields = ['start_date', 'end_date', ]
+        fields = ['start_date', 'start_date_arrival',
+                  'end_date', 'end_date_arrival']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['start_date'].required = True
         self.fields['end_date'].required = True
+        self.fields['start_date_arrival'].required = True
+        self.fields['end_date_arrival'].required = True
 
 # Forms for config block
 
