@@ -244,14 +244,26 @@ class PtsRequest(models.Model):
         verbose_name='Тип работы'
     )
     start_date = models.DateTimeField(
-        verbose_name='Дата и время выезда ПТС',
+        verbose_name='Дата и время выезда ПТС с базы',
         help_text='Дата и время выезда ПТС (YYYY-MM-DD hh:mm)',
         blank=True,
         null=True
     )
+    start_date_arrival = models.DateTimeField(
+        verbose_name='Дата и время прибытия ПТС на объект',
+        help_text='Дата и время прибытия ПТС на объект (YYYY-MM-DD hh:mm)',
+        blank=True,
+        null=True
+    )
     end_date = models.DateTimeField(
-        verbose_name='Дата и время отьезда ПТС',
+        verbose_name='Дата и время отьезда ПТС с объекта',
         help_text='Дата и время отьезда ПТС (YYYY-MM-DD hh:mm)',
+        blank=True,
+        null=True
+    )
+    end_date_arrival = models.DateTimeField(
+        verbose_name='Дата и время прибытия ПТС на базу',
+        help_text='Дата и время прибытия ПТС на базу (YYYY-MM-DD hh:mm)',
         blank=True,
         null=True
     )

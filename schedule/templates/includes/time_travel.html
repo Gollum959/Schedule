@@ -3,15 +3,29 @@
     <div class="card-body">
       <h5 class="card-title">Время работы ПТС</h5>
         <p class="card-text">
-          <b>Начало:</b> 
+          <b>Время выезда ПТС с базы:</b> 
           {% if ptsrequest.start_date %}
             {{ ptsrequest.start_date|date:'d E Y H:i' }}
           {% else %}
             &mdash;
           {% endif %}
           </br>
-          <b>Конец:</b> 
+          <b>Время прибытия ПТС на объект:</b> 
+          {% if ptsrequest.start_date_arrival %}
+            {{ ptsrequest.start_date|date:'d E Y H:i' }}
+          {% else %}
+            &mdash;
+          {% endif %}
+          </br>
+          <b>Время отьезда ПТС с объекта:</b> 
           {% if ptsrequest.end_date %}
+            {{ ptsrequest.end_date|date:'d E Y H:i' }}
+          {% else %}
+            &mdash;
+          {% endif %}
+          </br>
+          <b>Время прибытия ПТС на базу:</b> 
+          {% if ptsrequest.end_date_arrival %}
             {{ ptsrequest.end_date|date:'d E Y H:i' }}
           {% else %}
             &mdash;
