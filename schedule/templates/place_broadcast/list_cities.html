@@ -1,16 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %} 
+
   <div class="container py-3">     
     <h1>Список объектов</h1>
     <div class="card shadow-sm">
       <div class="card-body">
         <div class="row">
           <div class="col-4">
-            <select class="form-select ms-3" id="id_city_name">
-              <option value=0>Выбирите город</option>
+            <select class="form-select ms-3 bg-dark" id="id_city_name" data-allow-clear="1">
+              <option></option>
               {% for city in placecity_list %}
-                <option  {% if place_city == city.name %}selected{% endif %} value="{{ city.id }}">{{ city.name }}</option>
+                <option {% if place_city == city.name %}selected{% endif %} value="{{ city.id }}">{{ city.name }}</option>
               {% endfor %}
             </select>
           </div>
@@ -51,6 +52,14 @@
     function updateLink() {
 
     }
+    
+    $(document).ready(function() {
+
+        $('#id_city_name').select2({
+          theme: 'bootstrap-5',
+          placeholder: 'Выберите город'
+        });
+    });
 
     $(window).on('load', function() {
       var cityId = $("#id_city_name").val();
