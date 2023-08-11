@@ -363,6 +363,9 @@ def load_optic_brend(request, pk):
         optic_brends = OpticBrend.objects.filter(
             type_pts=base_object.pts_name.type,
             opticmodelbrend__type__pk=optic_id).order_by('name')
+        # optic_model = OpticModelBrend.objects.filter(
+        #     brend=optic_brends.first(), type=optic_id
+        #     ).order_by('name')
     return render(
         request,
         'pts_config/optic_brend_dropdown_list_options.html',

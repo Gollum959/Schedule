@@ -68,6 +68,20 @@
   </div>
 
   <script>
+
+    function fetchModelData(url, opticId, brendId, targetElementId) {
+      $.ajax({
+        url: url,
+        data: {
+          'optic': opticId,
+          'brend': brendId
+        },
+        success: function (data) {
+          $(`#${targetElementId}`).html(data);
+        }
+      });
+    }
+
     var countForm = $("#id_opticptsconstructor_set-TOTAL_FORMS").val()
     for (let i = 0; i < countForm; i++) {
       
@@ -81,8 +95,11 @@
             'optic': opticId        
           },
           success: function (data) {  
-            $(`#id_opticptsconstructor_set-${i}-brend`).html(data);  
-            $(`#id_opticptsconstructor_set-${i}-model`).html('<option value="">---------</option>');
+            $(`#id_opticptsconstructor_set-${i}-brend`).html(data);
+            const brendUrl = $("#optic_form").attr("brend-url");  
+            const brendId = $(`#id_opticptsconstructor_set-${i}-brend`).val()
+            fetchModelData(brendUrl, opticId, brendId, `id_opticptsconstructor_set-${i}-model`);
+
           }
         });
 
@@ -93,16 +110,7 @@
         const opticId = $(`#id_opticptsconstructor_set-${i}-optics`).val()
         const brendId = $(`#id_opticptsconstructor_set-${i}-brend`).val()
 
-        $.ajax({                       
-          url: url,                   
-          data: {
-            'optic': opticId,
-            'brend': brendId   
-          },
-          success: function (data) {  
-            $(`#id_opticptsconstructor_set-${i}-model`).html(data);  
-          }
-        });
+        fetchModelData(url, opticId, brendId, `id_opticptsconstructor_set-${i}-model`);
 
       });
 
