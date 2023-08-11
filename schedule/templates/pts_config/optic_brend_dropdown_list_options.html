@@ -1,4 +1,4 @@
 <option value="">---------</option>
 {% for optic_brend in optic_brends %}
-    <option value="{{ optic_brend.pk }}">{{ optic_brend.name }}</option>
+    <option value="{{ optic_brend.pk }}" {% if forloop.first %}selected{% endif %}>{{ optic_brend.name }}</option>
 {% endfor %}

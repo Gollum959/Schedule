@@ -324,7 +324,7 @@ class ModerateOptic(forms.ModelForm):
                 self.fields['model'].queryset = OpticModelBrend.objects.all()
             except (ValueError, TypeError):
                 pass
-        elif self.instance.pk:
+        elif self.instance.pk and self.instance.brend:
             self.fields['brend'].queryset = OpticBrend.objects.filter(
                     Q(
                         type_pts=pts_request.pts_name.type
@@ -333,6 +333,20 @@ class ModerateOptic(forms.ModelForm):
             self.fields['model'].queryset = OpticModelBrend.objects.filter(
                     brend=self.instance.brend_id, type=self.instance.optics
                 ).order_by('name')
+        elif (hasattr(self.instance, 'optics')
+              and pts_request.pts_name.type.pk != 1):
+            brend = OpticBrend.objects.filter(
+                    Q(
+                        type_pts=pts_request.pts_name.type
+                    ) | Q(type_pts__isnull=True)
+                ).order_by('name')
+            model = OpticModelBrend.objects.filter(
+                    brend=brend.first(), type=self.instance.optics
+                ).order_by('name')
+            self.fields['brend'].queryset = brend
+            self.fields['model'].queryset = model
+            self.initial['brend'] = brend.first()
+            self.initial['model'] = model.first()
 
     def __make_disable_readonly(self, field_name):
         self.fields[field_name].disabled = True
