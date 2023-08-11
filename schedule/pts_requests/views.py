@@ -829,13 +829,17 @@ def change_status_to_reject(request, pk):
     pts_request = get_object_or_404(PtsRequest, pk=pk)
     comment = request.POST.get('comment', '')
     step = request.POST.get('step')
+
     if (
         (
             not request.user.is_admin_or_moderator
-            and pts_request.status != "soundman"
+            and pts_request.status not in ['soundman', 'gdpt']
         ) or (
             not request.user.is_soundman_or_admin
-            and pts_request.status == "soundman"
+            and pts_request.status == 'soundman'
+        ) or (
+            not request.user.is_gdpt_or_admin
+            and pts_request.status == 'gdpt'
         )
     ):
         raise Http404()
