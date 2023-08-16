@@ -17,7 +17,11 @@ from docxtpl import DocxTemplate
 from place_broadcast.models import PlaceConstructor, EventType
 from pts_config.views import PtsConfigCreateOnBase
 from pts_requests.models import PtsRequest, PtsRequestApprovalStages
-from pts_config.models import PtsConstructor, MicrophoneType
+from pts_config.models import (PtsConstructor,
+                               MicrophoneType,
+                               CameraPtsConstructor,
+                               OpticPtsConstructor,
+                               ServerRecordingRepeatConstructor)
 from pts_requests.forms import (AddRequestFrom,
                                 UpdateTraktTime,
                                 UpdateTravelTime,
@@ -565,26 +569,44 @@ def time_travel_edit_form(request, pk):
 # View functions for config block
 
 
+def clear_cfg(constructor):
+    CameraPtsConstructor.objects.filter(constructor=constructor).update(
+        brend=None,
+        model=None)
+    OpticPtsConstructor.objects.filter(constructor=constructor).update(
+        brend=None,
+        model=None)
+    ServerRecordingRepeatConstructor.objects.filter(
+        constructor=constructor).update(
+        brend=None,
+        model=None,
+        quantity=0)
+
+
 @login_required
 def config_choice_pts_edit_form(request, pk):
     """View function for moderating type PTS."""
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
-
+    old_type_pts = ptsrequest.pts_name.type.pk
+    context = {'ptsrequest': ptsrequest, 'change_pts': False}
     if request.GET.get('step') == 'back':
         return render(
             request,
             'includes/config_choice_pts.html',
-            {'ptsrequest': ptsrequest}
+            context
         )
 
     if request.method == 'PUT':
         data = QueryDict(request.body).dict()
         form = UpdatePTS(data, instance=ptsrequest)
-        context = {'ptsrequest': ptsrequest}
         if form.is_valid():
-            form.save()
             form.instance.moderator = request.user
+            form.save()
+            new_type_pts = form.instance.pts_name.type.pk
+            if new_type_pts != old_type_pts:
+                clear_cfg(ptsrequest.pts_cfg)
+                context['change_pts'] = True
             return render(request, 'includes/config_choice_pts.html',
                           context)
 
@@ -592,7 +614,7 @@ def config_choice_pts_edit_form(request, pk):
         return render(request, 'includes/config_choice_pts_edit.html', context)
 
     form = UpdatePTS(instance=ptsrequest)
-    context = {'ptsrequest': ptsrequest, 'form': form}
+    context['form'] = form
     return render(request, 'includes/config_choice_pts_edit.html', context)
 
 
