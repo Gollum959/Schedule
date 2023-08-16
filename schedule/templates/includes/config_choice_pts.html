@@ -21,3 +21,15 @@
   </div>
 </div>
 
+{% if change_pts %}
+  <div id="config-cameras-edit" hx-swap-oob="true">
+    {% include 'includes/config_cameras.html' %}
+  </div>
+  <div id="config-optics-edit" hx-swap-oob="true">
+    {% include 'includes/config_optics.html' %}
+  </div>
+  <div id="config-servers-edit" hx-swap-oob="true">
+    {% include 'includes/config_servers.html' %}
+  </div>
+{% endif %}
+

@@ -15,9 +15,15 @@
       {% if user.is_soundman %}
         {% include 'includes/config_microphones.html' %}
       {% endif %}
-      {% include 'includes/config_cameras.html' %}
-      {% include 'includes/config_optics.html' %}
-      {% include 'includes/config_servers.html' %}
+      <div id="config-cameras-edit">
+        {% include 'includes/config_cameras.html' %}
+      </div>
+      <div id="config-optics-edit">
+        {% include 'includes/config_optics.html' %}
+      </div>
+      <div id="config-servers-edit">
+        {% include 'includes/config_servers.html' %}
+      </div>
       {% include 'includes/config_gfx.html' %}
       {% if not user.is_soundman %}
         {% include 'includes/config_microphones.html' %}

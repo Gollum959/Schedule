@@ -19,7 +19,9 @@ from pts_config.views import PtsConfigCreateOnBase
 from pts_requests.models import PtsRequest, PtsRequestApprovalStages
 from pts_config.models import (PtsConstructor,
                                MicrophoneType,
-                               CameraPtsConstructor)
+                               CameraPtsConstructor,
+                               OpticPtsConstructor,
+                               ServerRecordingRepeatConstructor)
 from pts_requests.forms import (AddRequestFrom,
                                 UpdateTraktTime,
                                 UpdateTravelTime,
@@ -570,8 +572,15 @@ def time_travel_edit_form(request, pk):
 def clear_cfg(constructor):
     CameraPtsConstructor.objects.filter(constructor=constructor).update(
         brend=None,
-        model=None
-    )
+        model=None)
+    OpticPtsConstructor.objects.filter(constructor=constructor).update(
+        brend=None,
+        model=None)
+    ServerRecordingRepeatConstructor.objects.filter(
+        constructor=constructor).update(
+        brend=None,
+        model=None,
+        quantity=0)
 
 
 @login_required
