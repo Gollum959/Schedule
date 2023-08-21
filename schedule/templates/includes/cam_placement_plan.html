@@ -28,18 +28,18 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div id="imageContainer{{ pts_cfg.pk }}" class="modal-body" {% if pts_cfg.image|lower|slice:'-3:' != 'pdf' %}style="height: 700px;{% endif %}">
-          {% if pts_cfg.image|lower|slice:"-3:" == 'pdf' %}
+          {% if pts_cfg.image %}
             <a href="{{ pts_cfg.image.url }}" target="_blank">Просмотр PDF файла</a>
           {% else %}
             <div id="dragOverlay{{ pts_cfg.pk }}" class="dragOverlay" style="width: 760px; height: 700px;"></div>
-            <img id="zoomImage{{ pts_cfg.pk }}" src="{{ pts_cfg.image.url }}" alt="Image" style="width: 760px;" class="zoomImage">
+            <img id="zoomImage{{ pts_cfg.pk }}" src="data:image/jpg;base64,{{ image_bytes }}" alt="Image" style="width: 760px;" class="zoomImage">
           {% endif %}
         </div>
         <div class="modal-footer">
           {% if pts_cfg.image|lower|slice:'-3:' != 'pdf' %}
             <div class="row justify-content-center align-items-center" style="width: 100%;">
               <div class="col-4 text-stat"> 
-                <a href="{{ pts_cfg.image.url }}" download>
+                <a href="data:image/jpg;base64,{{ image_bytes }}" download="{{ image_name }}">
                   <button type="button" class="btn btn-secondary">Скачать</button>
                 </a>
               </div>

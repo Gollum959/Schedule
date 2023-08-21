@@ -13,7 +13,9 @@ from pts_config.views import (
                               load_micro_brend,
                               load_micro_model,
                               load_optic_model,
-                              load_server_config)
+                              load_server_config,)
+#   download_pdf
+
 
 app_name = 'pts_config'
 
@@ -84,4 +86,9 @@ urlpatterns = [
         PtsConfigView.as_view(),
         name='ajax_load_cfg'
     ),
+    # path(
+    #     'download-pdf/<int:pk>/',
+    #     download_pdf,
+    #     name='download_pdf',
+    # ),
 ]

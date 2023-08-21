@@ -50,7 +50,33 @@
             </div>
             <div class="row">
               <div class="col-8">{{ form.name|as_crispy_field }}</div>
-              <div class="col-4">{{ form.image|as_crispy_field }}</div>
+              <div class="col-4">
+                {% if image_name %}
+                  <div class="row">
+                    {{ form.image|as_crispy_field }}
+                  </div>
+                  <div class="row">
+                    <div class="input-group mb-2">
+                      <span class="input-group-text">На данный момент</span>
+                      <div class="form-control d-flex h-auto">
+                        <span class="text-break flex-grow-1">
+                          <a href="javascript:void(0);" onclick="openImageInNewWindow('{{ image_bytes }}')">Камерный план</a>
+                          <script>
+                              function openImageInNewWindow(imageData) {
+                                  const imageWindow = window.open();
+                                  imageWindow.document.write('<img src="data:image/jpg;base64,' + imageData + '" alt="Image" style="width: 760px;">');
+                                  imageWindow.document.close();
+                              }
+                          </script>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                {% else %}
+                  {{ form.image|as_crispy_field }}
+                {% endif %}
+              </div>
+              <!-- <div class="col-4">{{ form.image|as_crispy_field }}</div> -->
             </div>
             <div class="row">
               <div class="col-6">
