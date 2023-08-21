@@ -9,7 +9,8 @@ from pts_config.models import (
     Gfx, GfxPtsConstructor, GfxModel, GfxLicenseType,
     ServerRecordingRepeatBrend, ServerRecordingRepeatModelBrend,
     ServerRecordingRepeatConstructor, ServerPlayerType,
-    ServerRecordingRepeatType, TypePtsForConfiguration
+    ServerRecordingRepeatType, TypePtsForConfiguration,
+    ImageBank
 )
 
 
@@ -83,3 +84,6 @@ class PtsConstructorAdmin(admin.ModelAdmin):
         MicrophonePtsConstructor,
         GfxPtsConstructor
     )
+
+
+admin.site.register(ImageBank)

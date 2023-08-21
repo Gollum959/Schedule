@@ -29,12 +29,12 @@
                             {% endfor %}
                           </tbody>
                         </table>
-                        <div class="row pt-3">
-                          {% include 'includes/cam_placement_plan.html' with pts_cfg=ptsconstructor %}
-                        </div>
                         {% else %}
                           Информация отсутсвует в конфигурации ПТС
                         {% endif %}
+                        <div class="row pt-3">
+                          {% include 'includes/cam_placement_plan.html' with pts_cfg=ptsconstructor image_bytes=ptsconstructor.image_bytes.0 image_name=ptsconstructor.image_bytes.1 %}
+                        </div>
                       </div>
                     </div>
                   </div>

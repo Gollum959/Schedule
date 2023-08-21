@@ -298,6 +298,20 @@ class GfxPtsConstructor(ConstrQuantity):
         )
 
 
+class ImageBank(models.Model):
+    name = models.CharField(max_length=100)
+    image_data = models.BinaryField(null=True)
+    pts_cfg = models.ForeignKey(
+        "PtsConstructor",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
+    )
+
+    def __str__(self):
+        return self.name
+
+
 class PtsConstructor(models.Model):
     """PTS configuration model."""
 
@@ -357,7 +371,8 @@ class PtsConstructor(models.Model):
     image = models.ImageField(
         'Картинка или pdf',
         upload_to='plans/',
-        blank=True
+        blank=True,
+        null=True
     )
     create_date = models.DateTimeField(auto_now_add=True)
 

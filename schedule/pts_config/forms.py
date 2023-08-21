@@ -27,7 +27,7 @@ class CreatePtsConfigurationMixin(forms.ModelForm):
     """Mixin to creat configuration with 2 fields(image, name)
      and clean_image method"""
 
-    image = forms.FileField()
+    image = forms.FileField(label='Выберете изображение камерного плана')
     name = forms.CharField(
         label='Название конфигурации ПТС',
         validators=[RegexValidator(
@@ -62,6 +62,7 @@ class AddPtsConfigFrom(CreatePtsConfigurationMixin):
 
         self.place_id = kwargs.pop('place', None)
         self.event_id = kwargs.pop('event', None)
+        disable_image_required = kwargs.pop('disable_image_required', False)
         super().__init__(*args, **kwargs)
 
         self.fields['place'].label = 'Название объекта'
@@ -77,6 +78,8 @@ class AddPtsConfigFrom(CreatePtsConfigurationMixin):
         self.fields['event_type'].disabled = True
         if self.event_id:
             self.fields['event_type'].initial = self.event_id
+        if disable_image_required:
+            self.fields['image'].required = False
 
     class Meta:
         model = PtsConstructor
