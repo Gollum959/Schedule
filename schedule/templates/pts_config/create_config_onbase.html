@@ -53,35 +53,19 @@
                     {{ form.image|as_crispy_field }}
                   </div>
                   <div class="row">
-
                     <div class="input-group mb-2">
                       <span class="input-group-text">На данный момент</span>
                       <div class="form-control d-flex h-auto">
-                          <span class="text-break flex-grow-1">
-
-
-
-
-                            <a href="javascript:void(0);" onclick="openImageInNewWindow('{{ image_bytes }}')">Камерный план</a>
-
-                            <script>
-                                function openImageInNewWindow(imageData) {
-                                    const imageWindow = window.open();
-                                    imageWindow.document.write('<img src="data:image/jpg;base64,' + imageData + '" alt="Image" style="width: 760px;">');
-                                    imageWindow.document.close();
-                                }
-                            </script>
-
-
-
-
-                              <!-- <a href="data:image/jpg;base64,{{ image_bytes }}" target="_blank">{{image_name}}</a> -->
-
-                              <!-- <a href="data:image/jpg;base64,{{ image_bytes }}" target="_blank">
-                                <img id="zoomImage{{ pts_cfg.pk }}" src="data:image/jpg;base64,{{ image_bytes }}" alt="Image" style="width: 760px;" class="zoomImage">
-                            </a> -->
-                          </span>
-                          
+                        <span class="text-break flex-grow-1">
+                          <a href="javascript:void(0);" onclick="openImageInNewWindow('{{ image_bytes }}')">Камерный план</a>
+                          <script>
+                              function openImageInNewWindow(imageData) {
+                                  const imageWindow = window.open();
+                                  imageWindow.document.write('<img src="data:image/jpg;base64,' + imageData + '" alt="Image" style="width: 760px;">');
+                                  imageWindow.document.close();
+                              }
+                          </script>
+                        </span>
                       </div>
                     </div>
                   </div>

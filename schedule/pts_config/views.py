@@ -112,7 +112,7 @@ class PtsConfigDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
     template_name = 'pts_config/config_detail.html'
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        """Add place_id, event_type_id  to context."""
+        """ """
 
         data = super().get_context_data(**kwargs)
         try:
