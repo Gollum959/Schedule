@@ -1,5 +1,6 @@
 from datetime import date, timedelta, datetime
 import os
+import base64
 from django.http import HttpResponse
 # import locale
 from django.http import QueryDict, FileResponse
@@ -13,6 +14,7 @@ from django.urls import reverse_lazy
 from typing import Any, Dict
 from django.http import HttpResponseRedirect
 from docxtpl import DocxTemplate
+from django.db import transaction
 
 from place_broadcast.models import PlaceConstructor, EventType
 from pts_config.views import PtsConfigCreateOnBase
@@ -37,8 +39,9 @@ from pts_config.forms import (CameraModerateFormset,
 from core.custom_view import (DetalInformationMixin,
                               UserToFormMixin,
                               EditOnlyAuthorMixin)
-from pts_config.models import MicrophoneBrend
+from pts_config.models import MicrophoneBrend, ImageBank
 from schedule.settings import MEDIA_ROOT
+from pts_config.views import CfgSaver
 
 
 class PtsRequestsView(LoginRequiredMixin, ListView):
@@ -127,6 +130,21 @@ class PtsRequestDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
     login_url = reverse_lazy('users:login')
     model = PtsRequest
     template_name = 'pts_requests/request_detail.html'
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        """ """
+
+        data = super().get_context_data(**kwargs)
+        try:
+            image_instance = ImageBank.objects.get(pts_cfg=self.object.pts_cfg.pk)
+            binary_data = base64.b64encode(
+                image_instance.image_data).decode('utf-8')
+            data['image_bytes'] = binary_data
+            data['image_name'] = image_instance.name
+        except ImageBank.DoesNotExist:
+            ...
+
+        return data
 
 
 class PtsRequestCreate(UserToFormMixin, LoginRequiredMixin, CreateView):
@@ -257,10 +275,26 @@ class PtsRequestCreateCfg(PtsConfigCreateOnBase):
         pts_cfg_forms = [context['camera'], context['optic'],
                          context['server'], context['gfx']]
         if all([inline_form.is_valid() for inline_form in pts_cfg_forms]):
-            self.object = form.save()
-            for cfg_form in pts_cfg_forms:
-                cfg_form.instance = self.object
-                cfg_form.save()
+            if form.cleaned_data['image']:
+                new_record = CfgSaver(form, pts_cfg_forms, self)
+                new_record.save()
+            else:
+                with transaction.atomic():
+                    self.object = form.save()
+                    try:
+                        image_instance = ImageBank.objects.get(
+                            pts_cfg=context.get('cfg_info').pk)
+                        uploaded_image = ImageBank(
+                            name=image_instance.name,
+                            image_data=image_instance.image_data,
+                            pts_cfg=self.object
+                        )
+                        uploaded_image.save()
+                    except ImageBank.DoesNotExist:
+                        ...
+                    for cfg_form in pts_cfg_forms:
+                        cfg_form.instance = self.object
+                        cfg_form.save()
         else:
             return self.render_to_response(self.get_context_data(form=form))
 

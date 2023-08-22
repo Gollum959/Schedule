@@ -2,7 +2,9 @@ from django.db import models
 from django.urls import reverse
 
 from users.models import User
-from pts_config.models import PtsConstructor, TypePtsForConfiguration
+from pts_config.models import (PtsConstructor,
+                               TypePtsForConfiguration,
+                               ImageBank)
 from place_broadcast.models import PlaceConstructor, EventType
 from pts_requests.abstract_models import NameModel, LineConstructor
 
@@ -355,6 +357,17 @@ class PtsRequest(models.Model):
         clone.clone_conf = True
         clone.base_conf = False
         clone.save()
+        try:
+            image_instance = ImageBank.objects.get(
+                pts_cfg=obj.pk)
+            uploaded_image = ImageBank(
+                name=image_instance.name,
+                image_data=image_instance.image_data,
+                pts_cfg=clone
+            )
+            uploaded_image.save()
+        except ImageBank.DoesNotExist:
+            ...
         for related_field in related_fields:
             if related_field:
                 for field in related_field:
