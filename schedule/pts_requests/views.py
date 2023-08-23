@@ -136,7 +136,8 @@ class PtsRequestDetail(DetalInformationMixin, LoginRequiredMixin, DetailView):
 
         data = super().get_context_data(**kwargs)
         try:
-            image_instance = ImageBank.objects.get(pts_cfg=self.object.pts_cfg.pk)
+            image_instance = ImageBank.objects.get(
+                pts_cfg=self.object.pts_cfg.pk)
             binary_data = base64.b64encode(
                 image_instance.image_data).decode('utf-8')
             data['image_bytes'] = binary_data
