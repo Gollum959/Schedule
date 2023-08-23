@@ -622,7 +622,7 @@ def config_choice_pts_edit_form(request, pk):
     """View function for moderating type PTS."""
 
     ptsrequest = get_object_or_404(PtsRequest, pk=pk)
-    old_type_pts = ptsrequest.pts_name.type.pk
+    old_type_pts = ptsrequest.pts_name.type.pk if ptsrequest.pts_name else None
     context = {'ptsrequest': ptsrequest, 'change_pts': False}
     if request.GET.get('step') == 'back':
         return render(
