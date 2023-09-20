@@ -38,6 +38,7 @@ CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1']
 
 INSTALLED_APPS = [
     'pts_requests.apps.PtsRequestsConfig',
+    'tjk.apps.TjkConfig',
     'users.apps.UsersConfig',
     'place_broadcast.apps.PlaceBroadcastConfig',
     'pts_config.apps.PtsConfigConfig',

@@ -756,10 +756,22 @@ class PtsSerializer(serializers.ModelSerializer):
 
 
 class PtsRequestSerializer(serializers.ModelSerializer):
-    start_date = serializers.SerializerMethodField()
-    start_time = serializers.SerializerMethodField()
-    end_date = serializers.SerializerMethodField()
-    end_time = serializers.SerializerMethodField()
+    broadcast_start_date = serializers.SerializerMethodField()
+    broadcast_start_time = serializers.SerializerMethodField()
+    broadcast_end_date = serializers.SerializerMethodField()
+    broadcast_end_time = serializers.SerializerMethodField()
+    departure_start_date = serializers.SerializerMethodField()
+    departure_start_time = serializers.SerializerMethodField()
+    arrival_start_date = serializers.SerializerMethodField()
+    arrival_start_time = serializers.SerializerMethodField()
+    departure_end_date = serializers.SerializerMethodField()
+    departure_end_time = serializers.SerializerMethodField()
+    arrival_end_date = serializers.SerializerMethodField()
+    arrival_end_time = serializers.SerializerMethodField()
+    trakt_start_date = serializers.SerializerMethodField()
+    trakt_start_time = serializers.SerializerMethodField()
+    trakt_end_date = serializers.SerializerMethodField()
+    trakt_end_time = serializers.SerializerMethodField()
     status = serializers.CharField(source='get_status_display')
     author = serializers.SerializerMethodField()
     pts_name = PtsSerializer()
@@ -768,20 +780,83 @@ class PtsRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PtsRequest
-        fields = ('id', 'start_date', 'start_time', 'end_date', 'end_time',
-                  'name', 'status', 'author', 'pts_name', 'pts_cfg', 'place')
+        fields = ('id',
+                  'broadcast_start_date',
+                  'broadcast_start_time',
+                  'broadcast_end_date',
+                  'broadcast_end_time',
+                  'departure_start_date',
+                  'departure_start_time',
+                  'arrival_start_date',
+                  'arrival_start_time',
+                  'departure_end_date',
+                  'departure_end_time',
+                  'arrival_end_date',
+                  'arrival_end_time',
+                  'trakt_start_date',
+                  'trakt_start_time',
+                  'trakt_end_date',
+                  'trakt_end_time',
+                  'name',
+                  'status',
+                  'author',
+                  'pts_name',
+                  'pts_cfg',
+                  'place')
 
-    def get_start_date(self, obj):
-        return obj.broadcast_start_date.strftime('%Y-%m-%d')
+    def _get_date(self, obj,):
+        return obj.strftime('%Y-%m-%d') if obj else ''
 
-    def get_end_date(self, obj):
-        return obj.broadcast_end_date.strftime('%Y-%m-%d')
+    def _get_time(self, obj,):
+        return obj.strftime('%H:%M') if obj else ''
 
-    def get_start_time(self, obj):
-        return obj.broadcast_start_date.strftime('%H:%M')
+    def get_broadcast_start_date(self, obj):
+        return self._get_date(obj.broadcast_start_date)
 
-    def get_end_time(self, obj):
-        return obj.broadcast_end_date.strftime('%H:%M')
+    def get_broadcast_start_time(self, obj):
+        return self._get_time(obj.broadcast_start_date)
+
+    def get_broadcast_end_date(self, obj):
+        return self._get_date(obj.broadcast_end_date)
+
+    def get_broadcast_end_time(self, obj):
+        return self._get_time(obj.broadcast_end_date)
+
+    def get_departure_start_date(self, obj):
+        return self._get_date(obj.start_date)
+
+    def get_departure_start_time(self, obj):
+        return self._get_time(obj.start_date)
+
+    def get_arrival_start_date(self, obj):
+        return self._get_date(obj.start_date_arrival)
+
+    def get_arrival_start_time(self, obj):
+        return self._get_time(obj.start_date_arrival)
+
+    def get_departure_end_date(self, obj):
+        return self._get_date(obj.end_date)
+
+    def get_departure_end_time(self, obj):
+        return self._get_time(obj.end_date)
+
+    def get_arrival_end_date(self, obj):
+        return self._get_date(obj.end_date_arrival)
+
+    def get_arrival_end_time(self, obj):
+        return self._get_time(obj.end_date_arrival)
+
+    def get_trakt_start_date(self, obj):
+        return self._get_date(obj.trakt_start_date)
+
+    def get_trakt_start_time(self, obj):
+        return self._get_time(obj.trakt_start_date)
+
+    def get_trakt_end_date(self, obj):
+        return self._get_date(obj.trakt_end_date)
+
+    def get_trakt_end_time(self, obj):
+        return self._get_time(obj.trakt_end_date)
 
     def get_author(self, obj):
         return obj.author.get_full_name() if obj.author else None
