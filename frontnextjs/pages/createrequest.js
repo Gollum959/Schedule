@@ -1,10 +1,13 @@
 import { useFormik } from 'formik';
 import {TextField, Select, MenuItem, FormControl, InputLabel, Button, Container, Box} from '@mui/material';
+import axios from "axios";
+import {useEffect, useState} from "react";
 
 export default function Createrequest() {
+  const [cityData, setCityData] = useState(null);
   const formik = useFormik({
     initialValues: {
-      city: '',
+      city: 'Minsk',
       place: '',
       event: '',
       txName: '',
@@ -14,6 +17,20 @@ export default function Createrequest() {
       // handle form submission here
     },
   });
+  useEffect(() => {
+    fetchCityData();
+  }, []);
+  async function fetchCityData() {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/v1/city/');
+      const data = response.data;
+      setCityData(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  console.log('CityData', cityData)
+
 
   return (
       <Container sx={{ paddingTop: '50px'}}>
@@ -23,10 +40,11 @@ export default function Createrequest() {
       <FormControl sx={{ m: 1, minWidth: 120 }} >
         <InputLabel>City</InputLabel>
         <Select  value={formik.values.city} onChange={formik.handleChange('city')}>
-            <MenuItem value="Minsk">Minsk</MenuItem>
-            <MenuItem value="Pinsk">Pinsk</MenuItem>
-            <MenuItem value="Moscow">Moscow</MenuItem>
-            <MenuItem value="Orsha">Orsha</MenuItem>
+          {cityData?.map((city) => (
+              <MenuItem key={city.id} value={city.name}>
+                {city.name}
+              </MenuItem>
+          ))}
         </Select>
       </FormControl>
       <FormControl sx={{ m: 1, minWidth: 120 }}>
