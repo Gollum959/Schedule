@@ -18,42 +18,68 @@ import {
 } from "@mui/material";
 import PlaceDetails from './PlaceDetails';
 import PtsConfigDetails from './PtsConfigDetails'
+import { startOfWeek, endOfWeek, addWeeks, subWeeks, isWithinInterval } from 'date-fns';
 
 
 function Home() {
-  const [data, setData] = useState(null);
-  const [open, setOpen] = useState(false);
-  const [openPtsConfig, setOpenPtsConfig] = useState(false);
+const [data, setData] = useState(null);
+const [open, setOpen] = useState(false);
+const [openPtsConfig, setOpenPtsConfig] = useState(false);
 const [openPtsRequest, setOpenPtsRequest] = useState(false);
-
 const [selectedPlace, setSelectedPlace] = useState(false)
 const [selectedPtsConfig, setSelectedPtsConfig] = useState(false)
 const [selectedPtsRequest, setSelectedPtsRequest] = useState(false);
+const [filter, setFilter] = useState('thisWeek');
+const handleOpen = () => setOpen(true);
+const handleClose = () => setOpen(false);
+const handlePtsConfigOpen = () => setOpenPtsConfig(true);
+const handlePtsConfigClose = () => setOpenPtsConfig(false);
+const handlePtsRequestOpen = () => setOpenPtsRequest(true);
+const handlePtsRequestClose = () => setOpenPtsRequest(false);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handlePtsConfigOpen = () => setOpenPtsConfig(true);
-  const handlePtsConfigClose = () => setOpenPtsConfig(false);
-  const handlePtsRequestOpen = () => setOpenPtsRequest(true);
-  const handlePtsRequestClose = () => setOpenPtsRequest(false);
+useEffect(() => {
+  fetchData();
+}, []);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
 
-  
-  async function fetchData() {
-    try {
-      const response = await axios.get('http://127.0.0.1:8000/api/v1/pts_requests/');
-      const data = response.data;
-      setData(data);
-    } catch (error) {
-      console.error(error);
-    }
+async function fetchData() {
+  try {
+    const response = await axios.get('http://127.0.0.1:8000/api/v1/pts_requests/');
+    const data = response.data;
+    setData(data);
+  } catch (error) {
+    console.error(error);
   }
+}
   
 console.log('DATA', data)
- 
+const handleFilter = (filter) => {
+  setFilter(filter);
+};
+
+const getWeekInterval = (weekOffset) => {
+  const start = startOfWeek(addWeeks(new Date(), weekOffset));
+  const end = endOfWeek(addWeeks(new Date(), weekOffset));
+  return { start, end };
+};
+
+const filteredData = data?.filter(item => {
+  const itemDate = new Date(item.broadcast_start_date);
+  let weekInterval;
+
+  switch (filter) {
+    case 'lastWeek':
+      weekInterval = getWeekInterval(-1);
+      break;
+    case 'nextWeek':
+      weekInterval = getWeekInterval(1);
+      break;
+    default:
+      weekInterval = getWeekInterval(0);
+  }
+
+  return isWithinInterval(itemDate, weekInterval);
+});
     return (
       <div>
         <Modal open={openPtsRequest} onClose={handlePtsRequestClose}>
@@ -110,7 +136,6 @@ console.log('DATA', data)
             </Button>
           </Box>
         </Modal>
-        {data ? (
           <Table>
             <TableHead>
               <TableRow>
@@ -126,13 +151,14 @@ console.log('DATA', data)
                 {/* Add more table headers for additional fields */}
               </TableRow>
             </TableHead>
+            {data ? (
             <TableBody>
-              {data.map((item) => (
+              {filteredData.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>{item.id}</TableCell>
-                  <TableCell>{item.start_date}</TableCell>
+                  <TableCell>{item.broadcast_start_date}</TableCell>
                   <TableCell>
-                    {item.start_time}-{item.end_time}
+                    {item.broadcast_start_time}-{item.broadcast_end_time}
                   </TableCell>
                   <TableCell>
                     <Button
@@ -174,11 +200,16 @@ console.log('DATA', data)
                   {/* Add more table cells for additional fields */}
                 </TableRow>
               ))}
-            </TableBody>
-          </Table>
+            </TableBody>  
         ) : (
           <p>Loading data...</p>
         )}
+         </Table>
+         <div>
+            <button onClick={() => handleFilter('thisWeek')}>This Week</button>
+            <button onClick={() => handleFilter('lastWeek')}>Last Week</button>
+            <button onClick={() => handleFilter('nextWeek')}>Next Week</button>
+          </div>
       </div>
     );
   }
