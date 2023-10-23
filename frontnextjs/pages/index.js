@@ -1,13 +1,4 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import { Router } from 'next/router'
-import styles from '../styles/Home.module.css'
 import { useEffect, useState } from 'react'
-import dateFormat from 'dateformat'
-import { i18n } from "dateformat";
-import Link from 'next/link'
-import { useRouter } from 'next/router'
 import axios from 'axios';
 import {
   Table,
