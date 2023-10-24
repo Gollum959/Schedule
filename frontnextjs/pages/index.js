@@ -10,7 +10,7 @@ import {
 import PlaceDetails from './PlaceDetails';
 import PtsConfigDetails from './PtsConfigDetails'
 import { startOfWeek, endOfWeek, addWeeks, subWeeks, isWithinInterval } from 'date-fns';
-
+import { useSelector} from 'react-redux'
 
 function Home() {
 const [data, setData] = useState(null);
@@ -71,8 +71,12 @@ const filteredData = data?.filter(item => {
 
   return isWithinInterval(itemDate, weekInterval);
 });
+const counter = useSelector(state => state.counter)
     return (
       <div>
+        <h1>COUNTER</h1>
+        <h2>{counter}</h2>
+
         <Modal open={openPtsRequest} onClose={handlePtsRequestClose}>
           <Box
             sx={{

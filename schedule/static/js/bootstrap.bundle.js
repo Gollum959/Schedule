@@ -3361,7 +3361,7 @@
           if (!areValidElements(reference, popper)) {
 
             return;
-          } // Store the reference and popper rects to be read by modifiers
+          } // store the reference and popper rects to be read by modifiers
 
 
           state.rects = {

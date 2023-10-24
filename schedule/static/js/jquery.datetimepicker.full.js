@@ -2774,7 +2774,7 @@ var datetimepickerFactory = function ($) {
             } else {
                 this.onmousewheel = handler;
             }
-            // Store the line height and page height for this particular element
+            // store the line height and page height for this particular element
             $.data(this, 'mousewheel-line-height', special.getLineHeight(this));
             $.data(this, 'mousewheel-page-height', special.getPageHeight(this));
         },
@@ -2879,7 +2879,7 @@ var datetimepickerFactory = function ($) {
             deltaX *= pageHeight;
         }
 
-        // Store lowest absolute delta to normalize the delta values
+        // store lowest absolute delta to normalize the delta values
         absDelta = Math.max( Math.abs(deltaY), Math.abs(deltaX) );
 
         if ( !lowestDelta || absDelta < lowestDelta ) {

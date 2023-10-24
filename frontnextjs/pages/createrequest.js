@@ -1,7 +1,9 @@
 import { useFormik } from 'formik';
 import {TextField, Select, MenuItem, FormControl, InputLabel, Button, Container, Box} from '@mui/material';
 import axios from "axios";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCitiesRequest } from '../store/actions/cities';
 
 export default function Createrequest() {
   const [cityData, setCityData] = useState(null);
@@ -17,21 +19,14 @@ export default function Createrequest() {
       // handle form submission here
     },
   });
+  const dispatch = useDispatch();
+  const cities = useSelector((state) => state.cities); // As
   useEffect(() => {
-    fetchCityData();
-  }, []);
-  async function fetchCityData() {
-    try {
-      const response = await axios.get('http://127.0.0.1:8000/api/v1/city/');
-      const data = response.data;
-      setCityData(data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  console.log('CityData', cityData)
+    dispatch(fetchCitiesRequest());
+  }, [dispatch]); // Run the effect when dispatch changes
 
 
+  console.log('CITIES ARRAY', cities);
   return (
       <Container sx={{ paddingTop: '50px'}}>
 
@@ -40,7 +35,8 @@ export default function Createrequest() {
       <FormControl sx={{ m: 1, minWidth: 120 }} >
         <InputLabel>City</InputLabel>
         <Select  value={formik.values.city} onChange={formik.handleChange('city')}>
-          {cityData?.map((city) => (
+
+          {cities.cities.map((city) => (
               <MenuItem key={city.id} value={city.name}>
                 {city.name}
               </MenuItem>
