@@ -1,6 +1,6 @@
 # Schedule — OB Van (PTS) Booking Workflow (Django + Crispy Forms)
 
-> **Legacy notice:** This is a learning project from 2021. The **final working version lives on the `NewCrispyForm` branch**. It is preserved for portfolio/history and is not actively maintained.
+> **Legacy notice:** This is a learning project from 2022/23. The **final working version lives on the `NewCrispyForm` branch**. It is preserved for portfolio/history and is not actively maintained.
 
 Internal tool for **TV broadcast company** to request and manage **OB van (PTS)** bookings. It implements a multi‑step approval flow and keeps an inventory of available equipment.
 
@@ -26,7 +26,7 @@ Internal tool for **TV broadcast company** to request and manage **OB van (PTS)*
 
 ```bash
 # 1) clone and switch to the final branch
-git clone https://github.com/Gollum959/Schedule.git
+git clone https://github.com/aliaksandr-aliakseyeu/Schedule.git
 cd Schedule
 git checkout NewCrispyForm
 
@@ -70,7 +70,6 @@ DB_PASSWORD=your_db_password
 DB_HOST=your_db_host
 DB_PORT=5432
 
-TIME_ZONE=Europe/Warsaw
 ```
 
 > If your `settings.py` does not read from env yet, you can either:  
